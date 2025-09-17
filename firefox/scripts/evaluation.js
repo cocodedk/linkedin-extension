@@ -1,9 +1,47 @@
 const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 const DEFAULT_MODEL = 'gpt-4o-mini';
 
-const SYSTEM_PROMPT = 'You are an assistant evaluating prospects for FITS, a GRC automation tool. Respond with JSON containing aiScore (0-100), aiReasons (summary of why the score was chosen), and aiFitSummary (1-2 sentences describing how FITS could help this lead).';
+const SYSTEM_PROMPT = [
+  'You are an assistant evaluating prospects for FITS, an AI-assisted GRC automation platform.',
+  'Score higher when the lead references security and compliance personas such as CISOs, CSOs, IT security, cybersecurity, cyber security, AI security, compliance officers, ISO 27001, or NIS2 readiness.',
+  'Respond with JSON containing aiScore (0-100), aiReasons (summary of why the score was chosen), and aiFitSummary (1-2 sentences describing how FITS could help this lead).'
+].join(' ');
+
+function extractJson(text) {
+  if (!text) {
+    return null;
+  }
+
+  let candidate = text.trim();
+  if (candidate.startsWith('```')) {
+    candidate = candidate.replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+  }
+
+  const firstBrace = candidate.indexOf('{');
+  const lastBrace = candidate.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    return null;
+  }
+
+  const jsonSnippet = candidate.slice(firstBrace, lastBrace + 1);
+  try {
+    return JSON.parse(jsonSnippet);
+  } catch (error) {
+    console.warn('[LinkedIn Extension] Unable to parse AI JSON payload', { text, error: error.message });
+    return null;
+  }
+}
+
+function prepareLeadPayload(lead) {
+  if (!lead || typeof lead !== 'object') {
+    return {};
+  }
+  const { isOnline, online, ...rest } = lead;
+  return rest;
+}
 
 async function requestCompletion({ apiKey, lead }) {
+  const payloadLead = prepareLeadPayload(lead);
   const response = await fetch(OPENAI_URL, {
     method: 'POST',
     headers: {
@@ -19,7 +57,7 @@ async function requestCompletion({ apiKey, lead }) {
         },
         {
           role: 'user',
-          content: `Evaluate how well FITS (a GRC automation platform) fits this lead. Respond ONLY in JSON.\nLead: ${JSON.stringify(lead)}`
+          content: `Evaluate how well FITS (a GRC automation platform) fits this lead, paying special attention to security and compliance focus areas (CISO, CSO, IT security, cybersecurity, cyber security, AI security, compliance, ISO 27001, NIS2). Respond ONLY in JSON.\nLead: ${JSON.stringify(payloadLead)}`
         }
       ]
     })
@@ -31,22 +69,22 @@ async function requestCompletion({ apiKey, lead }) {
 
   const payload = await response.json();
   const text = payload?.choices?.[0]?.message?.content ?? '';
-  try {
-    const parsed = JSON.parse(text);
+  const parsed = extractJson(text);
+  if (parsed) {
     return {
       ...lead,
       aiScore: parsed.aiScore ?? parsed.score ?? null,
-      aiReasons: parsed.aiReasons ?? parsed.reasons ?? text,
+      aiReasons: parsed.aiReasons ?? parsed.reasons ?? '',
       aiFitSummary: parsed.aiFitSummary ?? parsed.fitSummary ?? parsed.aiFit ?? ''
     };
-  } catch (error) {
-    return {
-      ...lead,
-      aiScore: null,
-      aiReasons: text || 'Unable to parse AI response as JSON.',
-      aiFitSummary: 'No FITS summary available.'
-    };
   }
+
+  return {
+    ...lead,
+    aiScore: null,
+    aiReasons: text || 'Unable to parse AI response as JSON.',
+    aiFitSummary: 'No FITS summary available.'
+  };
 }
 
 export async function evaluateLeads({ leads, apiKey, signal, onProgress }) {

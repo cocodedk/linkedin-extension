@@ -1,6 +1,7 @@
 const browserApi = globalThis.browser ?? globalThis.chrome;
 const LEADS_KEY = 'leads';
 const API_KEY = 'openaiApiKey';
+const LAST_AI_QUERY_KEY = 'lastAiQuery';
 
 export async function getLeads() {
   const { [LEADS_KEY]: leads = [] } = await browserApi.storage.local.get(LEADS_KEY);
@@ -39,4 +40,13 @@ export async function getApiKey() {
 
 export async function setApiKey(apiKey) {
   await browserApi.storage.local.set({ [API_KEY]: apiKey });
+}
+
+export async function setLastAiQuery(entry) {
+  await browserApi.storage.local.set({ [LAST_AI_QUERY_KEY]: entry });
+}
+
+export async function getLastAiQuery() {
+  const { [LAST_AI_QUERY_KEY]: entry = null } = await browserApi.storage.local.get(LAST_AI_QUERY_KEY);
+  return entry;
 }
