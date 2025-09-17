@@ -39,8 +39,9 @@ h1 {
 }
 
 .actions button {
-  flex: 1 1 45%;
-  padding: 6px;
+  flex: 0 0 auto;
+  width: 148px;
+  padding: 6px 8px;
 }
 
 .actions .icon-btn {
