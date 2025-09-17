@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinkedIn Lead Exporter</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>LinkedIn Lead Exporter</h1>
+    </header>
+    <main>
+      <section class="actions">
+        <button id="scan-btn">Scan Results</button>
+        <button id="view-btn">View Leads</button>
+        <button id="evaluate-btn">Evaluate Leads</button>
+        <button id="export-csv-btn">Export CSV</button>
+        <button id="export-json-btn">Export JSON</button>
+      </section>
+      <section class="settings">
+        <label>
+          OpenAI API Key
+          <input id="api-key" type="password" placeholder="sk-..." />
+        </label>
+        <button id="save-api-key-btn">Save Key</button>
+      </section>
+      <p id="status" role="status"></p>
+      <section class="table-container">
+        <table id="leads-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Headline</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
