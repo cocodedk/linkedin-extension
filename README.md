@@ -1,36 +1,27 @@
-# LinkedIn Lead Exporter Extension
+# LinkedIn Lead Exporter Extensions
 
-A Chrome MV3 extension that scrapes the currently visible LinkedIn search results, stores deduplicated leads locally, optionally evaluates them with OpenAI, and exports them as CSV or JSON files.
+Cross-browser browser-extension project for collecting and evaluating LinkedIn search leads. The codebase now contains dedicated builds for both Google Chrome (Manifest V3) and Mozilla Firefox (Manifest V3 with browser-specific tweaks).
 
 ## Features
+- **Lead capture**: Injects a content script into the active LinkedIn search results page and gathers profile metadata.
+- **Persistent storage**: Deduplicates and stores captured leads locally so repeated scans enrich the saved list.
+- **AI evaluation**: Lets you supply an OpenAI API key to score each lead and capture qualitative feedback.
+- **Data export**: Downloads the stored leads as CSV or JSON using the browser downloads API.
 
-- **Scan Results**: Injects a content script into the active LinkedIn search tab and extracts names, headlines, companies, locations, and profile URLs.
-- **Lead Storage**: Saves and deduplicates leads in `chrome.storage.local` so repeated scans simply enrich existing entries.
-- **OpenAI Evaluation**: Allows the user to provide an OpenAI API key and score stored leads, storing both `aiScore` and `aiReasons` fields.
-- **Export**: Downloads the stored leads as CSV or JSON using the Chrome downloads API.
+## Repository Layout
+- `chrome/` – original Chrome extension source, unchanged except for being relocated.
+- `firefox/` – Firefox port that reuses the Chrome code with minimal compatibility shims.
+- `prd.md` – product notes shared by both builds.
 
-## Installation in Chrome
+## Getting Started
+Pick the target browser and follow the setup guide in the matching subfolder:
 
-Follow these steps to install the unpacked extension in Google Chrome:
+- Chrome: see `chrome/README.md`
+- Firefox: see `firefox/README.md`
 
-1. **Get the source code**
-   - Clone this repository: `git clone https://github.com/<your-account>/linkedin-extension.git`
-   - or download the ZIP from GitHub and extract it to a convenient location.
-2. **Open the Extensions page**
-   - Launch Chrome and visit `chrome://extensions`.
-   - Enable **Developer mode** using the toggle in the top-right corner of the page.
-3. **Load the unpacked extension**
-   - Click **Load unpacked**.
-   - In the file dialog, choose the folder that contains the `manifest.json` file (the root of this project).
-   - Confirm the selection. Chrome should add "LinkedIn Lead Exporter Extension" to your list of installed extensions.
-4. **(Optional) Pin the extension**
-   - Click the puzzle-piece icon in the Chrome toolbar and pin the extension for easy access.
+Each guide covers loading the unpacked extension, permissions, and any browser-specific tips.
 
-After installation, you can open the popup from the Chrome toolbar whenever you are on a LinkedIn search results page.
+## Development Notes
+Both builds share the same popup UI and content-scripting logic. If you extend shared functionality, update both folders (or introduce shared tooling) so features stay in sync across browsers.
 
-## Development
-
-1. Navigate to a LinkedIn search results page.
-2. Open the extension popup and use the provided controls.
-
-> **Note:** The OpenAI integration requires a valid API key supplied by the user via the popup settings section.
+> The OpenAI integration requires the user to provide an API key through the popup before evaluation can run.
