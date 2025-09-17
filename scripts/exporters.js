@@ -1,4 +1,4 @@
-const HEADERS = ['name', 'headline', 'company', 'location', 'profileUrl', 'aiScore', 'aiReasons'];
+const HEADERS = ['name', 'headline', 'company', 'location', 'profileUrl', 'aiScore', 'aiReasons', 'aiFitSummary'];
 
 export function toCsv(leads) {
   const safeLeads = Array.isArray(leads) ? leads : [];

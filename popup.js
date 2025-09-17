@@ -2,6 +2,7 @@ import { scrapeLinkedInResults } from './scripts/scraper.js';
 import {
   getLeads,
   saveLeads,
+  clearLeads,
   getApiKey,
   setApiKey
 } from './scripts/storage.js';
@@ -14,6 +15,7 @@ const evaluateBtn = document.getElementById('evaluate-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+const clearLeadsBtn = document.getElementById('clear-leads-btn');
 const apiKeyInput = document.getElementById('api-key');
 const statusEl = document.getElementById('status');
 const leadsTableBody = document.querySelector('#leads-table tbody');
@@ -28,7 +30,7 @@ function renderLeads(leads) {
   if (!Array.isArray(leads) || leads.length === 0) {
     const row = document.createElement('tr');
     const cell = document.createElement('td');
-    cell.colSpan = 5;
+    cell.colSpan = 6;
     cell.textContent = 'No leads stored yet.';
     row.appendChild(cell);
     leadsTableBody.appendChild(row);
@@ -42,7 +44,8 @@ function renderLeads(leads) {
       lead.headline ?? '',
       lead.company ?? '',
       lead.location ?? '',
-      lead.aiScore ?? ''
+      lead.aiScore ?? '',
+      lead.aiFitSummary ?? lead.aiReasons ?? ''
     ];
 
     values.forEach((value) => {
@@ -67,17 +70,18 @@ async function handleScan() {
   setStatus('Scanning results...');
   try {
     const tabId = await getActiveTabId();
-    const [{ result = [] } = {}] = await chrome.scripting.executeScript({
+    const [{ result = {} } = {}] = await chrome.scripting.executeScript({
       target: { tabId },
       func: scrapeLinkedInResults
     });
 
-    if (!result || result.length === 0) {
+    const leadsFromPage = Array.isArray(result?.leads) ? result.leads : [];
+    if (!leadsFromPage.length) {
       setStatus('No results found on the page.', 'warning');
       return;
     }
 
-    const leads = await saveLeads(result);
+    const leads = await saveLeads(leadsFromPage);
     setStatus(`Stored ${leads.length} lead(s).`, 'success');
     renderLeads(leads);
   } catch (error) {
@@ -124,6 +128,12 @@ async function handleExportJson() {
   setStatus('JSON export triggered.', 'success');
 }
 
+async function handleClearLeads() {
+  await clearLeads();
+  renderLeads([]);
+  setStatus('Cleared stored leads.', 'success');
+}
+
 async function handleSaveApiKey() {
   const apiKey = apiKeyInput.value.trim();
   await setApiKey(apiKey);
@@ -145,13 +155,18 @@ async function handleEvaluate() {
   }
 
   evaluateBtn.disabled = true;
+  evaluateBtn.classList.add('evaluating');
   setStatus('Evaluating leads with OpenAI...');
 
   try {
     const evaluated = await evaluateLeads({
       leads,
       apiKey,
-      onProgress: ({ lead }) => setStatus(`Scored ${lead.name || lead.profileUrl}`)
+      onProgress: ({ lead, index, total }) => {
+        const count = typeof index === 'number' && typeof total === 'number' ? `${index + 1}/${total}` : '';
+        const label = lead.name || lead.profileUrl || 'lead';
+        setStatus(`Scored ${label}${count ? ` (${count})` : ''}`);
+      }
     });
 
     await saveLeads(evaluated);
@@ -162,6 +177,7 @@ async function handleEvaluate() {
     setStatus(`Evaluation failed: ${error.message}`, 'error');
   } finally {
     evaluateBtn.disabled = false;
+    evaluateBtn.classList.remove('evaluating');
   }
 }
 
@@ -178,5 +194,6 @@ evaluateBtn.addEventListener('click', handleEvaluate);
 exportCsvBtn.addEventListener('click', handleExportCsv);
 exportJsonBtn.addEventListener('click', handleExportJson);
 saveApiKeyBtn.addEventListener('click', handleSaveApiKey);
+clearLeadsBtn.addEventListener('click', handleClearLeads);
 
 document.addEventListener('DOMContentLoaded', initialise);
