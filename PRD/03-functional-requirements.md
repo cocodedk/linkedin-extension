@@ -4,16 +4,27 @@
 
 1. **Scrape LinkedIn Search Results (MVP)**
 
-   * Extract visible results: name, headline, company, location, profile URL.
-   * Fallback selectors cover both the legacy and the new reusable search layouts.
+   * Extract visible results: name, headline, derived employer, location, profile URL.
+   * Fallback selectors cover both the legacy and the new reusable search layouts and prioritize LinkedIn People cards.
    * Pseudo-code:
 
      ```js
      function scrapeLinkedInResults() {
-       const PROFILE_PATTERNS = [/\/in\//i, /\/company\//i, /\/school\//i];
+       const PROFILE_PATTERNS = [/\/in\//i, /\/profile\/view/i, /\/sales\//i];
        const CARD_SELECTOR = '[data-view-name="search-entity-result-universal-template"], [data-chameleon-result-urn], .reusable-search__result-container, .search-result__wrapper';
        const cards = document.querySelectorAll(CARD_SELECTOR);
        const normalise = (node) => node?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+
+       const deriveCompany = ({ summaryText, headlineText }) => {
+         const sources = [summaryText, headlineText].filter(Boolean);
+         for (const text of sources) {
+           const atMatch = text.match(/\bat\s+([^•|,;:]+)/i);
+           if (atMatch?.[1]) return atMatch[1].trim();
+           const atSymbol = text.match(/@\s*([^•|,;:]+)/);
+           if (atSymbol?.[1]) return atSymbol[1].trim();
+         }
+         return sources[0] ?? '';
+       };
 
        const rawLeads = Array.from(cards).map((card) => {
          const profileLink = Array.from(card.querySelectorAll('a[href*="linkedin.com/"]'))
@@ -21,7 +32,10 @@
          return {
            name: normalise(profileLink) || normalise(card.querySelector('.entity-result__title-text span, span[dir="ltr"]')),
            headline: normalise(card.querySelector('.entity-result__primary-subtitle, .linked-area .t-14.t-normal')),
-           company: normalise(card.querySelector('.entity-result__summary-list li, .entity-result__primary-subtitle span')),
+           company: deriveCompany({
+             summaryText: normalise(card.querySelector('.entity-result__summary--2-lines, .entity-result__summary-list li, .entity-result__primary-subtitle')), 
+             headlineText: normalise(card.querySelector('.entity-result__primary-subtitle, .linked-area .t-14.t-normal'))
+           }),
            location: normalise(card.querySelector('.entity-result__secondary-subtitle, .linked-area .t-12.t-normal')),
            profileUrl: profileLink.href ?? ''
          };
