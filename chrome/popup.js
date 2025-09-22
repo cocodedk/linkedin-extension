@@ -34,7 +34,7 @@ function renderLeads(leads) {
   if (!Array.isArray(leads) || leads.length === 0) {
     const row = document.createElement('tr');
     const cell = document.createElement('td');
-    cell.colSpan = 7;
+    cell.colSpan = 8;
     cell.textContent = 'No leads stored yet.';
     row.appendChild(cell);
     leadsTableBody.appendChild(row);
@@ -47,6 +47,7 @@ function renderLeads(leads) {
       lead.name ?? '',
       lead.headline ?? '',
       lead.company ?? '',
+      lead.contact ?? '',
       lead.location ?? '',
       lead.aiScore ?? '',
       lead.aiReasons ?? '',

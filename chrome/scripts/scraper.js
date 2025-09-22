@@ -1,7 +1,8 @@
 export function scrapeLinkedInResults() {
+  const COMPANY_LIST_ITEM_SELECTOR = '.entity-result__summary-list li';
   const COMPANY_SELECTOR = [
     '.entity-result__summary--2-lines',
-    '.entity-result__summary-list li',
+    COMPANY_LIST_ITEM_SELECTOR,
     '.entity-result__primary-subtitle',
     '.entity-result__primary-subtitle span'
   ].join(', ');
@@ -12,9 +13,12 @@ export function scrapeLinkedInResults() {
     '.search-result__wrapper'
   ].join(', ');
   const NAME_SELECTOR = [
+    '.entity-result__title-text .app-aware-link span[aria-hidden="true"]',
+    '.entity-result__title-text a span[aria-hidden="true"]',
+    'a.app-aware-link[href*="/in/"] span[aria-hidden="true"]',
+    '.entity-result__title-text span[dir="ltr"]',
     '.linked-area a[data-test-app-aware-link]:not([aria-hidden="true"]) span',
     '.linked-area a[data-test-app-aware-link]:not([aria-hidden="true"])',
-    'span[dir="ltr"]',
     '.entity-result__title-text a span',
     '.entity-result__title-text span',
     '.linked-area a[href*="/in/"] span',
@@ -73,6 +77,31 @@ export function scrapeLinkedInResults() {
   const cards = document.querySelectorAll(CARD_SELECTOR);
   debugInfo.cardCount = cards.length;
 
+  function deriveCompanyImproved({ card, summaryText, headlineText }) {
+    const listItems = Array.from(card.querySelectorAll(COMPANY_LIST_ITEM_SELECTOR));
+    if (listItems.length > 0) {
+      const text = normaliseText(listItems[0]);
+      if (text) {
+        return text.replace(/[•|,;].*$/, '').trim();
+      }
+    }
+
+    const sources = [summaryText, headlineText].filter(Boolean);
+    for (const text of sources) {
+      const atMatch = text.match(/\bat\s+([^•|,;:#]+)\b/i);
+      if (atMatch?.[1]) {
+        return atMatch[1].trim();
+      }
+
+      const atSymbolMatch = text.match(/@\s*([^•|,;:#]+)\b/);
+      if (atSymbolMatch?.[1]) {
+        return atSymbolMatch[1].trim();
+      }
+    }
+
+    return '';
+  }
+
   function deriveCompany({ summaryText, headlineText }) {
     const sources = [summaryText, headlineText].filter(Boolean);
     for (const text of sources) {
@@ -98,17 +127,18 @@ export function scrapeLinkedInResults() {
     }) ?? profileElementCandidates[0] ?? null;
 
     const profileUrl = profileElement?.href ?? '';
-    const name = normaliseText(profileElement) || normaliseText(card.querySelector(NAME_SELECTOR));
+    const name = normaliseText(card.querySelector(NAME_SELECTOR)) || normaliseText(profileElement);
     const headline = normaliseText(card.querySelector(HEADLINE_SELECTOR));
     const location = normaliseText(card.querySelector(LOCATION_SELECTOR));
     const companySummary = normaliseText(card.querySelector(COMPANY_SELECTOR));
-    const company = deriveCompany({ summaryText: companySummary, headlineText: headline });
+    const company = deriveCompanyImproved({ card, summaryText: companySummary, headlineText: headline });
 
     return {
       name,
       headline,
       company,
       location,
+      contact: '',
       profileUrl
     };
   });
