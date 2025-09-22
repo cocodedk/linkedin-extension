@@ -13,6 +13,8 @@ export function scrapeLinkedInResults() {
     '.search-result__wrapper'
   ].join(', ');
   const NAME_SELECTOR = [
+    'a[data-test-app-aware-link][href*="/in/"] span[dir="ltr"] span[aria-hidden="true"]',
+    'a.app-aware-link[href*="/in/"] span[dir="ltr"] span[aria-hidden="true"]',
     '.entity-result__title-text .app-aware-link span[aria-hidden="true"]',
     '.entity-result__title-text a span[aria-hidden="true"]',
     'a.app-aware-link[href*="/in/"] span[aria-hidden="true"]',
@@ -127,18 +129,38 @@ export function scrapeLinkedInResults() {
     }) ?? profileElementCandidates[0] ?? null;
 
     const profileUrl = profileElement?.href ?? '';
-    const name = normaliseText(card.querySelector(NAME_SELECTOR)) || normaliseText(profileElement);
+    let name = normaliseText(card.querySelector(NAME_SELECTOR)) || normaliseText(profileElement);
+    if (!name) {
+      const img = card.querySelector('img.presence-entity__image[alt], img[alt]');
+      if (img?.getAttribute) {
+        name = String(img.getAttribute('alt') || '').trim();
+      }
+    }
     const headline = normaliseText(card.querySelector(HEADLINE_SELECTOR));
     const location = normaliseText(card.querySelector(LOCATION_SELECTOR));
     const companySummary = normaliseText(card.querySelector(COMPANY_SELECTOR));
-    const company = deriveCompanyImproved({ card, summaryText: companySummary, headlineText: headline });
+    let company = deriveCompanyImproved({ card, summaryText: companySummary, headlineText: headline });
+    if (!company || company === headline) {
+      const candidates = [companySummary, headline].filter(Boolean);
+      for (const text of candidates) {
+        const mHos = text.match(/\bhos\s+([^�?�|,;:#]+)\b/i);
+        if (mHos?.[1]) { company = mHos[1].trim(); break; }
+        const mAt = text.match(/\bat\s+([^�?�|,;:#]+)\b/i);
+        if (mAt?.[1]) { company = mAt[1].trim(); break; }
+        const mAtSym = text.match(/@\s*([^�?�|,;:#]+)\b/);
+        if (mAtSym?.[1]) { company = mAtSym[1].trim(); break; }
+      }
+      if (company === headline) {
+        company = '';
+      }
+    }
 
     return {
       name,
       headline,
       company,
       location,
-      contact: '',
+      contact: profileUrl,
       profileUrl
     };
   });
