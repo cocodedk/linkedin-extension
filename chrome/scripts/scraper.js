@@ -79,6 +79,32 @@ export function scrapeLinkedInResults() {
   const cards = document.querySelectorAll(CARD_SELECTOR);
   debugInfo.cardCount = cards.length;
 
+  function extractContactInfoFromProfileDoc(root = document) {
+    const sections = Array.from(root.querySelectorAll('.pv-contact-info__contact-type'));
+    const contacts = [];
+    const links = [];
+
+    sections.forEach((sec) => {
+      const header = (sec.querySelector('h3, .pv-contact-info__header')?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const anchors = Array.from(sec.querySelectorAll('a[href]'));
+      if (anchors.length) {
+        anchors.forEach((a) => {
+          const href = a.getAttribute('href') || '';
+          const label = (a.textContent || href).replace(/\s+/g, ' ').trim();
+          if (href) {
+            links.push({ href, label, type: header || 'link' });
+            contacts.push(`${header || 'link'}: ${href}`);
+          }
+        });
+      } else {
+        const txt = (sec.textContent || '').replace(/\s+/g, ' ').trim();
+        if (txt) contacts.push(`${header || 'info'}: ${txt}`);
+      }
+    });
+
+    return { contacts, links };
+  }
+
   function deriveCompanyImproved({ card, summaryText, headlineText }) {
     const listItems = Array.from(card.querySelectorAll(COMPANY_LIST_ITEM_SELECTOR));
     if (listItems.length > 0) {
@@ -161,6 +187,7 @@ export function scrapeLinkedInResults() {
       company,
       location,
       contact: profileUrl,
+      contactLinks: profileUrl ? [{ href: profileUrl, label: 'LinkedIn', type: 'linkedin' }] : [],
       profileUrl
     };
   });
@@ -176,6 +203,29 @@ export function scrapeLinkedInResults() {
   });
 
   debugInfo.leadsAfterFilter = leads.length;
+
+  // If we are on a profile page (no cards), try to extract contact info there
+  if (leads.length === 0) {
+    const profileUrl = (typeof location !== 'undefined' && location.href) ? location.href : (document.location?.href || '');
+    const name = normaliseText(document.querySelector('main h1, h1')) || normaliseText(document.querySelector('img[alt]'));
+    const headline = normaliseText(document.querySelector('[class*="text-body-medium"], [class*="pv-text-details__left-panel"] div'));
+    const locationText = normaliseText(document.querySelector('[class*="text-body-small"], [class*="pv-text-details__left-panel"] [class*="t-black--light"]'));
+    const { contacts, links } = extractContactInfoFromProfileDoc(document);
+    const contact = contacts.join(' | ') || profileUrl;
+
+    return {
+      leads: [{
+        name,
+        headline,
+        company: '',
+        location: locationText,
+        contact,
+        contactLinks: links.length ? links : (profileUrl ? [{ href: profileUrl, label: 'LinkedIn', type: 'linkedin' }] : []),
+        profileUrl
+      }],
+      debugInfo
+    };
+  }
 
   return { leads, debugInfo };
 }
