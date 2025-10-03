@@ -27,7 +27,7 @@ Use this checklist when ANY file exceeds 80 lines.
 ```
 popup.js (200 lines):
   - DOM manipulation (50 lines) → ui.js
-  - Event handlers (80 lines) → handlers.js  
+  - Event handlers (80 lines) → handlers.js
   - Chrome API calls (40 lines) → chrome-utils.js
   - Helper functions (30 lines) → utils.js
 ```
@@ -131,7 +131,7 @@ export default init;
 // ui.js - only UI rendering
 // handlers.js - only event handling
 
-// ❌ Bad: Mixed responsibilities  
+// ❌ Bad: Mixed responsibilities
 // stuff.js - UI + handlers + API calls
 ```
 

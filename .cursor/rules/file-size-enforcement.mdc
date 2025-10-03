@@ -18,7 +18,7 @@ description: Strict enforcement of 100-line file size limit
 ### When Editing Existing Files >100 Lines
 1. **DO NOT add more lines** to the file
 2. **IMMEDIATELY refactor** into smaller modules
-3. Create a subfolder: `filename/` 
+3. Create a subfolder: `filename/`
 4. Extract logical components into separate files
 5. Main file becomes orchestrator (imports only)
 
@@ -27,7 +27,7 @@ description: Strict enforcement of 100-line file size limit
 ### Step 1: Identify Responsibilities
 Look for distinct concerns in the file:
 - UI rendering
-- Event handling  
+- Event handling
 - Data processing
 - API calls
 - Utilities
