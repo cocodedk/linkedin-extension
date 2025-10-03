@@ -5,11 +5,9 @@
 export function createLeadHeader(lead) {
   const header = document.createElement('div');
   header.className = 'lead-header';
-
   const title = document.createElement('h2');
   title.className = 'lead-name';
   const nameText = lead.name || 'Unknown';
-
   if (lead.profileUrl) {
     const a = document.createElement('a');
     a.href = lead.profileUrl;
@@ -20,7 +18,6 @@ export function createLeadHeader(lead) {
   } else {
     title.textContent = nameText;
   }
-
   const meta = document.createElement('div');
   meta.className = 'lead-meta';
   meta.innerHTML = [
@@ -28,7 +25,6 @@ export function createLeadHeader(lead) {
     lead.location ? `<span class="chip">${lead.location}</span>` : '',
     lead.aiScore ? `<span class="chip score">Score: ${lead.aiScore}</span>` : ''
   ].filter(Boolean).join(' ');
-
   header.appendChild(title);
   header.appendChild(meta);
   return header;
@@ -45,7 +41,6 @@ export function createLeadContact(lead) {
   const contact = document.createElement('p');
   contact.className = 'lead-contact';
   const links = Array.isArray(lead.contactLinks) ? lead.contactLinks : [];
-
   if (links.length) {
     contact.textContent = 'Kontakt: ';
     const wrap = document.createElement('span');
@@ -68,14 +63,12 @@ export function createLeadContact(lead) {
     a.textContent = 'Kontakt';
     contact.append('Kontakt: ', a);
   }
-
   return contact;
 }
 
 export function createLeadReasons(lead) {
   const reasons = document.createElement('div');
   reasons.className = 'lead-detail';
-
   if (lead.aiReasons) {
     const label = document.createElement('div');
     label.className = 'lead-detail__label';
@@ -85,14 +78,12 @@ export function createLeadReasons(lead) {
     body.textContent = lead.aiReasons;
     reasons.append(label, body);
   }
-
   return reasons;
 }
 
 export function createLeadSummary(lead) {
   const summary = document.createElement('div');
   summary.className = 'lead-detail';
-
   if (lead.aiFitSummary) {
     const label = document.createElement('div');
     label.className = 'lead-detail__label';
@@ -102,7 +93,6 @@ export function createLeadSummary(lead) {
     body.textContent = lead.aiFitSummary;
     summary.append(label, body);
   }
-
   return summary;
 }
 
