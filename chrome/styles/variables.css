@@ -1,0 +1,24 @@
+/**
+ * Design tokens and CSS custom properties
+ */
+
+:root {
+  /* Colors */
+  --bg: #edf1f5;
+  --elev: #f7f9fc;
+  --text: #111314;
+  --muted: #6b7280;
+  --accent: #0a84ff; /* iOS blue */
+  --border: #e5e7eb;
+  
+  /* Shadows */
+  --shadow-dark: rgba(0, 0, 0, 0.12);
+  --shadow-light: rgba(255, 255, 255, 0.85);
+  
+  /* Border radius */
+  --radius: 14px;
+  
+  /* Card sizing */
+  --card-min: 320px;
+}
+

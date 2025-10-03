@@ -12,9 +12,11 @@
     <main>
       <section class="actions">
         <button id="scan-btn">Scan Results</button>
+        <button id="scan-next-btn">Scan Next</button>
         <button id="view-btn">View Leads</button>
         <button id="evaluate-btn">Evaluate Leads</button>
         <button id="generate-ai-query-btn">Generate AI Query</button>
+        <button id="open-tab-btn">Open in Tab</button>
         <button id="export-csv-btn">Export CSV</button>
         <button id="export-json-btn">Export JSON</button>
         <button id="clear-leads-btn" class="icon-btn" title="Clear stored leads" aria-label="Clear stored leads">
@@ -32,6 +34,7 @@
       </section>
       <p id="status" role="status"></p>
       <section class="table-container">
+        <div id="leads-cards" class="cards" aria-live="polite"></div>
         <table id="leads-table">
           <thead>
             <tr>

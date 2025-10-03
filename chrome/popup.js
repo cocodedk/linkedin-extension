@@ -1,18 +1,24 @@
-import { scrapeLinkedInResults } from './scripts/scraper.js';
-import {
-  getLeads,
-  saveLeads,
-  clearLeads,
-  getApiKey,
-  setApiKey,
-  setLastAiQuery,
-  getLastAiQuery
-} from './scripts/storage.js';
-import { toCsv, toJson, triggerDownload } from './scripts/exporters.js';
-import { evaluateLeads } from './scripts/evaluation.js';
-import { generateAiSearchQuery } from './scripts/ai-query.js';
+/**
+ * Main popup controller - orchestrates UI and event handling
+ */
 
+import { getLeads, getApiKey } from './scripts/storage.js';
+import { renderLeads } from './popup/ui.js';
+import {
+  handleScan,
+  handleScanNext,
+  handleViewLeads,
+  handleExportCsv,
+  handleExportJson,
+  handleClearLeads,
+  handleSaveApiKey,
+  handleEvaluate,
+  handleGenerateAiQuery
+} from './popup/handlers.js';
+
+// DOM elements
 const scanBtn = document.getElementById('scan-btn');
+const scanNextBtn = document.getElementById('scan-next-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
@@ -20,379 +26,39 @@ const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
 const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
+const openTabBtn = document.getElementById('open-tab-btn');
 const apiKeyInput = document.getElementById('api-key');
-const statusEl = document.getElementById('status');
-const leadsTableBody = document.querySelector('#leads-table tbody');
-const leadsCards = document.getElementById('leads-cards');
 
-function setStatus(message, type = 'info') {
-  statusEl.textContent = message;
-  statusEl.dataset.type = type;
-}
+// Event listeners
+scanBtn.addEventListener('click', handleScan);
+scanNextBtn.addEventListener('click', handleScanNext);
+viewBtn.addEventListener('click', handleViewLeads);
+evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
+exportCsvBtn.addEventListener('click', handleExportCsv);
+exportJsonBtn.addEventListener('click', handleExportJson);
+saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
+clearLeadsBtn.addEventListener('click', handleClearLeads);
+generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
+openTabBtn.addEventListener('click', async () => {
+  const leadsUrl = chrome.runtime.getURL('leads.html');
+  const tabs = await chrome.tabs.query({ url: leadsUrl });
 
-function renderLeads(leads) {
-  leadsTableBody.innerHTML = '';
-  leadsCards.innerHTML = '';
-
-  const safe = Array.isArray(leads) ? leads : [];
-  if (safe.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.textContent = 'No leads stored yet.';
-    leadsCards.appendChild(empty);
-    return;
+  if (tabs.length > 0) {
+    // Tab exists, focus it and reload
+    await chrome.tabs.update(tabs[0].id, { active: true });
+    await chrome.tabs.reload(tabs[0].id);
+  } else {
+    // No tab exists, create new one
+    await chrome.tabs.create({ url: leadsUrl });
   }
+});
 
-  safe.forEach((lead) => {
-    // Card layout
-    const card = document.createElement('article');
-    card.className = 'lead-card';
-
-    const header = document.createElement('div');
-    header.className = 'lead-header';
-
-    const title = document.createElement('h2');
-    title.className = 'lead-name';
-    const nameText = lead.name || 'Unknown';
-    if (lead.profileUrl) {
-      const a = document.createElement('a');
-      a.href = lead.profileUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = nameText;
-      title.appendChild(a);
-    } else {
-      title.textContent = nameText;
-    }
-
-    const meta = document.createElement('div');
-    meta.className = 'lead-meta';
-    meta.innerHTML = [
-      lead.company ? `<span class="chip">${lead.company}</span>` : '',
-      lead.location ? `<span class="chip">${lead.location}</span>` : '',
-      lead.aiScore ? `<span class="chip score">Score: ${lead.aiScore}</span>` : ''
-    ].filter(Boolean).join(' ');
-
-    header.appendChild(title);
-    header.appendChild(meta);
-
-    const headline = document.createElement('p');
-    headline.className = 'lead-headline';
-    headline.textContent = lead.headline || '';
-
-    const contact = document.createElement('p');
-    contact.className = 'lead-contact';
-    const links = Array.isArray(lead.contactLinks) ? lead.contactLinks : [];
-    if (links.length) {
-      contact.textContent = 'Kontakt: ';
-      const wrap = document.createElement('span');
-      wrap.className = 'contact-links';
-      links.forEach((lnk, idx) => {
-        const a = document.createElement('a');
-        a.href = lnk.href;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.className = 'chip';
-        a.textContent = lnk.label || lnk.type || 'link';
-        wrap.appendChild(a);
-      });
-      contact.appendChild(wrap);
-    } else if (lead.contact) {
-      const a = document.createElement('a');
-      a.href = lead.contact;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = 'Kontakt';
-      contact.append('Kontakt: ', a);
-    }
-
-    const reasons = document.createElement('div');
-    reasons.className = 'lead-detail';
-    if (lead.aiReasons) {
-      const label = document.createElement('div');
-      label.className = 'lead-detail__label';
-      label.textContent = 'AI Reasons';
-      const body = document.createElement('div');
-      body.className = 'lead-detail__body';
-      body.textContent = lead.aiReasons;
-      reasons.append(label, body);
-    }
-
-    const summary = document.createElement('div');
-    summary.className = 'lead-detail';
-    if (lead.aiFitSummary) {
-      const label = document.createElement('div');
-      label.className = 'lead-detail__label';
-      label.textContent = 'FITS Summary';
-      const body = document.createElement('div');
-      body.className = 'lead-detail__body';
-      body.textContent = lead.aiFitSummary;
-      summary.append(label, body);
-    }
-
-    card.append(header, headline, contact, reasons, summary);
-    leadsCards.appendChild(card);
-
-    // Also keep table row (hidden by CSS if desired)
-    const row = document.createElement('tr');
-    const values = [
-      lead.name ?? '',
-      lead.headline ?? '',
-      lead.company ?? '',
-      lead.contact ?? '',
-      lead.location ?? '',
-      lead.aiScore ?? '',
-      lead.aiReasons ?? '',
-      lead.aiFitSummary ?? ''
-    ];
-    values.forEach((value) => {
-      const cell = document.createElement('td');
-      cell.textContent = value;
-      row.appendChild(cell);
-    });
-    leadsTableBody.appendChild(row);
-  });
-}
-
-async function getActiveTabId() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) {
-    throw new Error('No active tab found.');
-  }
-  return tab.id;
-}
-
-async function injectQueryIntoLinkedIn({ tabId, query }) {
-  const selectors = [
-    'input.search-global-typeahead__input',
-    'input[data-view-name="search-global-typeahead-input"]',
-    'input[role="combobox"][aria-label="Search"]'
-  ];
-
-  const [{ result }] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: ({ selectors: selectorList, value }) => {
-      const pickInput = () => {
-        for (const selector of selectorList) {
-          const node = document.querySelector(selector);
-          if (node instanceof HTMLInputElement) {
-            return node;
-          }
-        }
-        return null;
-      };
-
-      const input = pickInput();
-      if (!input) {
-        return { success: false };
-      }
-
-      const descriptor = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');
-      if (descriptor?.set) {
-        descriptor.set.call(input, value);
-      } else {
-        input.value = value;
-      }
-
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-      input.focus();
-      return { success: true };
-    },
-    args: [{ selectors, value: query }]
-  });
-
-  if (!result?.success) {
-    throw new Error('Unable to locate LinkedIn search box.');
-  }
-}
-
-async function handleScan() {
-  setStatus('Scanning results...');
-  try {
-    const tabId = await getActiveTabId();
-    const [{ result = {} } = {}] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: scrapeLinkedInResults
-    });
-
-    const leadsFromPage = Array.isArray(result?.leads) ? result.leads : [];
-    if (!leadsFromPage.length) {
-      setStatus('No results found on the page.', 'warning');
-      return;
-    }
-
-    const leads = await saveLeads(leadsFromPage);
-    setStatus(`Stored ${leads.length} lead(s).`, 'success');
-    renderLeads(leads);
-  } catch (error) {
-    console.error(error);
-    setStatus(`Scan failed: ${error.message}`, 'error');
-  }
-}
-
-async function handleViewLeads() {
-  const leads = await getLeads();
-  renderLeads(leads);
-  setStatus(`Loaded ${leads.length} lead(s).`);
-}
-
-async function handleExportCsv() {
-  const leads = await getLeads();
-  if (!leads.length) {
-    setStatus('No leads to export.', 'warning');
-    return;
-  }
-
-  const content = toCsv(leads);
-  await triggerDownload({
-    filename: 'linkedin-leads.csv',
-    mimeType: 'text/csv',
-    content
-  });
-  setStatus('CSV export triggered.', 'success');
-}
-
-async function handleExportJson() {
-  const leads = await getLeads();
-  if (!leads.length) {
-    setStatus('No leads to export.', 'warning');
-    return;
-  }
-
-  const content = toJson(leads);
-  await triggerDownload({
-    filename: 'linkedin-leads.json',
-    mimeType: 'application/json',
-    content
-  });
-  setStatus('JSON export triggered.', 'success');
-}
-
-async function handleClearLeads() {
-  await clearLeads();
-  renderLeads([]);
-  setStatus('Cleared stored leads.', 'success');
-}
-
-async function handleSaveApiKey() {
-  const apiKey = apiKeyInput.value.trim();
-  await setApiKey(apiKey);
-  setStatus(apiKey ? 'API key saved.' : 'API key cleared.', 'success');
-}
-
-async function handleEvaluate() {
-  const leads = await getLeads();
-  if (!leads.length) {
-    setStatus('No leads available for evaluation.', 'warning');
-    return;
-  }
-
-  const apiKey = (await getApiKey()).trim();
-  if (!apiKey) {
-    setStatus('Add your OpenAI API key first.', 'warning');
-    apiKeyInput.focus();
-    return;
-  }
-
-  evaluateBtn.disabled = true;
-  evaluateBtn.classList.add('evaluating');
-  setStatus('Evaluating leads with OpenAI...');
-
-  try {
-    const evaluated = await evaluateLeads({
-      leads,
-      apiKey,
-      onProgress: ({ lead, index, total }) => {
-        const count = typeof index === 'number' && typeof total === 'number' ? `${index + 1}/${total}` : '';
-        const label = lead.name || lead.profileUrl || 'lead';
-        setStatus(`Scored ${label}${count ? ` (${count})` : ''}`);
-      }
-    });
-
-    await saveLeads(evaluated);
-    renderLeads(evaluated);
-    setStatus('Evaluation complete.', 'success');
-  } catch (error) {
-    console.error(error);
-    setStatus(`Evaluation failed: ${error.message}`, 'error');
-  } finally {
-    evaluateBtn.disabled = false;
-    evaluateBtn.classList.remove('evaluating');
-  }
-}
-
-async function handleGenerateAiQuery() {
-  const apiKey = (await getApiKey()).trim();
-  if (!apiKey) {
-    setStatus('Add your OpenAI API key first.', 'warning');
-    apiKeyInput.focus();
-    return;
-  }
-
-  const suggestion = await getLastAiQuery();
-  const defaultPrompt = suggestion?.icpDescription ?? '';
-  const icpDescription = window.prompt('Describe who you want to find on LinkedIn:', defaultPrompt ?? '');
-  if (icpDescription === null) {
-    setStatus('AI query cancelled.');
-    return;
-  }
-
-  const trimmedDescription = icpDescription.trim();
-  if (!trimmedDescription) {
-    setStatus('Provide a brief description so AI can help.', 'warning');
-    return;
-  }
-
-  generateAiQueryBtn.disabled = true;
-  setStatus('Generating LinkedIn query with AI...');
-
-  try {
-    const { query, summary } = await generateAiSearchQuery({ apiKey, icpDescription: trimmedDescription });
-    const reviewed = window.prompt('Review the AI query before inserting into LinkedIn:', query);
-    if (reviewed === null) {
-      setStatus('AI query insertion cancelled.');
-      return;
-    }
-
-    const finalQuery = reviewed.trim();
-    if (!finalQuery) {
-      setStatus('AI query was cleared. Nothing inserted.', 'warning');
-      return;
-    }
-
-    const tabId = await getActiveTabId();
-    await injectQueryIntoLinkedIn({ tabId, query: finalQuery });
-    await setLastAiQuery({
-      icpDescription: trimmedDescription,
-      query: finalQuery,
-      summary,
-      generatedAt: new Date().toISOString()
-    });
-
-    setStatus('AI query inserted. Press enter in LinkedIn to search.', 'success');
-  } catch (error) {
-    console.error(error);
-    setStatus(`AI query failed: ${error.message}`, 'error');
-  } finally {
-    generateAiQueryBtn.disabled = false;
-  }
-}
-
+// Initialize
 async function initialise() {
   const apiKey = await getApiKey();
   apiKeyInput.value = apiKey;
   const leads = await getLeads();
   renderLeads(leads);
 }
-
-scanBtn.addEventListener('click', handleScan);
-viewBtn.addEventListener('click', handleViewLeads);
-evaluateBtn.addEventListener('click', handleEvaluate);
-exportCsvBtn.addEventListener('click', handleExportCsv);
-exportJsonBtn.addEventListener('click', handleExportJson);
-saveApiKeyBtn.addEventListener('click', handleSaveApiKey);
-clearLeadsBtn.addEventListener('click', handleClearLeads);
-generateAiQueryBtn.addEventListener('click', handleGenerateAiQuery);
 
 document.addEventListener('DOMContentLoaded', initialise);

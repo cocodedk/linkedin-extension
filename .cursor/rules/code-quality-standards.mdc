@@ -1,0 +1,154 @@
+---
+alwaysApply: true
+description: Enforce MVP, KISS, YAGNI, DRY, SOLID principles and file size limits
+---
+
+# Code Quality & Architecture Standards
+
+## Core Principles (Always Enforce)
+
+### 1. MVP (Minimum Viable Product)
+- Build only what's needed to solve the immediate problem
+- No speculative features or "nice-to-haves"
+- Ship functional code fast, iterate based on feedback
+
+### 2. KISS (Keep It Simple, Stupid)
+- Prefer simple solutions over clever ones
+- Avoid unnecessary complexity
+- If you can't explain it simply, refactor it
+
+### 3. YAGNI (You Aren't Gonna Need It)
+- Don't add functionality until it's actually required
+- Remove unused code, imports, and dependencies
+- Question every feature: "Do we need this NOW?"
+
+### 4. DRY (Don't Repeat Yourself)
+- Extract repeated logic into reusable functions/modules
+- Share common code between similar components
+- Create utilities for repeated patterns
+
+### 5. SOLID Principles
+- **S**ingle Responsibility: One file/function = one purpose
+- **O**pen/Closed: Open for extension, closed for modification
+- **L**iskov Substitution: Subtypes must be substitutable
+- **I**nterface Segregation: Many small interfaces > one large
+- **D**ependency Inversion: Depend on abstractions, not concretions
+
+## File Size Limits (STRICTLY ENFORCED)
+
+### Maximum Lines Per File
+- **Code files (.js, .ts, .css, etc.)**: **100 lines maximum**
+- **Markdown files (.md, .mdc)**: **100 lines maximum**
+- **Exception**: Auto-generated files only
+
+### When You Hit the Limit
+1. **STOP immediately** - Do not create files >100 lines
+2. **Refactor into modules** - Split into logical components
+3. **Create a subfolder** - Organize related modules together
+4. **Use imports** - Connect modules with clear dependencies
+
+### Refactoring Large Files
+
+#### For JavaScript/TypeScript:
+```javascript
+// ❌ BAD: One 300-line file
+popup.js (300 lines)
+
+// ✅ GOOD: Modular structure
+popup.js (40 lines - orchestration)
+popup/
+  ├── ui.js (80 lines)
+  ├── handlers.js (90 lines)
+  └── utils.js (60 lines)
+```
+
+#### For CSS:
+```css
+/* ❌ BAD: One 400-line file */
+styles.css (400 lines)
+
+/* ✅ GOOD: Modular structure */
+styles.css (10 lines - imports)
+styles/
+  ├── variables.css (25 lines)
+  ├── base.css (45 lines)
+  ├── buttons.css (70 lines)
+  ├── cards.css (80 lines)
+  └── responsive.css (35 lines)
+```
+
+#### For Markdown:
+```markdown
+❌ BAD: One massive README
+README.md (500 lines)
+
+✅ GOOD: Split documentation
+README.md (80 lines - overview)
+docs/
+  ├── installation.md (60 lines)
+  ├── usage.md (75 lines)
+  ├── api.md (90 lines)
+  └── architecture.md (85 lines)
+```
+
+## Actionable Rules
+
+### Before Writing Code
+1. Can this be simpler? (KISS)
+2. Do we need this now? (YAGNI)
+3. Does this solve ONE problem? (SRP/MVP)
+4. Will this file exceed 100 lines? (Refactor first)
+
+### During Code Review
+1. Count lines - enforce 100 line limit
+2. Check for repeated code (DRY)
+3. Verify single responsibility (SOLID)
+4. Remove unnecessary features (YAGNI)
+
+### When Refactoring
+1. Split by responsibility, not by size alone
+2. Create logical module boundaries
+3. Use clear, descriptive file names
+4. Document module relationships
+5. Keep main files as thin orchestrators
+
+## Common Patterns
+
+### Module Structure
+```
+feature/
+  ├── index.js          # Main export (10-20 lines)
+  ├── component.js      # Core logic (60-80 lines)
+  ├── helpers.js        # Utilities (40-60 lines)
+  ├── constants.js      # Config (20-30 lines)
+  └── types.js          # Interfaces (30-40 lines)
+```
+
+### Import Organization
+```javascript
+// External dependencies
+import { lib } from 'external-lib';
+
+// Internal modules (relative imports)
+import { helper } from './helpers.js';
+import { UI } from './ui.js';
+
+// Keep imports organized and minimal
+```
+
+## Exceptions (Rare)
+- Lock files (package-lock.json)
+- Generated code (not manually edited)
+- Third-party vendor files
+
+## Enforcement Checklist
+
+Before committing ANY file:
+- [ ] File has ≤100 lines
+- [ ] Single, clear responsibility
+- [ ] No repeated code
+- [ ] No unused code
+- [ ] Simple, not clever
+- [ ] Actually needed now
+
+**If any checkbox is unchecked: REFACTOR before commit**
