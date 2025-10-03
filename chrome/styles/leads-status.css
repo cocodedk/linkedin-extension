@@ -1,0 +1,33 @@
+/**
+ * Full-page status styles
+ */
+
+#status {
+  min-height: 20px;
+  font-size: 14px;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--elev);
+  box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
+}
+
+#status:empty {
+  display: none;
+}
+
+#status[data-type='warning'] {
+  color: #a05a00;
+  background: #fff4e6;
+}
+
+#status[data-type='error'] {
+  color: #b3261e;
+  background: #ffebe9;
+}
+
+#status[data-type='success'] {
+  color: #1b5e20;
+  background: #e8f5e9;
+}
+

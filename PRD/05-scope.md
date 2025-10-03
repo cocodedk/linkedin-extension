@@ -6,7 +6,11 @@
 * Save & dedupe in local storage with company field support.
 * Export CSV/JSON with AI insights.
 * OpenAI eval with manual API key entry, per-lead status feedback.
-* Inline lead viewer + clear/reset.
+* Card-based lead viewer in popup and full-page tab view.
+* "Open in Tab" feature for expanded workspace viewing.
+* AI-assisted search query generation from ICP descriptions.
+* Modular codebase with separated concerns (UI, handlers, browser utils).
+* Clear/reset functionality with confirmation dialog.
 
 **Excluded (future YAGNI):**
 
