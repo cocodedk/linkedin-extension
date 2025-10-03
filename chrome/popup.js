@@ -24,6 +24,7 @@ const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
 const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
+const openTabBtn = document.getElementById('open-tab-btn');
 const apiKeyInput = document.getElementById('api-key');
 
 // Event listeners
@@ -35,6 +36,9 @@ exportJsonBtn.addEventListener('click', handleExportJson);
 saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 clearLeadsBtn.addEventListener('click', handleClearLeads);
 generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
+openTabBtn.addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('leads.html') });
+});
 
 // Initialize
 async function initialise() {

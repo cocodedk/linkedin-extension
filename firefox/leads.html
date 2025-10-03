@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Leads - Full View</title>
+  <link rel="stylesheet" href="leads.css">
+</head>
+<body>
+  <header>
+    <h1>LinkedIn Lead Manager</h1>
+    <div class="header-actions">
+      <span id="lead-count" class="lead-count"></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="actions">
+      <button id="scan-btn">🔍 Scan Page</button>
+      <button id="evaluate-btn">⚡ Evaluate with AI</button>
+      <button id="generate-ai-query-btn">🤖 Generate AI Query</button>
+      <button id="view-btn">👁️ Refresh View</button>
+      <button id="export-csv-btn">📊 Export CSV</button>
+      <button id="export-json-btn">📄 Export JSON</button>
+      <button id="clear-leads-btn">🗑️ Clear All</button>
+    </section>
+
+    <section class="settings">
+      <label>
+        OpenAI API Key
+        <input type="password" id="api-key" placeholder="sk-...">
+      </label>
+      <button id="save-api-key-btn">💾 Save Key</button>
+    </section>
+
+    <div id="status"></div>
+
+    <section class="leads-section">
+      <div id="leads-cards" class="cards"></div>
+      <table id="leads-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Headline</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>AI Score</th>
+            <th>AI Reasons</th>
+            <th>Fit Summary</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="leads.js"></script>
+</body>
+</html>
+

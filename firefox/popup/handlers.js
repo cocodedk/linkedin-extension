@@ -2,14 +2,14 @@
  * Event handlers for popup actions
  */
 
-import { 
-  getLeads, 
-  saveLeads, 
-  clearLeads, 
-  getApiKey, 
+import {
+  getLeads,
+  saveLeads,
+  clearLeads,
+  getApiKey,
   setApiKey,
   setLastAiQuery,
-  getLastAiQuery 
+  getLastAiQuery
 } from '../scripts/storage.js';
 import { toCsv, toJson, triggerDownload } from '../scripts/exporters.js';
 import { evaluateLeads } from '../scripts/evaluation.js';
@@ -183,4 +183,3 @@ export async function handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput) {
     generateAiQueryBtn.disabled = false;
   }
 }
-

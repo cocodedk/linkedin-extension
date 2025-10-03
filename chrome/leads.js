@@ -1,5 +1,5 @@
 /**
- * Main popup controller - orchestrates UI and event handling
+ * Full-page leads view controller
  */
 
 import { getLeads, getApiKey } from './scripts/storage.js';
@@ -19,29 +19,48 @@ import {
 const scanBtn = document.getElementById('scan-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
-const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
-const openTabBtn = document.getElementById('open-tab-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
+const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
 const apiKeyInput = document.getElementById('api-key');
-
-// Get cross-browser API
-const browserApi = globalThis.browser ?? globalThis.chrome;
+const leadCountEl = document.getElementById('lead-count');
 
 // Event listeners
-scanBtn.addEventListener('click', handleScan);
-viewBtn.addEventListener('click', handleViewLeads);
-evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
+scanBtn.addEventListener('click', async () => {
+  await handleScan();
+  updateLeadCount();
+});
+
+viewBtn.addEventListener('click', async () => {
+  await handleViewLeads();
+  updateLeadCount();
+});
+
+evaluateBtn.addEventListener('click', async () => {
+  await handleEvaluate(evaluateBtn, apiKeyInput);
+  updateLeadCount();
+});
+
 exportCsvBtn.addEventListener('click', handleExportCsv);
 exportJsonBtn.addEventListener('click', handleExportJson);
 saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
-clearLeadsBtn.addEventListener('click', handleClearLeads);
-generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
-openTabBtn.addEventListener('click', () => {
-  browserApi.tabs.create({ url: browserApi.runtime.getURL('leads.html') });
+
+clearLeadsBtn.addEventListener('click', async () => {
+  if (confirm('Are you sure you want to clear all leads? This cannot be undone.')) {
+    await handleClearLeads();
+    updateLeadCount();
+  }
 });
+
+generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
+
+// Update lead count in header
+async function updateLeadCount() {
+  const leads = await getLeads();
+  leadCountEl.textContent = leads.length === 1 ? '1 lead' : `${leads.length} leads`;
+}
 
 // Initialize
 async function initialise() {
@@ -49,6 +68,8 @@ async function initialise() {
   apiKeyInput.value = apiKey;
   const leads = await getLeads();
   renderLeads(leads);
+  updateLeadCount();
 }
 
 document.addEventListener('DOMContentLoaded', initialise);
+
