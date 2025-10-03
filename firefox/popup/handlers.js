@@ -2,7 +2,7 @@
  * Event handlers - main export file
  */
 
-export { handleScan, handleViewLeads, handleClearLeads } from './handlers/scan-handlers.js';
+export { handleScan, handleScanNext, handleViewLeads, handleClearLeads } from './handlers/scan-handlers.js';
 export { handleExportCsv, handleExportJson } from './handlers/export-handlers.js';
 export { handleSaveApiKey } from './handlers/settings-handlers.js';
 export { handleEvaluate } from './handlers/evaluate-handler.js';

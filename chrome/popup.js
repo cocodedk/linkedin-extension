@@ -6,6 +6,7 @@ import { getLeads, getApiKey } from './scripts/storage.js';
 import { renderLeads } from './popup/ui.js';
 import {
   handleScan,
+  handleScanNext,
   handleViewLeads,
   handleExportCsv,
   handleExportJson,
@@ -17,6 +18,7 @@ import {
 
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
+const scanNextBtn = document.getElementById('scan-next-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
@@ -29,6 +31,7 @@ const apiKeyInput = document.getElementById('api-key');
 
 // Event listeners
 scanBtn.addEventListener('click', handleScan);
+scanNextBtn.addEventListener('click', handleScanNext);
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
 exportCsvBtn.addEventListener('click', handleExportCsv);
@@ -36,8 +39,18 @@ exportJsonBtn.addEventListener('click', handleExportJson);
 saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 clearLeadsBtn.addEventListener('click', handleClearLeads);
 generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
-openTabBtn.addEventListener('click', () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL('leads.html') });
+openTabBtn.addEventListener('click', async () => {
+  const leadsUrl = chrome.runtime.getURL('leads.html');
+  const tabs = await chrome.tabs.query({ url: leadsUrl });
+
+  if (tabs.length > 0) {
+    // Tab exists, focus it and reload
+    await chrome.tabs.update(tabs[0].id, { active: true });
+    await chrome.tabs.reload(tabs[0].id);
+  } else {
+    // No tab exists, create new one
+    await chrome.tabs.create({ url: leadsUrl });
+  }
 });
 
 // Initialize

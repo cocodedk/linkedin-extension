@@ -66,3 +66,27 @@ export async function scrapeActiveTab() {
   });
   return result;
 }
+
+export async function clickNextButton() {
+  const tabId = await getActiveTabId();
+  const [{ result }] = await browserApi.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const nextButtons = document.querySelectorAll('span.artdeco-button__text');
+      for (const span of nextButtons) {
+        if (span.textContent.trim() === 'Next') {
+          const button = span.closest('button');
+          if (button && !button.disabled) {
+            button.click();
+            return { success: true };
+          }
+        }
+      }
+      return { success: false, message: 'Next button not found or disabled' };
+    }
+  });
+
+  if (!result?.success) {
+    throw new Error(result?.message || 'Failed to click Next button');
+  }
+}

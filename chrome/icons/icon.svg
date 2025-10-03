@@ -1,0 +1,17 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#0A66C2"/>
+
+  <!-- Contact card/leads symbol -->
+  <rect x="32" y="38" width="64" height="52" rx="4" fill="white"/>
+
+  <!-- Person icon -->
+  <circle cx="52" cy="56" r="8" fill="#0A66C2"/>
+  <path d="M 52 66 Q 44 66 44 74 L 60 74 Q 60 66 52 66 Z" fill="#0A66C2"/>
+
+  <!-- Download/export arrow -->
+  <g transform="translate(72, 52)">
+    <path d="M 8 0 L 8 12 M 2 8 L 8 14 L 14 8" stroke="#0A66C2" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="2" y1="18" x2="14" y2="18" stroke="#0A66C2" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -75,4 +75,3 @@ export async function handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput) {
     generateAiQueryBtn.disabled = false;
   }
 }
-

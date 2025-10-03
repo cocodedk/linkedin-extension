@@ -4,7 +4,7 @@
 
 import { getLeads, saveLeads } from '../../scripts/storage.js';
 import { setStatus, renderLeads } from '../ui.js';
-import { scrapeActiveTab } from '../browser-utils.js';
+import { scrapeActiveTab, clickNextButton } from '../browser-utils.js';
 
 export async function handleScan() {
   setStatus('Scanning results...');
@@ -25,6 +25,19 @@ export async function handleScan() {
   }
 }
 
+export async function handleScanNext() {
+  setStatus('Clicking Next button...');
+  try {
+    await clickNextButton();
+    setStatus('Waiting for page to load...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await handleScan();
+  } catch (error) {
+    console.error(error);
+    setStatus(`Scan Next failed: ${error.message}`, 'error');
+  }
+}
+
 export async function handleViewLeads() {
   const leads = await getLeads();
   renderLeads(leads);
@@ -37,4 +50,3 @@ export async function handleClearLeads() {
   renderLeads([]);
   setStatus('Cleared stored leads.', 'success');
 }
-

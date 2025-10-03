@@ -5,39 +5,23 @@
 import { getLeads, getApiKey } from './scripts/storage.js';
 import { renderLeads } from './popup/ui.js';
 import {
-  handleScan,
-  handleViewLeads,
   handleExportCsv,
   handleExportJson,
   handleClearLeads,
   handleSaveApiKey,
-  handleEvaluate,
-  handleGenerateAiQuery
+  handleEvaluate
 } from './popup/handlers.js';
 
 // DOM elements
-const scanBtn = document.getElementById('scan-btn');
-const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
-const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
 const apiKeyInput = document.getElementById('api-key');
 const leadCountEl = document.getElementById('lead-count');
 
 // Event listeners
-scanBtn.addEventListener('click', async () => {
-  await handleScan();
-  updateLeadCount();
-});
-
-viewBtn.addEventListener('click', async () => {
-  await handleViewLeads();
-  updateLeadCount();
-});
-
 evaluateBtn.addEventListener('click', async () => {
   await handleEvaluate(evaluateBtn, apiKeyInput);
   updateLeadCount();
@@ -53,8 +37,6 @@ clearLeadsBtn.addEventListener('click', async () => {
     updateLeadCount();
   }
 });
-
-generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
 
 // Update lead count in header
 async function updateLeadCount() {
@@ -72,4 +54,3 @@ async function initialise() {
 }
 
 document.addEventListener('DOMContentLoaded', initialise);
-
