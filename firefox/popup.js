@@ -4,6 +4,7 @@
 
 import { getLeads, getApiKey } from './scripts/storage.js';
 import { renderLeads } from './popup/ui.js';
+import { updateButtonVisibility } from './popup/ui/button-visibility.js';
 import {
   handleScan,
   handleScanNext,
@@ -15,12 +16,15 @@ import {
   handleEvaluate,
   handleGenerateAiQuery
 } from './popup/handlers.js';
+import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
 const scanNextBtn = document.getElementById('scan-next-btn');
+const openVirkBtn = document.getElementById('open-virk-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
+const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
 const openTabBtn = document.getElementById('open-tab-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
@@ -35,8 +39,12 @@ const browserApi = globalThis.browser ?? globalThis.chrome;
 // Event listeners
 scanBtn.addEventListener('click', handleScan);
 scanNextBtn.addEventListener('click', handleScanNext);
+openVirkBtn.addEventListener('click', () => {
+  browserApi.tabs.create({ url: 'https://datacvr.virk.dk/' });
+});
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
+enrichVirkBtn.addEventListener('click', handleEnrichWithVirk);
 exportCsvBtn.addEventListener('click', handleExportCsv);
 exportJsonBtn.addEventListener('click', handleExportJson);
 saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
@@ -62,6 +70,7 @@ async function initialise() {
   apiKeyInput.value = apiKey;
   const leads = await getLeads();
   renderLeads(leads);
+  await updateButtonVisibility(leads);
 }
 
 document.addEventListener('DOMContentLoaded', initialise);

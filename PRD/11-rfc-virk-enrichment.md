@@ -1,5 +1,7 @@
 # RFC: Virk.dk Company Data Enrichment
 
+> **Note:** This RFC contains the technical design and rationale. For practical implementation steps, see [`virk-integration/`](virk-integration/) and [`12-virk-implementation-summary.md`](12-virk-implementation-summary.md).
+
 ## Context
 
 LinkedIn profiles provide valuable lead information (name, headline, location), but company data is limited and often incomplete. For Danish companies, the Central Business Register (CVR) at `datacvr.virk.dk` offers official, structured company information including CVR numbers, addresses, company form, and status. Enriching LinkedIn leads with verified CVR data improves lead quality and provides sales teams with authoritative company information.

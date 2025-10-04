@@ -60,16 +60,7 @@
   transform: translateY(-1px);
 }
 
-/* Primary accent for evaluate action */
-#evaluate-btn {
-  background: linear-gradient(180deg, #0a84ff, #0577e6);
-  color: #fff;
-}
-
-#evaluate-btn:hover:enabled {
-  background: linear-gradient(180deg, #1a8eff, #0a84ff);
-}
-
+/* Evaluate button loading state */
 #evaluate-btn.evaluating {
   position: relative;
 }
@@ -92,4 +83,3 @@
   from { transform: translateY(-50%) rotate(0deg); }
   to   { transform: translateY(-50%) rotate(360deg); }
 }
-

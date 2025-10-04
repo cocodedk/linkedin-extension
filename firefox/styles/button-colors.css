@@ -1,0 +1,91 @@
+/**
+ * Button color schemes with WCAG AA contrast
+ * Organized by action type for semantic clarity
+ */
+
+/* Primary actions - Blue (Scan, View) */
+#scan-btn,
+#scan-next-btn,
+#view-btn {
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(37, 99, 235, 0.3), -4px -4px 12px rgba(59, 130, 246, 0.1);
+}
+
+#scan-btn:hover:enabled,
+#scan-next-btn:hover:enabled,
+#view-btn:hover:enabled {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+
+/* Navigation - Indigo (Open Virk) */
+#open-virk-btn {
+  background: linear-gradient(180deg, #4f46e5, #4338ca);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(79, 70, 229, 0.3), -4px -4px 12px rgba(99, 102, 241, 0.1);
+}
+
+#open-virk-btn:hover:enabled {
+  background: linear-gradient(180deg, #6366f1, #4f46e5);
+}
+
+/* AI actions - Purple (Evaluate, Generate AI Query) */
+#evaluate-btn,
+#generate-ai-query-btn {
+  background: linear-gradient(180deg, #7c3aed, #6d28d9);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(124, 58, 237, 0.3), -4px -4px 12px rgba(139, 92, 246, 0.1);
+}
+
+#evaluate-btn:hover:enabled,
+#generate-ai-query-btn:hover:enabled {
+  background: linear-gradient(180deg, #8b5cf6, #7c3aed);
+}
+
+/* Enrichment - Green (Virk) */
+#enrich-virk-btn {
+  background: linear-gradient(180deg, #059669, #047857);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(5, 150, 105, 0.3), -4px -4px 12px rgba(16, 185, 129, 0.1);
+}
+
+#enrich-virk-btn:hover:enabled {
+  background: linear-gradient(180deg, #10b981, #059669);
+}
+
+/* Export actions - Teal (CSV, JSON) */
+#export-csv-btn,
+#export-json-btn {
+  background: linear-gradient(180deg, #0891b2, #0e7490);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(8, 145, 178, 0.3), -4px -4px 12px rgba(6, 182, 212, 0.1);
+}
+
+#export-csv-btn:hover:enabled,
+#export-json-btn:hover:enabled {
+  background: linear-gradient(180deg, #06b6d4, #0891b2);
+}
+
+/* Utility actions - Gray (Open Tab, Save Key) */
+#open-tab-btn,
+#save-api-key-btn {
+  background: linear-gradient(180deg, #52525b, #3f3f46);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(82, 82, 91, 0.3), -4px -4px 12px rgba(113, 113, 122, 0.1);
+}
+
+#open-tab-btn:hover:enabled,
+#save-api-key-btn:hover:enabled {
+  background: linear-gradient(180deg, #71717a, #52525b);
+}
+
+/* Destructive action - Red (Clear) */
+#clear-leads-btn {
+  background: linear-gradient(180deg, #dc2626, #b91c1c);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(220, 38, 38, 0.3), -4px -4px 12px rgba(239, 68, 68, 0.1);
+}
+
+#clear-leads-btn:hover:enabled {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}

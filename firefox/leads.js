@@ -9,11 +9,15 @@ import {
   handleExportJson,
   handleClearLeads,
   handleSaveApiKey,
-  handleEvaluate
+  handleEvaluate,
+  handleViewLeads
 } from './popup/handlers.js';
+import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 
 // DOM elements
+const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
+const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
@@ -22,8 +26,18 @@ const apiKeyInput = document.getElementById('api-key');
 const leadCountEl = document.getElementById('lead-count');
 
 // Event listeners
+viewBtn.addEventListener('click', async () => {
+  await handleViewLeads();
+  updateLeadCount();
+});
+
 evaluateBtn.addEventListener('click', async () => {
   await handleEvaluate(evaluateBtn, apiKeyInput);
+  updateLeadCount();
+});
+
+enrichVirkBtn.addEventListener('click', async () => {
+  await handleEnrichWithVirk();
   updateLeadCount();
 });
 

@@ -1,5 +1,10 @@
 const browserApi = globalThis.browser ?? globalThis.chrome;
-const HEADERS = ['name', 'headline', 'company', 'location', 'profileUrl', 'aiScore', 'aiReasons', 'aiFitSummary'];
+const HEADERS = [
+  'name', 'headline', 'company', 'location', 'profileUrl',
+  'aiScore', 'aiReasons', 'aiFitSummary',
+  'virkCvrNumber', 'virkAddress', 'virkPostalCode', 'virkCity',
+  'virkStartDate', 'virkCompanyForm', 'virkStatus', 'virkEnriched', 'virkEnrichmentDate'
+];
 
 export function toCsv(leads) {
   const safeLeads = Array.isArray(leads) ? leads : [];

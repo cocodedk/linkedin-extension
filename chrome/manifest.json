@@ -11,7 +11,8 @@
     "tabs"
   ],
   "host_permissions": [
-    "https://www.linkedin.com/*"
+    "https://www.linkedin.com/*",
+    "https://datacvr.virk.dk/*"
   ],
   "action": {
     "default_popup": "popup.html",
