@@ -1,15 +1,6 @@
 /**
- * LinkedIn DOM selectors
+ * CSS selectors for LinkedIn scraping
  */
-
-export const COMPANY_LIST_ITEM_SELECTOR = '.entity-result__summary-list li';
-
-export const COMPANY_SELECTOR = [
-  '.entity-result__summary--2-lines',
-  COMPANY_LIST_ITEM_SELECTOR,
-  '.entity-result__primary-subtitle',
-  '.entity-result__primary-subtitle span'
-].join(', ');
 
 export const CARD_SELECTOR = [
   '[data-view-name="search-entity-result-universal-template"]',
@@ -48,6 +39,13 @@ export const LOCATION_SELECTOR = [
   '.linked-area .t-14.t-normal'
 ].join(', ');
 
+export const COMPANY_SELECTOR = [
+  '.entity-result__summary--2-lines',
+  '.entity-result__summary-list li',
+  '.entity-result__primary-subtitle',
+  '.entity-result__primary-subtitle span'
+].join(', ');
+
 export const PROFILE_LINK_SELECTOR = [
   '.linked-area a[data-test-app-aware-link]:not([aria-hidden="true"])',
   'a.app-aware-link[href*="/in/"]',
@@ -56,4 +54,3 @@ export const PROFILE_LINK_SELECTOR = [
 ].join(', ');
 
 export const PROFILE_URL_PATTERNS = [/\/in\//i, /\/profile\/view/i, /\/sales\//i];
-

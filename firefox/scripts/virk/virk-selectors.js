@@ -10,7 +10,7 @@ export const SELECTORS = {
 
   // Results page elements
   virksomhedFilter: 'label[data-cy="soegeresultater-enhedstype-filter-virksomhed"]',
-  detailLink: 'a[href*="/enhed/virksomhed/"]',
+  detailLink: 'a.button.button-unstyled[aria-label*="Vis mere"]',
   resultRow: '.soegeresultaterTabel .row',
 
   // Detail page elements

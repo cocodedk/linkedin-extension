@@ -26,12 +26,12 @@ export async function isOnLinkedIn() {
 }
 
 /**
- * Check if current tab is on Virk.dk
+ * Check if current tab is on Virk.dk (datacvr)
  * @returns {Promise<boolean>}
  */
 export async function isOnVirk() {
   const url = await getCurrentTabUrl();
-  return url ? url.includes('virk.dk') : false;
+  return url ? url.includes('datacvr.virk.dk') : false;
 }
 
 /**
@@ -52,14 +52,14 @@ export async function updateButtonVisibility(leads) {
   // Virk enrichment button (only show when NOT on virk.dk AND has leads)
   const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 
-  // Show/hide LinkedIn buttons
+  // Show/hide LinkedIn-only buttons
   if (scanBtn) scanBtn.style.display = onLinkedIn ? '' : 'none';
   if (scanNextBtn) scanNextBtn.style.display = onLinkedIn ? '' : 'none';
   if (openVirkBtn) openVirkBtn.style.display = onLinkedIn ? '' : 'none';
   if (generateAiQueryBtn) generateAiQueryBtn.style.display = onLinkedIn ? '' : 'none';
 
-  // Show Virk button only when NOT on virk.dk and has leads
+  // Show Virk enrichment button when on datacvr.virk.dk OR when has leads (but not on other virk.dk pages)
   if (enrichVirkBtn) {
-    enrichVirkBtn.style.display = (!onVirk && hasLeads) ? '' : 'none';
+    enrichVirkBtn.style.display = (onVirk || hasLeads) ? '' : 'none';
   }
 }

@@ -33,18 +33,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     await sleep(TIMING.searchDelay);
 
-    // Step 2: Check company count
-    const [countResult] = await browser.scripting.executeScript({
-      target: { tabId },
-      func: getCountScript
-    });
-
-    const count = countResult.result;
-    if (count !== 1) {
-      return { ...lead, virkEnriched: false };
-    }
-
-    // Step 3: Click filter and navigate to detail
+    // Step 2: Click filter to show only companies
     await browser.scripting.executeScript({
       target: { tabId },
       func: clickFilterScript
@@ -52,6 +41,18 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     await sleep(TIMING.navigationDelay);
 
+    // Step 3: Check if any companies found
+    const [countResult] = await browser.scripting.executeScript({
+      target: { tabId },
+      func: getCountScript
+    });
+
+    const count = countResult.result;
+    if (count === 0) {
+      return { ...lead, virkEnriched: false };
+    }
+
+    // Step 4: Navigate to first company (regardless of how many matches)
     await browser.scripting.executeScript({
       target: { tabId },
       func: navigateScript
@@ -59,7 +60,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     await sleep(TIMING.pageLoadDelay);
 
-    // Step 4: Extract company data
+    // Step 5: Extract company data
     const [dataResult] = await browser.scripting.executeScript({
       target: { tabId },
       func: extractDataScript

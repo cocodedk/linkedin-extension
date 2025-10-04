@@ -34,7 +34,10 @@ const openTabBtn = document.getElementById('open-tab-btn');
 const apiKeyInput = document.getElementById('api-key');
 
 // Event listeners
-scanBtn.addEventListener('click', handleScan);
+scanBtn.addEventListener('click', () => {
+  // Start deep scan in background
+  handleScan();
+});
 scanNextBtn.addEventListener('click', handleScanNext);
 openVirkBtn.addEventListener('click', () => {
   chrome.tabs.create({ url: 'https://datacvr.virk.dk/' });

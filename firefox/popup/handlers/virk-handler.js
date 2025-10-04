@@ -23,42 +23,47 @@ export async function handleEnrichWithVirk() {
   setStatus(`Starting Virk enrichment for ${leadsWithCompany.length} leads...`);
 
   try {
-    // Create virk.dk tab
-    const tab = await browser.tabs.create({
-      url: 'https://datacvr.virk.dk/',
-      active: false
-    });
+    // Create 3 virk.dk tabs for parallel processing
+    const PARALLEL_TABS = 3;
+    const tabs = await Promise.all(
+      Array(PARALLEL_TABS).fill(0).map(() =>
+        browser.tabs.create({ url: 'https://datacvr.virk.dk/', active: false })
+      )
+    );
 
-    // Wait for page to load
+    // Wait for pages to load
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     let enrichedCount = 0;
-    const enrichedLeads = [];
+    const enrichedLeads = [...leads];
 
-    // Process each lead
-    for (let i = 0; i < leads.length; i++) {
-      const lead = leads[i];
+    // Get leads that need enrichment
+    const leadsToEnrich = leads.map((lead, index) => ({ lead, index }))
+      .filter(({ lead }) => lead.company);
 
-      if (!lead.company) {
-        enrichedLeads.push(lead);
-        continue;
-      }
+    // Process in parallel batches
+    for (let i = 0; i < leadsToEnrich.length; i += PARALLEL_TABS) {
+      const batch = leadsToEnrich.slice(i, i + PARALLEL_TABS);
 
-      setStatus(`Enriching ${i + 1}/${leads.length}: ${lead.company}...`);
+      setStatus(`Enriching batch ${Math.floor(i / PARALLEL_TABS) + 1}/${Math.ceil(leadsToEnrich.length / PARALLEL_TABS)}...`);
 
-      const enrichedLead = await enrichLeadWithVirk(lead, tab.id);
-      enrichedLeads.push(enrichedLead);
+      const results = await Promise.all(
+        batch.map(({ lead, index }, batchIdx) =>
+          enrichLeadWithVirk(lead, tabs[batchIdx].id).then(enriched => ({ enriched, index }))
+        )
+      );
 
-      if (enrichedLead.virkEnriched) {
-        enrichedCount++;
-      }
+      results.forEach(({ enriched, index }) => {
+        enrichedLeads[index] = enriched;
+        if (enriched.virkEnriched) enrichedCount++;
+      });
     }
 
     // Save enriched leads
     await saveLeads(enrichedLeads);
 
-    // Close virk.dk tab
-    await browser.tabs.remove(tab.id);
+    // Close virk.dk tabs
+    await Promise.all(tabs.map(tab => browser.tabs.remove(tab.id)));
 
     // Update UI
     renderLeads(enrichedLeads);

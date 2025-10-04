@@ -3,9 +3,7 @@
  */
 
 export function normaliseText(node) {
-  if (!node) {
-    return '';
-  }
+  if (!node) return '';
 
   if (node.nodeType === Node.TEXT_NODE) {
     return node.textContent?.replace(/\s+/g, ' ')?.trim() ?? '';
@@ -16,11 +14,7 @@ export function normaliseText(node) {
   }
 
   const clone = node.cloneNode(true);
-  clone.querySelectorAll('.visually-hidden, script, style').forEach((hiddenNode) => {
-    hiddenNode.remove();
-  });
-
+  clone.querySelectorAll('.visually-hidden, script, style').forEach((h) => h.remove());
   const text = clone.textContent?.replace(/\s+/g, ' ')?.trim() ?? '';
   return text.replace(/\bStatus is offline\b/gi, '').trim();
 }
-

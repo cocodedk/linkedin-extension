@@ -34,10 +34,10 @@ export function clickFilterScript() {
 }
 
 /**
- * Navigate to company detail page
+ * Navigate to company detail page (first result)
  */
 export function navigateScript() {
-  const link = document.querySelector('a[href*="/enhed/virksomhed/"]');
+  const link = document.querySelector('a.button.button-unstyled[aria-label*="Vis mere"]');
   if (link) {
     const href = link.getAttribute('href');
     window.location.href = href.startsWith('http') ? href : `https://datacvr.virk.dk${href}`;

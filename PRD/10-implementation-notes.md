@@ -125,6 +125,37 @@ The AI-assisted search feature from RFC 09 is now implemented:
 - `popup/handlers.js` - `handleGenerateAiQuery()` function
 - `popup/chrome-utils.js` / `browser-utils.js` - `injectQueryIntoLinkedIn()` function
 
+## Deep Scan Implementation (Fixed)
+
+The deep scan feature opens individual LinkedIn profiles to extract accurate company data. This was fixed to use a triple-fallback extraction strategy.
+
+**Key Implementation Files:**
+- `chrome/background/deep-scan-worker.js` - Background worker for parallel profile processing
+- `chrome/popup/handlers/scan-deep-scripts.js` - Content scripts for data extraction
+- `firefox/background/deep-scan-worker.js` - Firefox version (same logic, uses `browser` API)
+
+**Company Extraction Strategy (Triple Fallback):**
+1. **aria-label method** (most stable): Extract from `button[aria-label*="Current company:"]`
+2. **XPath method**: Direct path to company element `/html/body/div[7]/div[3]/div/div/div[2]/div/div/main/section[1]/div[2]/div[2]/ul/li[1]/button/span/div`
+3. **CSS selector fallback**: Find first `a[href*="/company/"]` link
+
+**Profile Data Extraction:**
+- **Headline**: `div.text-body-medium.break-words`
+- **Location**: `span.text-body-small.inline.t-black--light.break-words`
+
+**Processing Flow:**
+1. Extract profile URLs from search results (XPath)
+2. Open profiles in batches of 3 (parallel processing)
+3. Wait 4 seconds for page load
+4. Extract company (triple fallback), headline, and location
+5. Close tabs and save leads to storage
+
+**Why XPath + aria-label Works:**
+- LinkedIn dynamically generates CSS class names (anti-scraping)
+- `aria-label` attributes are required for accessibility (most stable)
+- XPath targets structural position (changes less than dynamic classes)
+- Triple fallback maximizes extraction success rate
+
 ## Virk.dk Enrichment Integration
 
 The Virk.dk company enrichment feature from RFC 11 extends the extension to augment LinkedIn leads with official Danish company data.
