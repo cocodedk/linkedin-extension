@@ -9,6 +9,7 @@
     "scripting",
     "activeTab",
     "tabs",
+    "windows",
     "notifications"
   ],
   "background": {

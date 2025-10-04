@@ -36,7 +36,7 @@ export async function runDeepScanInBackground(searchTabId) {
   const processProfileWithScripts = (profile) =>
     processProfile(profile, extractCompanyScript, extractProfileDataScript);
 
-  const leads = await processBatches(profiles, processProfileWithScripts, 3);
+  const leads = await processBatches(profiles, processProfileWithScripts, 2);  // Process 2 profiles at a time
 
   console.log(`Deep scan complete! Processed ${leads.length} leads`);
   return leads;

@@ -69,6 +69,9 @@ async function initialise() {
   const apiKey = await getApiKey();
   apiKeyInput.value = apiKey;
   const leads = await getLeads();
+  console.log(`Popup: Loaded ${leads.length} leads from storage`);
+  const enrichedCount = leads.filter(l => l.virkEnriched).length;
+  console.log(`Popup: ${enrichedCount} leads have Virk enrichment`);
   renderLeads(leads);
   await updateButtonVisibility(leads);
 }

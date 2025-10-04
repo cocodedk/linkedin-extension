@@ -8,7 +8,8 @@
     "downloads",
     "scripting",
     "activeTab",
-    "tabs"
+    "tabs",
+    "windows"
   ],
   "host_permissions": [
     "https://www.linkedin.com/*",

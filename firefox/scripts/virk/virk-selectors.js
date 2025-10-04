@@ -25,9 +25,10 @@ export const SELECTORS = {
 
 /**
  * Timing constants for virk.dk operations
+ * Optimized based on actual timing measurements
  */
 export const TIMING = {
-  searchDelay: 2000,      // Wait after search submission
-  navigationDelay: 1000,  // Wait after clicking filter/link
-  pageLoadDelay: 2000     // Wait for page load after navigation
+  searchDelay: 2000,      // Wait after search submission (page loads quickly)
+  navigationDelay: 2000,  // Wait after clicking filter (results render quickly)
+  pageLoadDelay: 7000     // Wait for detail page to load (critical for data extraction)
 };

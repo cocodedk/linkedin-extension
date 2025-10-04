@@ -109,3 +109,12 @@
   word-break: break-word;
 }
 
+/* Virk.dk enrichment data styling */
+.virk-data {
+  color: #059669;
+  font-size: 13px;
+  padding: 8px 10px;
+  background: #f0fdf4;
+  border-radius: 6px;
+  border-left: 3px solid #10b981;
+}

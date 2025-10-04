@@ -10,6 +10,7 @@ import {
   createLeadReasons,
   createLeadSummary
 } from './ui/card-builders.js';
+import { createVirkData } from './ui/virk-display.js';
 import { createTableRow } from './ui/table-builder.js';
 
 export { setStatus };
@@ -38,10 +39,11 @@ export function renderLeads(leads) {
     const header = createLeadHeader(lead);
     const headline = createLeadHeadline(lead);
     const contact = createLeadContact(lead);
+    const virkData = createVirkData(lead);
     const reasons = createLeadReasons(lead);
     const summary = createLeadSummary(lead);
 
-    card.append(header, headline, contact, reasons, summary);
+    card.append(header, headline, contact, virkData, reasons, summary);
     leadsCards.appendChild(card);
 
     // Also keep table row (hidden by CSS if desired)

@@ -22,7 +22,7 @@ export async function processBatches(profiles, processProfileFn, batchSize = 3) 
     );
 
     leads.push(...batchResults);
-    await sleep(1000); // Rate limit between batches
+    await sleep(3000); // Rate limit between batches
   }
 
   return leads;

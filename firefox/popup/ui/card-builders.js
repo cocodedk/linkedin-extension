@@ -5,9 +5,11 @@
 export function createLeadHeader(lead) {
   const header = document.createElement('div');
   header.className = 'lead-header';
+
   const title = document.createElement('h2');
   title.className = 'lead-name';
   const nameText = lead.name || 'Unknown';
+
   if (lead.profileUrl) {
     const a = document.createElement('a');
     a.href = lead.profileUrl;
@@ -18,13 +20,16 @@ export function createLeadHeader(lead) {
   } else {
     title.textContent = nameText;
   }
+
   const meta = document.createElement('div');
   meta.className = 'lead-meta';
-  meta.innerHTML = [
-    lead.company ? `<span class="chip">${lead.company}</span>` : '',
-    lead.location ? `<span class="chip">${lead.location}</span>` : '',
-    lead.aiScore ? `<span class="chip score">Score: ${lead.aiScore}</span>` : ''
-  ].filter(Boolean).join(' ');
+  const chips = [
+    lead.company && `<span class="chip">${lead.company}</span>`,
+    lead.location && `<span class="chip">${lead.location}</span>`,
+    lead.aiScore && `<span class="chip score">Score: ${lead.aiScore}</span>`
+  ].filter(Boolean);
+  meta.innerHTML = chips.join(' ');
+
   header.appendChild(title);
   header.appendChild(meta);
   return header;
@@ -95,4 +100,3 @@ export function createLeadSummary(lead) {
   }
   return summary;
 }
-
