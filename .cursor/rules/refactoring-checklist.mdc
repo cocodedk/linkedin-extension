@@ -3,213 +3,85 @@ alwaysApply: true
 ---
 # Refactoring Checklist for Large Files
 
-Use this checklist when ANY file exceeds 80 lines.
+Use when ANY file exceeds 80 lines.
 
 ## Pre-Refactoring Assessment
 
-- [ ] File currently has >80 lines
-- [ ] File will exceed 100 lines with planned changes
-- [ ] File has multiple responsibilities (violates SRP)
-- [ ] File contains repeated code patterns (violates DRY)
+- [ ] File >80 lines or will exceed 100 lines
+- [ ] Multiple responsibilities (violates SRP)
+- [ ] Repeated code patterns (violates DRY)
 
-**If ANY box checked: Proceed with refactoring**
+**If ANY checked: Proceed with refactoring**
 
-## Step 1: Analyze Current Structure
+## Step 1: Analyze & Plan
 
-### Identify Logical Boundaries
-- [ ] List all functions/classes in the file
+- [ ] List all functions/classes in file
 - [ ] Group by responsibility (UI, logic, API, utils)
 - [ ] Note dependencies between groups
-- [ ] Mark shared/common code
-
-### Example Analysis
-```
-popup.js (200 lines):
-  - DOM manipulation (50 lines) → ui.js
-  - Event handlers (80 lines) → handlers.js
-  - Chrome API calls (40 lines) → chrome-utils.js
-  - Helper functions (30 lines) → utils.js
-```
-
-## Step 2: Plan Module Structure
-
 - [ ] Create subfolder: `filename/` or `feature/`
-- [ ] Define module names (be descriptive)
-- [ ] Map functions to modules
-- [ ] Identify shared dependencies
+- [ ] Define descriptive module names
 
-### Naming Conventions
+**Good module names:** `ui.js`, `handlers.js`, `api-client.js`, `validators.js`
+**Bad module names:** `utils.js`, `helpers.js`, `misc.js`, `stuff.js`
+
+Example:
 ```
-✅ Good Module Names:
-  - ui.js (UI rendering)
-  - handlers.js (event handlers)
-  - api-client.js (API calls)
-  - validators.js (validation logic)
-  - constants.js (configuration)
-
-❌ Bad Module Names:
-  - utils.js (too generic)
-  - helpers.js (unclear purpose)
-  - misc.js (dumping ground)
-  - stuff.js (meaningless)
+popup.js (200 lines) → Split to:
+  popup.js (40 lines - orchestrator)
+  popup/ui.js (80 lines)
+  popup/handlers.js (90 lines)
 ```
 
-## Step 3: Create Module Files
+## Step 2: Create Modules
 
-- [ ] Create subfolder
-- [ ] Create module files
-- [ ] Copy relevant code to each module
-- [ ] Add proper exports to each module
-- [ ] Add JSDoc/comments for public APIs
+- [ ] Create subfolder and module files
+- [ ] Move relevant code to each module
+- [ ] Add exports: `export function name() {}`
+- [ ] Add JSDoc for public APIs
 
-### Module Template
-```javascript
-/**
- * [Module name and purpose]
- */
+## Step 3: Update Main File
 
-// Imports
-import { dependency } from './other-module.js';
+- [ ] Remove extracted code
+- [ ] Add imports: `import { func } from './module.js';`
+- [ ] Wire modules together (thin orchestrator)
+- [ ] Verify main file ≤100 lines
 
-// Constants (if any)
-const LOCAL_CONST = 'value';
-
-// Main exports
-export function mainFunction() {
-  // Implementation
-}
-
-export function helperFunction() {
-  // Implementation
-}
-
-// Default export (if needed)
-export default mainFunction;
-```
-
-## Step 4: Update Main File
-
-- [ ] Remove extracted code from main file
-- [ ] Add imports for new modules
-- [ ] Wire modules together
-- [ ] Keep main file as thin orchestrator
-- [ ] Verify main file is ≤100 lines
-
-### Main File Template
-```javascript
-/**
- * Main orchestrator - wires together modules
- */
-
-// Module imports
-import { ui } from './feature/ui.js';
-import { handlers } from './feature/handlers.js';
-import { utils } from './feature/utils.js';
-
-// Initialize and export
-export function init() {
-  ui.render();
-  handlers.attach();
-}
-
-// Export main entry point
-export default init;
-```
-
-## Step 5: Verify Module Boundaries
+## Step 4: Verify Quality
 
 - [ ] Each module has single responsibility
 - [ ] No circular dependencies
-- [ ] Clear import/export interfaces
-- [ ] Minimal coupling between modules
-- [ ] Each module is ≤100 lines
-
-### Check Module Quality
-```javascript
-// ✅ Good: Clear responsibility
-// ui.js - only UI rendering
-// handlers.js - only event handling
-
-// ❌ Bad: Mixed responsibilities
-// stuff.js - UI + handlers + API calls
-```
-
-## Step 6: Test Refactored Code
-
-- [ ] Run existing tests
-- [ ] Manually test all features
-- [ ] Check browser console for errors
-- [ ] Verify imports resolve correctly
-- [ ] Test in both Chrome and Firefox (if applicable)
-
-## Step 7: Update Documentation
-
-- [ ] Update README if structure changed
-- [ ] Add module documentation
-- [ ] Update import examples
-- [ ] Document module relationships
-- [ ] Add architecture diagram (if complex)
-
-## Step 8: Final Verification
-
-- [ ] All files are ≤100 lines
+- [ ] Each module ≤100 lines
+- [ ] All files ≤100 lines
 - [ ] No duplicate code (DRY)
-- [ ] Single responsibility per module (SRP)
 - [ ] Clear module names
-- [ ] Proper imports/exports
-- [ ] Tests pass
-- [ ] Documentation updated
 
-## Common Refactoring Patterns
+## Step 5: Test & Document
 
-### Pattern 1: Extract UI Layer
-```
-Before: app.js (250 lines - logic + UI)
-After:  app.js (60 lines - logic only)
-        app/ui.js (90 lines - UI only)
-```
+- [ ] Run tests
+- [ ] Manually test features
+- [ ] Check console for errors
+- [ ] Verify imports resolve
+- [ ] Update README if needed
+- [ ] Document module relationships
 
-### Pattern 2: Extract Handlers
-```
-Before: main.js (180 lines - mixed)
-After:  main.js (40 lines - initialization)
-        main/handlers.js (95 lines - event handlers)
-        main/logic.js (85 lines - business logic)
-```
+## Red Flags
 
-### Pattern 3: Extract API Layer
-```
-Before: service.js (220 lines - mixed)
-After:  service.js (50 lines - main logic)
-        service/api.js (80 lines - API calls)
-        service/transform.js (70 lines - data transformation)
-```
+- Module >100 lines → Split further
+- Multiple responsibilities → Split by concern
+- Circular imports → Redesign dependencies
+- Too many imports → Missing abstraction layer
+- Unclear names → Rethink boundaries
 
-### Pattern 4: Extract Utilities
-```
-Before: controller.js (300 lines)
-After:  controller.js (70 lines)
-        controller/validators.js (60 lines)
-        controller/formatters.js (55 lines)
-        controller/helpers.js (75 lines)
-```
+## Common Patterns
 
-## Red Flags During Refactoring
-
-🚨 Module still >100 lines → Split further
-🚨 Module has multiple responsibilities → Split by concern
-🚨 Circular imports → Redesign dependencies
-🚨 Too many imports in main file → Missing abstraction layer
-🚨 Unclear module names → Rethink boundaries
+**Extract UI:** `app.js (250)` → `app.js (60)` + `app/ui.js (90)`
+**Extract Handlers:** `main.js (180)` → `main.js (40)` + `main/handlers.js (95)` + `main/logic.js (85)`
+**Extract API:** `service.js (220)` → `service.js (50)` + `service/api.js (80)` + `service/transform.js (70)`
 
 ## Success Criteria
 
-✅ All files ≤100 lines
-✅ Each file has one clear purpose
-✅ No code duplication
-✅ Clean import structure
-✅ Tests pass
-✅ Easy to understand
-✅ Easy to modify
-
-**If all criteria met: Commit and celebrate! 🎉**
+- All files ≤100 lines
+- One clear purpose per file
+- No code duplication
+- Clean import structure
+- Tests pass
