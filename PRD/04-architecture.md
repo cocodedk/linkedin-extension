@@ -2,11 +2,11 @@
 
 **MV3 Components**
 
-* **Manifest.json**: permissions → `storage`, `scripting`, `downloads`, `activeTab`, `tabs` + LinkedIn host permissions.
+* **Manifest.json**: permissions → `storage`, `scripting`, `downloads`, `activeTab`, `tabs` + host permissions for LinkedIn and virk.dk.
 * **Content Script**: runs `scrapeLinkedInResults()` only on-demand (injected at runtime via `scripting.executeScript`).
 * **Popup UI**:
 
-  * Buttons: *Scan*, *View Leads*, *Evaluate Leads*, *Generate AI Query*, *Open in Tab*, *Export CSV*, *Export JSON*, *Clear*.
+  * Buttons: *Scan*, *View Leads*, *Evaluate Leads*, *Enrich with Virk*, *Generate AI Query*, *Open in Tab*, *Export CSV*, *Export JSON*, *Clear*.
   * Inline status banner and leads displayed in responsive card layout.
   * Compact popup view with "Open in Tab" option for expanded workspace.
 * **Full-Page View** (`leads.html`):
@@ -24,8 +24,10 @@
   * `popup/browser-api.js` (Firefox): Cross-browser compatibility layer.
 * **Storage Service**: wrapper for browser `storage.local` with API key helpers.
 * **Evaluation Service**: wrapper for OpenAI calls with progress callbacks and error handling.
-* **Export Service**: CSV/JSON helpers + `downloads` trigger.
+* **Export Service**: CSV/JSON helpers + `downloads` trigger with support for virk.dk fields.
 * **AI Query Service**: wrapper for OpenAI calls to generate LinkedIn search queries from ICP descriptions.
+* **Virk Enrichment Service**: orchestrates search, navigation, and data extraction from datacvr.virk.dk.
+* **Virk Scraper Service**: extracts company data from virk.dk detail pages using DOM selectors.
 
 **Browser Targets**
 
@@ -41,7 +43,17 @@ User → Popup [Scan]
      → Popup [View] → Render cards
      → Popup [Open in Tab] → Full-page view in new tab
      → Popup [Generate AI Query] → OpenAI API → Inject into LinkedIn search box
-     → Popup [Export] → CSV/JSON file via downloads API
+     → Popup [Enrich with Virk] → Virk Enrichment Service:
+          → Open virk.dk tab
+          → For each lead:
+               → Search company name
+               → Filter to "virksomheder"
+               → Navigate to detail page
+               → Extract CVR data
+               → Augment lead in storage
+          → Close virk.dk tab
+          → Update UI with enriched data
+     → Popup [Export] → CSV/JSON file via downloads API (includes virk fields)
      → (Optional) Eval Service → OpenAI API → Storage → Update cards
      → Popup [Clear] → Storage.reset()
 ```

@@ -33,7 +33,7 @@
            name: normalise(profileLink) || normalise(card.querySelector('.entity-result__title-text span, span[dir="ltr"]')),
            headline: normalise(card.querySelector('.entity-result__primary-subtitle, .linked-area .t-14.t-normal')),
            company: deriveCompany({
-             summaryText: normalise(card.querySelector('.entity-result__summary--2-lines, .entity-result__summary-list li, .entity-result__primary-subtitle')), 
+             summaryText: normalise(card.querySelector('.entity-result__summary--2-lines, .entity-result__summary-list li, .entity-result__primary-subtitle')),
              headlineText: normalise(card.querySelector('.entity-result__primary-subtitle, .linked-area .t-14.t-normal'))
            }),
            location: normalise(card.querySelector('.entity-result__secondary-subtitle, .linked-area .t-12.t-normal')),
@@ -144,6 +144,87 @@
    * `View Leads` reloads storage without rescanning.
    * `Clear` (trash icon) wipes stored leads for a clean slate.
    * Status bar communicates scan, export, and evaluation state with success/warning/error styling.
+
+6. **Virk.dk Company Enrichment (Danish Companies)**
+
+   * Allow user to enrich leads with official Danish company data from datacvr.virk.dk.
+   * For each lead with a company name, search virk.dk and extract CVR data.
+   * Filter results to "virksomheder" (companies), skip if 0 or multiple matches.
+   * Navigate to first matching company detail page and extract:
+     - CVR number
+     - Official address (street, building)
+     - Postal code and city
+     - Company start date
+     - Company form (e.g., Anpartsselskab, Aktieselskab)
+     - Company status (e.g., Normal, Under konkurs)
+   * Augment lead records with virk fields: `virkCvrNumber`, `virkAddress`, `virkPostalCode`, `virkCity`, `virkStartDate`, `virkCompanyForm`, `virkStatus`, `virkEnriched`, `virkEnrichmentDate`.
+   * Stream status updates during enrichment: "Enriching 5/15 leads...".
+   * Handle errors gracefully: no results, multiple matches, timeouts.
+   * Pseudo-code:
+
+     ```js
+     async function enrichLeadWithVirk(lead) {
+       if (!lead.company) {
+         return { ...lead, virkEnriched: false };
+       }
+
+       // Search virk.dk
+       await executeScriptOnTab(virkTab, `
+         const input = document.querySelector('input#forside-soegefelt-id');
+         const btn = document.querySelector('button[data-cy="forside-soegefelt-btn"]');
+         input.value = '${lead.company}';
+         input.dispatchEvent(new Event('input', { bubbles: true }));
+         btn.click();
+       `);
+
+       await sleep(2000); // Wait for results
+
+       // Check company count
+       const filterResult = await executeScriptOnTab(virkTab, `
+         const label = document.querySelector('label[data-cy="soegeresultater-enhedstype-filter-virksomhed"]');
+         const match = label?.textContent?.match(/\\((\\d+)\\)/);
+         return match ? parseInt(match[1]) : 0;
+       `);
+
+       if (filterResult !== 1) {
+         return { ...lead, virkEnriched: false };
+       }
+
+       // Navigate to detail page
+       await executeScriptOnTab(virkTab, `
+         const link = document.querySelector('a[href*="/enhed/virksomhed/"]');
+         if (link) window.location.href = link.href;
+       `);
+
+       await sleep(2000);
+
+       // Extract company data
+       const virkData = await executeScriptOnTab(virkTab, `
+         const get = (cls) => document.querySelector('.' + cls)?.textContent?.trim() ?? null;
+         return {
+           cvrNumber: get('cvrnummer'),
+           address: get('stamdata-bygningsnummer'),
+           postalCodeCity: get('postnummerOgBy'),
+           startDate: get('start-dato'),
+           companyForm: document.querySelector('.col-6.col-lg-9.break-word')?.textContent?.trim(),
+           status: get('virksomhed-status-label')
+         };
+       `);
+
+       return {
+         ...lead,
+         virkCvrNumber: virkData.cvrNumber,
+         virkAddress: virkData.address,
+         virkPostalCode: virkData.postalCodeCity?.split(' ')[0],
+         virkCity: virkData.postalCodeCity?.split(' ').slice(1).join(' '),
+         virkStartDate: virkData.startDate,
+         virkCompanyForm: virkData.companyForm,
+         virkStatus: virkData.status,
+         virkEnriched: true,
+         virkEnrichmentDate: new Date().toISOString()
+       };
+     }
+     ```
 
 ### 3.2 Non-Functional Requirements
 

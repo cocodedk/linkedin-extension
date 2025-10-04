@@ -1,7 +1,6 @@
 ---
-description: Step-by-step refactoring checklist for large files
+alwaysApply: true
 ---
-
 # Refactoring Checklist for Large Files
 
 Use this checklist when ANY file exceeds 80 lines.

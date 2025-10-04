@@ -25,6 +25,11 @@ chrome/
     evaluation.js       # OpenAI evaluation service
     exporters.js        # CSV/JSON export utilities
     ai-query.js         # AI search query generation
+    virk/
+      virk-enrichment.js  # Orchestrate Virk.dk enrichment flow
+      virk-scraper.js     # Extract company data from Virk pages
+      virk-selectors.js   # DOM selectors for Virk.dk
+      virk-search.js      # Search and navigation logic
 ```
 
 **Firefox Structure:**
@@ -120,6 +125,43 @@ The AI-assisted search feature from RFC 09 is now implemented:
 - `popup/handlers.js` - `handleGenerateAiQuery()` function
 - `popup/chrome-utils.js` / `browser-utils.js` - `injectQueryIntoLinkedIn()` function
 
+## Virk.dk Enrichment Integration
+
+The Virk.dk company enrichment feature from RFC 11 extends the extension to augment LinkedIn leads with official Danish company data.
+
+**Flow:**
+1. User scrapes LinkedIn leads (existing flow)
+2. User clicks "Enrich with Virk" button
+3. Extension opens virk.dk in background tab
+4. For each lead with company name:
+   - Search company on virk.dk
+   - Filter to "virksomheder" (companies only)
+   - If exactly 1 match, navigate to detail page
+   - Extract CVR, address, company form, status
+   - Augment lead record in storage
+5. Close virk.dk tab and refresh UI
+6. Export includes new Virk columns
+
+**Key Files:**
+- `scripts/virk/virk-enrichment.js` - Main orchestration logic
+- `scripts/virk/virk-scraper.js` - DOM scraping for Virk pages
+- `scripts/virk/virk-selectors.js` - Selector constants
+- `scripts/virk/virk-search.js` - Search and navigation helpers
+- `popup/handlers/virk-handler.js` - "Enrich with Virk" button handler
+- `scripts/storage.js` - Extended schema with Virk fields
+
+**Data Schema:**
+Added optional Virk fields to lead objects:
+- `virkCvrNumber`: CVR number (e.g., "39516446")
+- `virkAddress`: Official street address
+- `virkPostalCode`: Postal code (e.g., "4000")
+- `virkCity`: City name (e.g., "Roskilde")
+- `virkStartDate`: Company start date (e.g., "17.04.2018")
+- `virkCompanyForm`: Company type (e.g., "Anpartsselskab")
+- `virkStatus`: Company status (e.g., "Normal")
+- `virkEnriched`: Boolean flag (true if enrichment succeeded)
+- `virkEnrichmentDate`: ISO timestamp of enrichment
+
 ## Styling Improvements
 
 **Design System:**
@@ -199,4 +241,3 @@ While maintaining YAGNI principle, potential enhancements:
 - Import paths updated to use `popup/` subdirectory
 - Cross-browser compatibility maintained
 - No manifest changes required (permissions already sufficient)
-
