@@ -14,13 +14,17 @@ import {
   handleClearLeads,
   handleSaveApiKey,
   handleEvaluate,
-  handleGenerateAiQuery
+  handleGenerateAiQuery,
+  handleDeepScanAll,
+  handleStopDeepScanAll
 } from './popup/handlers.js';
 import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
 const scanNextBtn = document.getElementById('scan-next-btn');
+const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
+const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 const openVirkBtn = document.getElementById('open-virk-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
@@ -39,8 +43,11 @@ scanBtn.addEventListener('click', () => {
   handleScan();
 });
 scanNextBtn.addEventListener('click', handleScanNext);
+deepScanAllBtn.addEventListener('click', handleDeepScanAll);
+stopDeepScanAllBtn.addEventListener('click', handleStopDeepScanAll);
 openVirkBtn.addEventListener('click', () => {
-  browser.tabs.create({ url: 'https://datacvr.virk.dk/' });
+  const browserApi = globalThis.browser ?? globalThis.chrome;
+  browserApi.tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
@@ -51,16 +58,17 @@ saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 clearLeadsBtn.addEventListener('click', handleClearLeads);
 generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
 openTabBtn.addEventListener('click', async () => {
-  const leadsUrl = chrome.runtime.getURL('leads.html');
-  const tabs = await chrome.tabs.query({ url: leadsUrl });
+  const browserApi = globalThis.browser ?? globalThis.chrome;
+  const leadsUrl = browserApi.runtime.getURL('leads.html');
+  const tabs = await browserApi.tabs.query({ url: leadsUrl });
 
   if (tabs.length > 0) {
     // Tab exists, focus it and reload
-    await chrome.tabs.update(tabs[0].id, { active: true });
-    await chrome.tabs.reload(tabs[0].id);
+    await browserApi.tabs.update(tabs[0].id, { active: true });
+    await browserApi.tabs.reload(tabs[0].id);
   } else {
     // No tab exists, create new one
-    await chrome.tabs.create({ url: leadsUrl });
+    await browserApi.tabs.create({ url: leadsUrl });
   }
 });
 

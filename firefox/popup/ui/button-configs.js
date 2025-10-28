@@ -16,6 +16,18 @@ export const BUTTON_CONFIGS = {
     label: 'Scan Next',
     title: 'Navigate to next page and scan'
   },
+  deepScanAll: {
+    id: 'deep-scan-all-btn',
+    icon: '🔄',
+    label: 'Deep Scan ALL',
+    title: 'Deep scan all pages (up to 100) automatically'
+  },
+  stopDeepScanAll: {
+    id: 'stop-deep-scan-all-btn',
+    icon: '⏹️',
+    label: 'Stop Deep Scan',
+    title: 'Stop the deep scan all operation'
+  },
   view: {
     id: 'view-btn',
     icon: '👁️',
