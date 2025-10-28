@@ -19,11 +19,19 @@ export function scrapeCard(card) {
     PROFILE_URL_PATTERNS.some((p) => p.test(a?.href ?? ''))
   ) ?? profileCandidates[0] ?? null;
 
-  const profileUrl = profileElement?.href ?? '';
+  const profileUrl = profileElement?.href ?? card?.href ?? '';
 
-  let name = normaliseText(card.querySelector(NAME_SELECTOR)) || normaliseText(profileElement);
+  const nameElement = card.querySelector(NAME_SELECTOR);
+  let name = '';
+
+  if (nameElement?.tagName === 'IMG') {
+    name = String(nameElement.getAttribute('alt') || '').trim();
+  } else {
+    name = normaliseText(nameElement) || normaliseText(profileElement);
+  }
+
   if (!name) {
-    const img = card.querySelector('img.presence-entity__image[alt], img[alt]');
+    const img = card.querySelector('img[alt][src*="profile-displayphoto"], img.presence-entity__image[alt], img[alt]');
     if (img?.getAttribute) name = String(img.getAttribute('alt') || '').trim();
   }
 

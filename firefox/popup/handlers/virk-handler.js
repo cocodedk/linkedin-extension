@@ -23,16 +23,22 @@ export async function handleEnrichWithVirk() {
 
   try {
     // Send message to background worker
-    const response = await browser.runtime.sendMessage({ type: 'START_VIRK_ENRICHMENT' });
+    chrome.runtime.sendMessage(
+      { type: 'START_VIRK_ENRICHMENT' },
+      (response) => {
+        if (response && response.success) {
+          console.log('Virk enrichment started successfully');
+          console.log('Result:', response.result);
+          setStatus(`✅ Enrichment complete! ${response.result.enriched}/${response.result.total} leads enriched`);
+        } else if (response) {
+          console.error('Virk enrichment failed:', response.error);
+          setStatus(`❌ Enrichment failed: ${response.error}`, 'error');
+        }
+      }
+    );
 
-    if (response && response.success) {
-      console.log('Virk enrichment started successfully');
-      console.log('Result:', response.result);
-      setStatus(`✅ Enrichment complete! ${response.result.enriched}/${response.result.total} leads enriched`);
-    } else if (response) {
-      console.error('Virk enrichment failed:', response.error);
-      setStatus(`❌ Enrichment failed: ${response.error}`, 'error');
-    }
+    // Keep popup open - status will update when background worker completes
+    setStatus('Virk enrichment running in background... (check console for progress)');
 
   } catch (error) {
     console.error('Virk enrichment error:', error);

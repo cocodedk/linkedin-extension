@@ -3,6 +3,7 @@
  * Handles long-running tasks that need to survive popup closure
  */
 
+import { runtime } from './api/runtime.js';
 import {
   handleDeepScanRequest,
   handleDeepScanAllRequest,
@@ -12,7 +13,7 @@ import {
 } from './background/message-handlers.js';
 
 // Listen for messages from popup
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'START_DEEP_SCAN') {
     handleDeepScanRequest(message.searchTabId)
       .then(result => sendResponse({ success: true, leads: result }))

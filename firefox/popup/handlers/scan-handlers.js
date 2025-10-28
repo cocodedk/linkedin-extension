@@ -10,7 +10,7 @@ export async function handleScan() {
   setStatus('Starting deep scan in background...');
   try {
     // Get active tab
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!tab.url.includes('linkedin.com/search/results')) {
       setStatus('Please navigate to LinkedIn search results first', 'warning');
@@ -20,15 +20,16 @@ export async function handleScan() {
     // Send message to background worker for deep scan
     setStatus('Deep scan running in background. Popup will close.');
 
-    browser.runtime.sendMessage(
-      { type: 'START_DEEP_SCAN', searchTabId: tab.id }
-    ).then((response) => {
-      if (response && response.success) {
-        console.log('Deep scan started successfully');
-      } else if (response) {
-        console.error('Deep scan failed:', response.error);
+    chrome.runtime.sendMessage(
+      { type: 'START_DEEP_SCAN', searchTabId: tab.id },
+      (response) => {
+        if (response && response.success) {
+          console.log('Deep scan started successfully');
+        } else if (response) {
+          console.error('Deep scan failed:', response.error);
+        }
       }
-    });
+    );
 
     // Close popup after 2 seconds
     setTimeout(() => window.close(), 2000);

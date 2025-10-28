@@ -2,6 +2,7 @@
  * Message handlers for background service worker
  */
 
+import { notifications } from '../api/notifications.js';
 import { runDeepScanInBackground } from './deep-scan-worker.js';
 import { runVirkEnrichmentInBackground } from './virk-enrichment-worker.js';
 import { runDeepScanAllInBackground, stopDeepScanAll, getDeepScanAllStatus } from './deep-scan-all-worker.js';
@@ -14,7 +15,7 @@ export async function handleDeepScanRequest(searchTabId) {
     const savedLeads = await saveLeads(leads);
     console.log('Background: Deep scan complete, saved', savedLeads.length, 'leads');
 
-    chrome.notifications.create({
+    notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon128.png',
       title: 'Deep Scan Complete',
@@ -25,7 +26,7 @@ export async function handleDeepScanRequest(searchTabId) {
   } catch (error) {
     console.error('Background: Deep scan error:', error);
 
-    chrome.notifications.create({
+    notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon128.png',
       title: 'Deep Scan Failed',
@@ -52,7 +53,7 @@ export async function handleVirkEnrichmentRequest() {
     const result = await runVirkEnrichmentInBackground();
     console.log(`Background: Virk enrichment complete, enriched ${result.enriched}/${result.total} leads`);
 
-    chrome.notifications.create({
+    notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon128.png',
       title: 'Virk Enrichment Complete',
@@ -63,7 +64,7 @@ export async function handleVirkEnrichmentRequest() {
   } catch (error) {
     console.error('Background: Virk enrichment error:', error);
 
-    chrome.notifications.create({
+    notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon128.png',
       title: 'Virk Enrichment Failed',

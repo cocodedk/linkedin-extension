@@ -45,8 +45,9 @@ scanBtn.addEventListener('click', () => {
 scanNextBtn.addEventListener('click', handleScanNext);
 deepScanAllBtn.addEventListener('click', handleDeepScanAll);
 stopDeepScanAllBtn.addEventListener('click', handleStopDeepScanAll);
-openVirkBtn.addEventListener('click', () => {
-  chrome.tabs.create({ url: 'https://datacvr.virk.dk/' });
+openVirkBtn.addEventListener('click', async () => {
+  const { tabs } = await import('./api/tabs.js');
+  tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
@@ -57,16 +58,18 @@ saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 clearLeadsBtn.addEventListener('click', handleClearLeads);
 generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
 openTabBtn.addEventListener('click', async () => {
-  const leadsUrl = chrome.runtime.getURL('leads.html');
-  const tabs = await chrome.tabs.query({ url: leadsUrl });
+  const { runtime } = await import('./api/runtime.js');
+  const { tabs } = await import('./api/tabs.js');
+  const leadsUrl = runtime.getURL('leads.html');
+  const tabList = await tabs.query({ url: leadsUrl });
 
-  if (tabs.length > 0) {
+  if (tabList.length > 0) {
     // Tab exists, focus it and reload
-    await chrome.tabs.update(tabs[0].id, { active: true });
-    await chrome.tabs.reload(tabs[0].id);
+    await tabs.update(tabList[0].id, { active: true });
+    await tabs.reload(tabList[0].id);
   } else {
     // No tab exists, create new one
-    await chrome.tabs.create({ url: leadsUrl });
+    await tabs.create({ url: leadsUrl });
   }
 });
 

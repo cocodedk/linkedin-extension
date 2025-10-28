@@ -12,4 +12,3 @@ export const SEARCH_RESULTS_XPATHS = {
 export const PROFILE_XPATHS = {
   company: '/html/body/div[7]/div[3]/div/div/div[2]/div/div/main/section[1]/div[2]/div[2]/ul/li[1]/button/span/div'
 };
-

@@ -24,7 +24,7 @@ export async function processBatch(batch, batchNum, totalBatches) {
   const batchWindows = await Promise.all(
     batch.map(async () => {
       // Create window with tab for each company
-      const window = await browser.windows.create({
+      const window = await chrome.windows.create({
         url: 'https://datacvr.virk.dk/',
         focused: true,
         type: 'normal'
@@ -34,7 +34,7 @@ export async function processBatch(batch, batchNum, totalBatches) {
 
       // Execute script to set up page context that might avoid bot detection
       try {
-        await browser.scripting.executeScript({
+        await chrome.scripting.executeScript({
           target: { tabId },
           func: () => {
             // Set up window properties that might be expected by the site
@@ -42,6 +42,12 @@ export async function processBatch(batch, batchNum, totalBatches) {
               Object.defineProperty(window.navigator, 'webdriver', {
                 get: () => undefined
               });
+            }
+
+            // Override some common automation detection methods
+            if (!window.chrome || !window.chrome.runtime) {
+              window.chrome = window.chrome || {};
+              window.chrome.runtime = window.chrome.runtime || {};
             }
           }
         });
@@ -58,7 +64,7 @@ export async function processBatch(batch, batchNum, totalBatches) {
   await sleep(10000); // Increased wait time for JS initialization
 
   // Minimize windows after initialization to avoid UI clutter
-  await Promise.all(batchWindows.map(({ windowId }) => browser.windows.update(windowId, { state: 'minimized' })));
+  await Promise.all(batchWindows.map(({ windowId }) => chrome.windows.update(windowId, { state: 'minimized' })));
 
   try {
     // Process batch in parallel
@@ -82,7 +88,7 @@ export async function processBatch(batch, batchNum, totalBatches) {
     // Always close windows
     console.log(`[Background] Closing ${batchWindows.length} windows from batch ${batchNum}...`);
     try {
-      await Promise.all(batchWindows.map(({ windowId }) => browser.windows.remove(windowId).catch(e => console.error('Window close error:', e))));
+      await Promise.all(batchWindows.map(({ windowId }) => chrome.windows.remove(windowId).catch(e => console.error('Window close error:', e))));
     } catch (error) {
       console.error(`[Background] Error closing batch ${batchNum} windows:`, error);
     }

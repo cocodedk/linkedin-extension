@@ -1,6 +1,5 @@
-const browserApi = globalThis.browser ?? globalThis.chrome;
 const HEADERS = [
-  'name', 'headline', 'company', 'location', 'profileUrl',
+  'name', 'headline', 'company', 'contact', 'location', 'profileUrl',
   'aiScore', 'aiReasons', 'aiFitSummary',
   'virkCvrNumber', 'virkAddress', 'virkPostalCode', 'virkCity',
   'virkStartDate', 'virkCompanyForm', 'virkStatus', 'virkEnriched', 'virkEnrichmentDate'
@@ -28,12 +27,12 @@ export async function triggerDownload({ filename, mimeType, content }) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
 
-  await browserApi.downloads.download({
+  await chrome.downloads.download({
     url,
     filename,
     saveAs: true
   });
 
-  // Release the object URL after a short delay to allow the browser to resolve it.
+  // Release the object URL after a short delay to allow Chrome to resolve it.
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

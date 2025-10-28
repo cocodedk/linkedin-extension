@@ -2,7 +2,7 @@
  * State management for Deep Scan ALL
  */
 
-import { browserApi } from '../popup/browser-api.js';
+import { storage } from '../api/storage.js';
 
 export const state = {
   isRunning: false,
@@ -41,7 +41,7 @@ export function resetErrors() {
 }
 
 export async function saveStateToStorage() {
-  await browserApi.storage.local.set({
+  await storage.local.set({
     isDeepScanAllRunning: state.isRunning,
     deepScanAllProgress: { ...state }
   });
@@ -49,10 +49,10 @@ export async function saveStateToStorage() {
 
 export async function clearStateFromStorage() {
   state.isRunning = false;
-  await browserApi.storage.local.remove(['isDeepScanAllRunning', 'deepScanAllProgress']);
+  await storage.local.remove(['isDeepScanAllRunning', 'deepScanAllProgress']);
 }
 
 export async function getStatusFromStorage() {
-  const { isDeepScanAllRunning } = await browserApi.storage.local.get('isDeepScanAllRunning');
+  const { isDeepScanAllRunning } = await storage.local.get('isDeepScanAllRunning');
   return { isRunning: isDeepScanAllRunning || false };
 }

@@ -40,7 +40,8 @@ export async function isOnVirk() {
  */
 async function isDeepScanAllRunning() {
   try {
-    const { isDeepScanAllRunning } = await chrome.storage.local.get('isDeepScanAllRunning');
+    const { storage } = await import('../../api/storage.js');
+    const { isDeepScanAllRunning } = await storage.local.get('isDeepScanAllRunning');
     return isDeepScanAllRunning || false;
   } catch (error) {
     console.error('Failed to check Deep Scan ALL status:', error);

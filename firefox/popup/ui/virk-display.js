@@ -5,7 +5,7 @@
 export function createVirkData(lead) {
   const virkData = document.createElement('div');
   virkData.className = 'lead-detail virk-data';
-  
+
   if (lead.virkEnriched && lead.virkCvrNumber) {
     const info = [
       `🏢 CVR: ${lead.virkCvrNumber}`,
@@ -14,9 +14,9 @@ export function createVirkData(lead) {
       lead.virkCompanyForm && `📋 ${lead.virkCompanyForm}`,
       lead.virkStatus && `✅ ${lead.virkStatus}`
     ].filter(Boolean).join(' • ');
-    
+
     virkData.textContent = info;
   }
-  
+
   return virkData;
 }

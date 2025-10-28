@@ -2,23 +2,25 @@
  * Helper functions for Deep Scan ALL
  */
 
-import { browserApi } from '../popup/browser-api.js';
+import { action } from '../api/action.js';
+import { scripting } from '../api/scripting.js';
+import { notifications } from '../api/notifications.js';
 import { checkLinkedInNextExists, clickLinkedInNext } from '../popup/utils/pagination.js';
 
 export const MAX_PAGES = 100;
 export const PAGE_DELAY_MS = 2500;
 
 export async function updateBadge(pageNumber) {
-  await browserApi.action.setBadgeText({ text: String(pageNumber) });
-  await browserApi.action.setBadgeBackgroundColor({ color: '#0073b1' });
+  await action.setBadgeText({ text: String(pageNumber) });
+  await action.setBadgeBackgroundColor({ color: '#0073b1' });
 }
 
 export async function clearBadge() {
-  await browserApi.action.setBadgeText({ text: '' });
+  await action.setBadgeText({ text: '' });
 }
 
 export async function checkNextButtonExists(tabId) {
-  const [{ result }] = await browserApi.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: checkLinkedInNextExists
   });
@@ -26,11 +28,11 @@ export async function checkNextButtonExists(tabId) {
 }
 
 export async function clickNextButton(tabId) {
-  const [{ result }] = await browserApi.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: clickLinkedInNext
   });
-
+  
   if (!result?.success) {
     throw new Error('Failed to click Next button');
   }
@@ -41,7 +43,7 @@ export function sleep(ms) {
 }
 
 export async function showStartNotification() {
-  await browserApi.notifications.create({
+  await notifications.create({
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: 'Deep Scan ALL Started',
@@ -50,7 +52,7 @@ export async function showStartNotification() {
 }
 
 export async function showCompleteNotification(currentPage, totalLeads) {
-  await browserApi.notifications.create({
+  await notifications.create({
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: 'Deep Scan ALL Complete',
@@ -59,7 +61,7 @@ export async function showCompleteNotification(currentPage, totalLeads) {
 }
 
 export async function showStoppedNotification(currentPage, totalLeads) {
-  await browserApi.notifications.create({
+  await notifications.create({
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: 'Deep Scan ALL Stopped',
@@ -68,7 +70,7 @@ export async function showStoppedNotification(currentPage, totalLeads) {
 }
 
 export async function showErrorNotification(currentPage, error) {
-  await browserApi.notifications.create({
+  await notifications.create({
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: 'Deep Scan ALL Failed',

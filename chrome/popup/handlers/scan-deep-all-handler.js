@@ -2,6 +2,8 @@
  * Deep Scan ALL handler - scans all pages automatically
  */
 
+import { tabs } from '../../api/tabs.js';
+import { runtime } from '../../api/runtime.js';
 import { setStatus } from '../ui.js';
 
 /**
@@ -11,7 +13,7 @@ import { setStatus } from '../ui.js';
 export async function handleDeepScanAll() {
   try {
     // Get active tab
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await tabs.query({ active: true, currentWindow: true });
 
     if (!tab.url.includes('linkedin.com/search/results')) {
       setStatus('Please navigate to LinkedIn search results first', 'warning');
@@ -33,7 +35,7 @@ export async function handleDeepScanAll() {
     // Send message to background worker
     setStatus('Deep Scan ALL starting... You can close this popup.');
 
-    chrome.runtime.sendMessage(
+    runtime.sendMessage(
       { type: 'START_DEEP_SCAN_ALL', searchTabId: tab.id },
       (response) => {
         if (response && response.success) {
@@ -60,7 +62,7 @@ export async function handleStopDeepScanAll() {
   try {
     setStatus('Stopping Deep Scan ALL...');
 
-    chrome.runtime.sendMessage(
+    runtime.sendMessage(
       { type: 'STOP_DEEP_SCAN_ALL' },
       (response) => {
         if (response && response.success) {

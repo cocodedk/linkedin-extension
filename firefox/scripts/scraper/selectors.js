@@ -3,6 +3,7 @@
  */
 
 export const CARD_SELECTOR = [
+  'a[href*="/in/"][componentkey][tabindex]',
   '[data-view-name="search-entity-result-universal-template"]',
   '[data-chameleon-result-urn]',
   '.reusable-search__result-container',
@@ -10,6 +11,8 @@ export const CARD_SELECTOR = [
 ].join(', ');
 
 export const NAME_SELECTOR = [
+  'a[data-view-name="search-result-lockup-title"]',
+  'img[alt][src*="profile-displayphoto"]',
   'a[data-test-app-aware-link][href*="/in/"] span[dir="ltr"] span[aria-hidden="true"]',
   'a.app-aware-link[href*="/in/"] span[dir="ltr"] span[aria-hidden="true"]',
   '.entity-result__title-text .app-aware-link span[aria-hidden="true"]',
@@ -25,6 +28,7 @@ export const NAME_SELECTOR = [
 ].join(', ');
 
 export const HEADLINE_SELECTOR = [
+  'p:has(a[data-view-name="search-result-lockup-title"]) + p',
   '.entity-result__primary-subtitle',
   '.search-result__result-text',
   '.linked-area .t-14.t-black.t-normal',
@@ -32,6 +36,7 @@ export const HEADLINE_SELECTOR = [
 ].join(', ');
 
 export const LOCATION_SELECTOR = [
+  'p:has(a[data-view-name="search-result-lockup-title"]) + p + p',
   '.entity-result__secondary-subtitle',
   '.search-result__result-meta',
   '.linked-area .t-12.t-normal',
@@ -47,6 +52,8 @@ export const COMPANY_SELECTOR = [
 ].join(', ');
 
 export const PROFILE_LINK_SELECTOR = [
+  'a[data-view-name="search-result-lockup-title"][href*="/in/"]',
+  'a[href*="/in/"][data-view-name]',
   '.linked-area a[data-test-app-aware-link]:not([aria-hidden="true"])',
   'a.app-aware-link[href*="/in/"]',
   'a[href*="/in/"][data-test-app-aware-link]',

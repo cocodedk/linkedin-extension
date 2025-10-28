@@ -17,10 +17,10 @@ export function extractCompany({ card, companySummary, headline }) {
   for (const text of sources) {
     const atMatch = text.match(/\bat\s+([^•|,;:#]+)\b/i);
     if (atMatch?.[1]) return atMatch[1].trim();
-    
+
     const atSymbol = text.match(/@\s*([^•|,;:#]+)\b/);
     if (atSymbol?.[1]) return atSymbol[1].trim();
   }
-  
+
   return '';
 }

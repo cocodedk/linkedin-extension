@@ -1,9 +1,9 @@
 /**
- * Background service worker for Firefox extension
+ * Background service worker for Chrome extension
  * Handles long-running tasks that need to survive popup closure
  */
 
-import { browserApi } from './popup/browser-api.js';
+import { runtime } from './api/runtime.js';
 import {
   handleDeepScanRequest,
   handleDeepScanAllRequest,
@@ -13,7 +13,7 @@ import {
 } from './background/message-handlers.js';
 
 // Listen for messages from popup
-browserApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
+runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'START_DEEP_SCAN') {
     handleDeepScanRequest(message.searchTabId)
       .then(result => sendResponse({ success: true, leads: result }))

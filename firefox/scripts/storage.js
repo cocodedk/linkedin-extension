@@ -1,10 +1,9 @@
-const browserApi = globalThis.browser ?? globalThis.chrome;
 const LEADS_KEY = 'leads';
 const API_KEY = 'openaiApiKey';
 const LAST_AI_QUERY_KEY = 'lastAiQuery';
 
 export async function getLeads() {
-  const { [LEADS_KEY]: leads = [] } = await browserApi.storage.local.get(LEADS_KEY);
+  const { [LEADS_KEY]: leads = [] } = await chrome.storage.local.get(LEADS_KEY);
   return leads;
 }
 
@@ -25,28 +24,28 @@ export async function saveLeads(newLeads) {
   });
 
   const deduped = Array.from(map.values());
-  await browserApi.storage.local.set({ [LEADS_KEY]: deduped });
+  await chrome.storage.local.set({ [LEADS_KEY]: deduped });
   return deduped;
 }
 
 export async function clearLeads() {
-  await browserApi.storage.local.set({ [LEADS_KEY]: [] });
+  await chrome.storage.local.set({ [LEADS_KEY]: [] });
 }
 
 export async function getApiKey() {
-  const { [API_KEY]: apiKey = '' } = await browserApi.storage.local.get(API_KEY);
+  const { [API_KEY]: apiKey = '' } = await chrome.storage.local.get(API_KEY);
   return apiKey;
 }
 
 export async function setApiKey(apiKey) {
-  await browserApi.storage.local.set({ [API_KEY]: apiKey });
+  await chrome.storage.local.set({ [API_KEY]: apiKey });
 }
 
 export async function setLastAiQuery(entry) {
-  await browserApi.storage.local.set({ [LAST_AI_QUERY_KEY]: entry });
+  await chrome.storage.local.set({ [LAST_AI_QUERY_KEY]: entry });
 }
 
 export async function getLastAiQuery() {
-  const { [LAST_AI_QUERY_KEY]: entry = null } = await browserApi.storage.local.get(LAST_AI_QUERY_KEY);
+  const { [LAST_AI_QUERY_KEY]: entry = null } = await chrome.storage.local.get(LAST_AI_QUERY_KEY);
   return entry;
 }

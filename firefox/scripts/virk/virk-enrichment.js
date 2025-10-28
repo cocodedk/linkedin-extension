@@ -31,7 +31,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     // Step 1: Search for company
     const step1Start = Date.now();
     console.log(`[Virk] Step 1: Searching for "${lead.company}" in tab ${tabId}`);
-    await browser.scripting.executeScript({
+    await chrome.scripting.executeScript({
       target: { tabId },
       func: searchScript,
       args: [lead.company]
@@ -63,7 +63,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     } else {
       console.log(`[Virk] Step 3 for "${lead.company}": Clicking company filter to show results`);
       try {
-        await browser.scripting.executeScript({
+        await chrome.scripting.executeScript({
           target: { tabId },
           func: clickFilterScript
         });
@@ -80,9 +80,9 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     // Step 4: Navigate to first company (regardless of how many matches)
     const step4Start = Date.now();
-    console.log(`[Virk] Step 4 for "${lead.company}": Navigating to first result`);
+    console.log(`[Virk] Step 4: Navigating to first result for "${lead.company}"`);
     try {
-      await browser.scripting.executeScript({
+      await chrome.scripting.executeScript({
         target: { tabId },
         func: navigateScript
       });
@@ -98,7 +98,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     console.log(`[Virk] ⏱️ Step 4 for "${lead.company}" took ${Date.now() - step4Start}ms`);
 
     // Log current URL to verify we're on the detail page
-    const [urlResult] = await browser.scripting.executeScript({
+    const [urlResult] = await chrome.scripting.executeScript({
       target: { tabId },
       func: () => ({ url: window.location.href, title: document.title })
     });
@@ -107,10 +107,10 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     // Step 5: Extract company data
     const step5Start = Date.now();
-    console.log(`[Virk] Step 5 for "${lead.company}": Extracting company data`);
+    console.log(`[Virk] Step 5: Extracting company data for "${lead.company}"`);
     let dataResult;
     try {
-      [dataResult] = await browser.scripting.executeScript({
+      [dataResult] = await chrome.scripting.executeScript({
         target: { tabId },
         func: extractDataScript
       });

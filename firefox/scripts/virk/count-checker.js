@@ -20,7 +20,7 @@ export async function checkCompanyCount(tabId, companyName) {
 
   // Retry until we get a valid result or hit max retries
   while (retries < maxRetries) {
-    const [countResult] = await browser.scripting.executeScript({
+    const [countResult] = await chrome.scripting.executeScript({
       target: { tabId },
       func: getCountScript
     });
