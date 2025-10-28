@@ -22,6 +22,24 @@ export function clickLinkedInNext() {
   return { success: false, message: 'Next button not found or disabled' };
 }
 
+export function checkLinkedInNextExists() {
+  // Try data-testid selector first
+  const nextBtn = document.querySelector('button[data-testid="pagination-controls-next-button-visible"]');
+  if (nextBtn instanceof HTMLButtonElement && !nextBtn.disabled) {
+    return true;
+  }
+
+  // Fallback: Find button containing "Next" text
+  const allButtons = document.querySelectorAll('button');
+  for (const button of allButtons) {
+    if (button.textContent.includes('Next') && !button.disabled) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function clickVirkNext() {
   const pickElement = selectorList => {
     for (const selector of selectorList) {

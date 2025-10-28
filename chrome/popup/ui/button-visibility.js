@@ -35,6 +35,20 @@ export async function isOnVirk() {
 }
 
 /**
+ * Check if Deep Scan ALL is running
+ * @returns {Promise<boolean>}
+ */
+async function isDeepScanAllRunning() {
+  try {
+    const { isDeepScanAllRunning } = await chrome.storage.local.get('isDeepScanAllRunning');
+    return isDeepScanAllRunning || false;
+  } catch (error) {
+    console.error('Failed to check Deep Scan ALL status:', error);
+    return false;
+  }
+}
+
+/**
  * Update button visibility based on current context
  * @param {Object} leads - Current leads data
  */
@@ -42,10 +56,13 @@ export async function updateButtonVisibility(leads) {
   const onLinkedIn = await isOnLinkedIn();
   const onVirk = await isOnVirk();
   const hasLeads = leads && leads.length > 0;
+  const deepScanRunning = await isDeepScanAllRunning();
 
   // LinkedIn-specific buttons
   const scanBtn = document.getElementById('scan-btn');
   const scanNextBtn = document.getElementById('scan-next-btn');
+  const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
+  const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
   const openVirkBtn = document.getElementById('open-virk-btn');
   const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
 
@@ -57,6 +74,16 @@ export async function updateButtonVisibility(leads) {
   if (scanNextBtn) scanNextBtn.style.display = onLinkedIn ? '' : 'none';
   if (openVirkBtn) openVirkBtn.style.display = onLinkedIn ? '' : 'none';
   if (generateAiQueryBtn) generateAiQueryBtn.style.display = onLinkedIn ? '' : 'none';
+
+  // Show Deep Scan ALL button only on LinkedIn and when NOT running
+  if (deepScanAllBtn) {
+    deepScanAllBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
+  }
+
+  // Show Stop Deep Scan button only when running
+  if (stopDeepScanAllBtn) {
+    stopDeepScanAllBtn.style.display = deepScanRunning ? '' : 'none';
+  }
 
   // Show Virk enrichment button when on datacvr.virk.dk OR when has leads (but not on other virk.dk pages)
   if (enrichVirkBtn) {

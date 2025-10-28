@@ -14,13 +14,17 @@ import {
   handleClearLeads,
   handleSaveApiKey,
   handleEvaluate,
-  handleGenerateAiQuery
+  handleGenerateAiQuery,
+  handleDeepScanAll,
+  handleStopDeepScanAll
 } from './popup/handlers.js';
 import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
 const scanNextBtn = document.getElementById('scan-next-btn');
+const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
+const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 const openVirkBtn = document.getElementById('open-virk-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
@@ -39,6 +43,8 @@ scanBtn.addEventListener('click', () => {
   handleScan();
 });
 scanNextBtn.addEventListener('click', handleScanNext);
+deepScanAllBtn.addEventListener('click', handleDeepScanAll);
+stopDeepScanAllBtn.addEventListener('click', handleStopDeepScanAll);
 openVirkBtn.addEventListener('click', () => {
   chrome.tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
