@@ -138,16 +138,22 @@ export async function clickNextButton() {
       const hostname = window.location.hostname;
 
       if (hostname.includes('linkedin.com')) {
-        const nextButtons = document.querySelectorAll('span.artdeco-button__text');
-        for (const span of nextButtons) {
-          if (span.textContent.trim() === 'Next') {
-            const button = span.closest('button');
-            if (button instanceof HTMLButtonElement && !button.disabled) {
-              button.click();
-              return { success: true };
-            }
+        // Try data-testid selector first
+        const nextBtn = document.querySelector('button[data-testid="pagination-controls-next-button-visible"]');
+        if (nextBtn instanceof HTMLButtonElement && !nextBtn.disabled) {
+          nextBtn.click();
+          return { success: true };
+        }
+
+        // Fallback: Find button containing "Next" text
+        const allButtons = document.querySelectorAll('button');
+        for (const button of allButtons) {
+          if (button.textContent.includes('Next') && !button.disabled) {
+            button.click();
+            return { success: true };
           }
         }
+
         return { success: false, message: 'Next button not found or disabled' };
       }
 

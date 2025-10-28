@@ -4,52 +4,44 @@
  */
 
 export function getProfileLinksScript() {
-  // XPaths must be inlined - executeScript can't access external constants
-  const XPATHS = {
-    list: '/html/body/div[7]/div[3]/div[2]/div/div[1]/main/div/div/div/div/ul',
-    name: '/div/div/div/div[2]/div[1]/div[1]/div/span[1]/span/a/span/span[1]',
-    link: '/div/div/div/div[2]/div[1]/div[1]/div/span[1]/span/a'
-  };
-
   console.log('[Deep Scan] Starting profile extraction...');
   const profiles = [];
 
-  const listItems = document.evaluate(
-    `${XPATHS.list}/li`, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null
-  );
+  // Use CSS selectors that match new LinkedIn structure
+  const cardSelector = 'a[href*="/in/"][componentkey][tabindex]';
+  const cards = document.querySelectorAll(cardSelector);
 
-  console.log(`[Deep Scan] Found ${listItems.snapshotLength} list items`);
+  console.log(`[Deep Scan] Found ${cards.length} profile cards`);
 
-  for (let i = 0; i < listItems.snapshotLength; i++) {
-    const index = i + 1;
+  cards.forEach((card, index) => {
     try {
-      const nameNode = document.evaluate(
-        `${XPATHS.list}/li[${index}]${XPATHS.name}`,
-        document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
-      ).singleNodeValue;
+      const profileUrl = card.href;
 
-      const linkNode = document.evaluate(
-        `${XPATHS.list}/li[${index}]${XPATHS.link}`,
-        document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
-      ).singleNodeValue;
+      // Try to get name from link with data-view-name
+      let name = '';
+      const nameLink = card.querySelector('a[data-view-name="search-result-lockup-title"]');
+      if (nameLink) {
+        name = nameLink.textContent.trim();
+      }
 
-      if (nameNode && linkNode) {
-        const name = nameNode.textContent.trim();
-        const url = linkNode.href;
-        if (name && url && url.includes('/in/')) {
-          profiles.push({ name, profileUrl: url });
-          console.log(`[Deep Scan] Added profile ${i + 1}: ${name}`);
+      // Fallback to image alt
+      if (!name) {
+        const img = card.querySelector('img[alt][src*="profile-displayphoto"]');
+        if (img) {
+          name = img.getAttribute('alt').trim();
         }
+      }
+
+      if (name && profileUrl && profileUrl.includes('/in/')) {
+        profiles.push({ name, profileUrl });
+        console.log(`[Deep Scan] Added profile ${index + 1}: ${name}`);
       } else {
-        console.warn(`[Deep Scan] Missing data at index ${index}:`, {
-          nameNode: !!nameNode,
-          linkNode: !!linkNode
-        });
+        console.warn(`[Deep Scan] Missing data at index ${index}:`, { name, profileUrl });
       }
     } catch (error) {
       console.error(`[Deep Scan] Error at ${index}:`, error);
     }
-  }
+  });
 
   console.log(`[Deep Scan] Extracted ${profiles.length} profiles`);
   return profiles;
