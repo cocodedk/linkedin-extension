@@ -11,20 +11,14 @@ export function scrapeLinkedInResults() {
     cardCount: 0,
     leadsBeforeFilter: 0,
     leadsAfterFilter: 0,
-    missingProfileUrl: 0,
-    selector: CARD_SELECTOR
+    missingProfileUrl: 0
   };
 
   const cards = document.querySelectorAll(CARD_SELECTOR);
   debugInfo.cardCount = cards.length;
 
-  console.log('[LinkedIn Scraper] Cards found:', cards.length);
-  console.log('[LinkedIn Scraper] Using selector:', CARD_SELECTOR);
-
   const rawLeads = Array.from(cards).map(scrapeCard);
   debugInfo.leadsBeforeFilter = rawLeads.length;
-
-  console.log('[LinkedIn Scraper] Raw leads:', rawLeads);
 
   const leads = rawLeads.filter((lead) => {
     const hasUrl = PROFILE_URL_PATTERNS.some((p) => p.test(lead.profileUrl));
@@ -33,11 +27,9 @@ export function scrapeLinkedInResults() {
   });
 
   debugInfo.leadsAfterFilter = leads.length;
-  console.log('[LinkedIn Scraper] Filtered leads:', leads.length);
 
   // Profile page fallback
   if (leads.length === 0) {
-    console.log('[LinkedIn Scraper] No leads found, using profile page fallback');
     return {
       leads: [scrapeProfilePage()],
       debugInfo
