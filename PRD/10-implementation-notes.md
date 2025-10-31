@@ -4,7 +4,7 @@
 
 ### Modular Architecture
 
-Both Chrome and Firefox extensions have been refactored into modular components following SOLID principles:
+The Chrome extension has been refactored into modular components following SOLID principles:
 
 **Chrome Structure:**
 ```
@@ -32,29 +32,12 @@ chrome/
       virk-search.js      # Search and navigation logic
 ```
 
-**Firefox Structure:**
-```
-firefox/
-  popup.js              # Main orchestration (45 lines)
-  popup.html            # Compact popup UI
-  popup.css             # Shared styling with Chrome
-  leads.html            # Full-page tab view
-  leads.css             # Full-page styling
-  leads.js              # Full-page controller
-  popup/
-    browser-api.js      # Cross-browser compatibility layer (~5 lines)
-    ui.js               # UI rendering (shared with Chrome)
-    browser-utils.js    # Firefox extension API utilities (~73 lines)
-    handlers.js         # Event handler business logic (shared with Chrome)
-  scripts/              # Same as Chrome
-```
-
 ### Key Design Patterns
 
 1. **Separation of Concerns**
    - UI rendering isolated in `ui.js`
    - Business logic in `handlers.js`
-   - Browser API interactions in `chrome-utils.js` / `browser-utils.js`
+   - Browser API interactions in `chrome-utils.js`
 
 2. **Reusability**
    - Shared handlers between popup and full-page views
@@ -83,11 +66,7 @@ Added `leads.html` as a standalone tab view that:
 
 **Opening Tab:**
 ```javascript
-// Chrome
 chrome.tabs.create({ url: chrome.runtime.getURL('leads.html') });
-
-// Firefox (cross-browser)
-browserApi.tabs.create({ url: browserApi.runtime.getURL('leads.html') });
 ```
 
 **Shared Modules:**
@@ -123,7 +102,7 @@ The AI-assisted search feature from RFC 09 is now implemented:
 **Key Files:**
 - `scripts/ai-query.js` - AI query generation service
 - `popup/handlers.js` - `handleGenerateAiQuery()` function
-- `popup/chrome-utils.js` / `browser-utils.js` - `injectQueryIntoLinkedIn()` function
+- `popup/chrome-utils.js` - `injectQueryIntoLinkedIn()` function
 
 ## Deep Scan Implementation (Fixed)
 
@@ -132,7 +111,6 @@ The deep scan feature opens individual LinkedIn profiles to extract accurate com
 **Key Implementation Files:**
 - `chrome/background/deep-scan-worker.js` - Background worker for parallel profile processing
 - `chrome/popup/handlers/scan-deep-scripts.js` - Content scripts for data extraction
-- `firefox/background/deep-scan-worker.js` - Firefox version (same logic, uses `browser` API)
 
 **Company Extraction Strategy (Triple Fallback):**
 1. **aria-label method** (most stable): Extract from `button[aria-label*="Current company:"]`
