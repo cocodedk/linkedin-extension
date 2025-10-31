@@ -2,6 +2,7 @@
  * Virk.dk enrichment handler - triggers background worker
  */
 
+import { runtime } from '../../api/runtime.js';
 import { getLeads } from '../../scripts/storage.js';
 import { setStatus } from '../ui.js';
 
@@ -23,7 +24,7 @@ export async function handleEnrichWithVirk() {
 
   try {
     // Send message to background worker
-    chrome.runtime.sendMessage(
+    runtime.sendMessage(
       { type: 'START_VIRK_ENRICHMENT' },
       (response) => {
         if (response && response.success) {

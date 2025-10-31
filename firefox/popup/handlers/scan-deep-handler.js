@@ -2,6 +2,8 @@
  * Deep scan handler - visits each profile for accurate company data
  */
 
+import { tabs } from '../../api/tabs.js';
+import { runtime } from '../../api/runtime.js';
 import { saveLeads } from '../../scripts/storage.js';
 import { setStatus, renderLeads } from '../ui.js';
 import {
@@ -19,7 +21,7 @@ export async function handleDeepScan() {
 
   try {
     // Get active tab
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await tabs.query({ active: true, currentWindow: true });
 
     if (!tab.url.includes('linkedin.com/search/results')) {
       setStatus('Please navigate to LinkedIn search results first', 'warning');
@@ -29,7 +31,7 @@ export async function handleDeepScan() {
     // Send message to background worker
     setStatus('Deep scan running in background. You can close this popup.');
 
-    chrome.runtime.sendMessage(
+    runtime.sendMessage(
       { type: 'START_DEEP_SCAN', searchTabId: tab.id },
       (response) => {
         if (response.success) {

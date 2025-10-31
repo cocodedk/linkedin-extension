@@ -8,7 +8,8 @@
  */
 async function getCurrentTabUrl() {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const { tabs } = await import('../../api/tabs.js');
+    const [tab] = await tabs.query({ active: true, currentWindow: true });
     return tab?.url || null;
   } catch (error) {
     console.error('Failed to get current tab URL:', error);

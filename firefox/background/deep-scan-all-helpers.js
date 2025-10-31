@@ -32,7 +32,7 @@ export async function clickNextButton(tabId) {
     target: { tabId },
     func: clickLinkedInNext
   });
-  
+
   if (!result?.success) {
     throw new Error('Failed to click Next button');
   }

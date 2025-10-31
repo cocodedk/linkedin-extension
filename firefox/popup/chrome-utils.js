@@ -2,6 +2,7 @@
  * Chrome extension API utilities (orchestrator)
  */
 
+import { scripting } from '../api/scripting.js';
 import { scrapeLinkedInResults } from '../scripts/scraper.js';
 import { getActiveTabId } from './utils/tab-utils.js';
 import { injectLinkedInQuery } from './utils/linkedin-injection.js';
@@ -11,7 +12,7 @@ import { clickLinkedInNext, clickVirkNext } from './utils/pagination.js';
 export { getActiveTabId };
 
 export async function injectQueryIntoLinkedIn({ tabId, query }) {
-  const [{ result }] = await chrome.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: injectLinkedInQuery,
     args: [{ value: query }]
@@ -23,7 +24,7 @@ export async function injectQueryIntoLinkedIn({ tabId, query }) {
 }
 
 export async function injectQueryIntoVirk({ tabId, query }) {
-  const [{ result }] = await chrome.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: injectVirkQuery,
     args: [{ value: query }]
@@ -36,7 +37,7 @@ export async function injectQueryIntoVirk({ tabId, query }) {
 
 export async function scrapeActiveTab() {
   const tabId = await getActiveTabId();
-  const [{ result = {} } = {}] = await chrome.scripting.executeScript({
+  const [{ result = {} } = {}] = await scripting.executeScript({
     target: { tabId },
     func: scrapeLinkedInResults
   });
@@ -46,7 +47,7 @@ export async function scrapeActiveTab() {
 export async function clickNextButton() {
   const tabId = await getActiveTabId();
 
-  const [{ result }] = await chrome.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: clickLinkedInNext
   });
@@ -59,7 +60,7 @@ export async function clickNextButton() {
 export async function clickVirkNextButton() {
   const tabId = await getActiveTabId();
 
-  const [{ result }] = await chrome.scripting.executeScript({
+  const [{ result }] = await scripting.executeScript({
     target: { tabId },
     func: clickVirkNext
   });

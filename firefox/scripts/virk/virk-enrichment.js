@@ -1,3 +1,4 @@
+import { scripting } from '../api/scripting.js';
 /**
  * Virk.dk enrichment orchestration
  * Main logic for enriching leads with virk.dk data
@@ -31,7 +32,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     // Step 1: Search for company
     const step1Start = Date.now();
     console.log(`[Virk] Step 1: Searching for "${lead.company}" in tab ${tabId}`);
-    await chrome.scripting.executeScript({
+    await scripting.executeScript({
       target: { tabId },
       func: searchScript,
       args: [lead.company]
@@ -63,7 +64,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     } else {
       console.log(`[Virk] Step 3 for "${lead.company}": Clicking company filter to show results`);
       try {
-        await chrome.scripting.executeScript({
+        await scripting.executeScript({
           target: { tabId },
           func: clickFilterScript
         });
@@ -82,7 +83,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     const step4Start = Date.now();
     console.log(`[Virk] Step 4: Navigating to first result for "${lead.company}"`);
     try {
-      await chrome.scripting.executeScript({
+      await scripting.executeScript({
         target: { tabId },
         func: navigateScript
       });
@@ -98,7 +99,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     console.log(`[Virk] ⏱️ Step 4 for "${lead.company}" took ${Date.now() - step4Start}ms`);
 
     // Log current URL to verify we're on the detail page
-    const [urlResult] = await chrome.scripting.executeScript({
+    const [urlResult] = await scripting.executeScript({
       target: { tabId },
       func: () => ({ url: window.location.href, title: document.title })
     });
@@ -110,7 +111,7 @@ export async function enrichLeadWithVirk(lead, tabId) {
     console.log(`[Virk] Step 5: Extracting company data for "${lead.company}"`);
     let dataResult;
     try {
-      [dataResult] = await chrome.scripting.executeScript({
+      [dataResult] = await scripting.executeScript({
         target: { tabId },
         func: extractDataScript
       });

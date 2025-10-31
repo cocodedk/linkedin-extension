@@ -1,3 +1,5 @@
+import { scripting } from '../api/scripting.js';
+import { tabs } from '../api/tabs.js';
 /**
  * Process individual LinkedIn profiles
  */
@@ -10,7 +12,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 export async function processProfile(profile, extractCompanyScript, extractProfileDataScript) {
   let profileTab;
   try {
-    profileTab = await chrome.tabs.create({
+    profileTab = await tabs.create({
       url: profile.profileUrl,
       active: false
     });
@@ -19,18 +21,18 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
     await sleep(4000);
 
     // Extract company (no longer needs click/wait for overlay)
-    const [companyResult] = await chrome.scripting.executeScript({
+    const [companyResult] = await scripting.executeScript({
       target: { tabId: profileTab.id },
       func: extractCompanyScript
     });
 
     // Extract headline and location
-    const [profileData] = await chrome.scripting.executeScript({
+    const [profileData] = await scripting.executeScript({
       target: { tabId: profileTab.id },
       func: extractProfileDataScript
     });
 
-    await chrome.tabs.remove(profileTab.id);
+    await tabs.remove(profileTab.id);
 
     const data = profileData.result || {};
     const company = companyResult.result || '';
@@ -41,7 +43,7 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
     console.error(`Error processing ${profile.name}:`, error);
     if (profileTab) {
       try {
-        await chrome.tabs.remove(profileTab.id);
+        await tabs.remove(profileTab.id);
       } catch (e) {
         // Tab may already be closed
       }

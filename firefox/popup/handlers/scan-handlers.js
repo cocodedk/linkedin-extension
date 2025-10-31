@@ -2,6 +2,8 @@
  * Scan and view handlers
  */
 
+import { tabs } from '../../api/tabs.js';
+import { runtime } from '../../api/runtime.js';
 import { getLeads, saveLeads } from '../../scripts/storage.js';
 import { setStatus, renderLeads } from '../ui.js';
 import { scrapeActiveTab, clickNextButton } from '../chrome-utils.js';
@@ -10,7 +12,7 @@ export async function handleScan() {
   setStatus('Starting deep scan in background...');
   try {
     // Get active tab
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await tabs.query({ active: true, currentWindow: true });
 
     if (!tab.url.includes('linkedin.com/search/results')) {
       setStatus('Please navigate to LinkedIn search results first', 'warning');
@@ -20,7 +22,7 @@ export async function handleScan() {
     // Send message to background worker for deep scan
     setStatus('Deep scan running in background. Popup will close.');
 
-    chrome.runtime.sendMessage(
+    runtime.sendMessage(
       { type: 'START_DEEP_SCAN', searchTabId: tab.id },
       (response) => {
         if (response && response.success) {

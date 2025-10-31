@@ -1,3 +1,4 @@
+import { scripting } from '../api/scripting.js';
 /**
  * Company count checker with retry logic
  * Handles delayed page loading on Virk.dk
@@ -20,7 +21,7 @@ export async function checkCompanyCount(tabId, companyName) {
 
   // Retry until we get a valid result or hit max retries
   while (retries < maxRetries) {
-    const [countResult] = await chrome.scripting.executeScript({
+    const [countResult] = await scripting.executeScript({
       target: { tabId },
       func: getCountScript
     });

@@ -1,3 +1,5 @@
+import { downloads } from '../api/downloads.js';
+
 const HEADERS = [
   'name', 'headline', 'company', 'contact', 'location', 'profileUrl',
   'aiScore', 'aiReasons', 'aiFitSummary',
@@ -27,7 +29,7 @@ export async function triggerDownload({ filename, mimeType, content }) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
 
-  await chrome.downloads.download({
+  await downloads.download({
     url,
     filename,
     saveAs: true

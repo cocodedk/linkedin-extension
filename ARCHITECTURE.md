@@ -107,6 +107,28 @@ import { downloads } from '../../api/downloads.js';
 await downloads.download({ url, filename });
 ```
 
+## Important: Manifest Differences
+
+### Background Scripts
+
+**Chrome (MV3):**
+```json
+"background": {
+  "service_worker": "background.js",
+  "type": "module"
+}
+```
+
+**Firefox (MV3):**
+```json
+"background": {
+  "scripts": ["background.js"],
+  "type": "module"
+}
+```
+
+Firefox MV3 still uses the `scripts` array format (not `service_worker`). This is the main manifest difference between browsers.
+
 ## Files That Are Browser-Specific
 
 ### Never Copy These:

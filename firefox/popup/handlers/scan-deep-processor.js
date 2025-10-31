@@ -2,6 +2,8 @@
  * Profile processing logic for deep scan
  */
 
+import { tabs } from '../../api/tabs.js';
+import { scripting } from '../../api/scripting.js';
 import {
   extractCompanyScript,
   extractProfileDataScript
@@ -20,7 +22,7 @@ export async function processProfile(profile, index, total, setStatus) {
 
   try {
     // Open profile in new tab (background)
-    const profileTab = await chrome.tabs.create({
+    const profileTab = await tabs.create({
       url: profile.profileUrl,
       active: false
     });
@@ -29,7 +31,7 @@ export async function processProfile(profile, index, total, setStatus) {
     await sleep(3000);
 
     // Extract company from profile overlay
-    const [companyResult] = await chrome.scripting.executeScript({
+    const [companyResult] = await scripting.executeScript({
       target: { tabId: profileTab.id },
       func: extractCompanyScript
     });
@@ -37,7 +39,7 @@ export async function processProfile(profile, index, total, setStatus) {
     const company = companyResult.result || '';
 
     // Get additional profile data
-    const [profileData] = await chrome.scripting.executeScript({
+    const [profileData] = await scripting.executeScript({
       target: { tabId: profileTab.id },
       func: extractProfileDataScript
     });
@@ -45,7 +47,7 @@ export async function processProfile(profile, index, total, setStatus) {
     const data = profileData.result || {};
 
     // Close the profile tab
-    await chrome.tabs.remove(profileTab.id);
+    await tabs.remove(profileTab.id);
 
     return {
       name: profile.name,

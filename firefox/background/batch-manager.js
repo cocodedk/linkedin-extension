@@ -1,3 +1,5 @@
+import { scripting } from '../api/scripting.js';
+import { runtime } from '../api/runtime.js';
 /**
  * Manages batch processing for Virk enrichment
  * Creates fresh tabs, processes leads, closes tabs
@@ -34,7 +36,7 @@ export async function processBatch(batch, batchNum, totalBatches) {
 
       // Execute script to set up page context that might avoid bot detection
       try {
-        await chrome.scripting.executeScript({
+        await scripting.executeScript({
           target: { tabId },
           func: () => {
             // Set up window properties that might be expected by the site

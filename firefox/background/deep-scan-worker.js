@@ -1,3 +1,4 @@
+import { scripting } from '../api/scripting.js';
 /**
  * Deep scan background worker - orchestrates profile extraction
  */
@@ -19,7 +20,7 @@ export async function runDeepScanInBackground(searchTabId) {
   console.log('Starting deep scan in background...');
 
   // Step 1: Get all profile links from search results
-  const [profilesResult] = await chrome.scripting.executeScript({
+  const [profilesResult] = await scripting.executeScript({
     target: { tabId: searchTabId },
     func: getProfileLinksScript
   });
