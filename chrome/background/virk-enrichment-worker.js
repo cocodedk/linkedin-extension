@@ -5,8 +5,7 @@
 
 import { getLeads, saveLeads } from '../scripts/storage.js';
 import { processBatch } from './batch-manager.js';
-
-const PARALLEL_TABS = 1;  // Process one lead at a time for debugging
+import { getSettings } from '../scripts/settings.js';
 
 /**
  * Run Virk enrichment in background
@@ -14,6 +13,15 @@ const PARALLEL_TABS = 1;  // Process one lead at a time for debugging
  */
 export async function runVirkEnrichmentInBackground() {
   console.log('🚀 [Background] Starting Virk enrichment...');
+
+  const { virk } = await getSettings();
+  const parallelTabs = virk.parallelTabs;
+  const timingOverrides = {
+    searchDelay: virk.searchDelayMs,
+    navigationDelay: virk.navigationDelayMs,
+    pageLoadDelay: virk.pageLoadDelayMs
+  };
+  console.log(`[Background] Settings -> parallelTabs:${parallelTabs}, warmup:${virk.tabWarmupDelayMs}ms, searchDelay:${timingOverrides.searchDelay}ms, navigationDelay:${timingOverrides.navigationDelay}ms, pageLoadDelay:${timingOverrides.pageLoadDelay}ms`);
 
   const leads = await getLeads();
   console.log(`[Background] Loaded ${leads.length} leads from storage`);
@@ -36,13 +44,16 @@ export async function runVirkEnrichmentInBackground() {
   console.log(`[Background] Starting to process ${leadsToEnrich.length} leads...`);
 
   // Process in parallel batches
-  for (let i = 0; i < leadsToEnrich.length; i += PARALLEL_TABS) {
-    const batch = leadsToEnrich.slice(i, i + PARALLEL_TABS);
-    const batchNum = Math.floor(i / PARALLEL_TABS) + 1;
-    const totalBatches = Math.ceil(leadsToEnrich.length / PARALLEL_TABS);
+  for (let i = 0; i < leadsToEnrich.length; i += parallelTabs) {
+    const batch = leadsToEnrich.slice(i, i + parallelTabs);
+    const batchNum = Math.floor(i / parallelTabs) + 1;
+    const totalBatches = Math.ceil(leadsToEnrich.length / parallelTabs);
 
     try {
-      const results = await processBatch(batch, batchNum, totalBatches);
+      const results = await processBatch(batch, batchNum, totalBatches, {
+        tabWarmupDelayMs: virk.tabWarmupDelayMs,
+        timing: timingOverrides
+      });
 
       results.forEach(({ enriched, index }) => {
         enrichedLeads[index] = enriched;

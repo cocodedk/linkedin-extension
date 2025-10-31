@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinkedIn Lead Exporter Settings</title>
+    <link rel="stylesheet" href="settings-page.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>LinkedIn Lead Exporter Settings</h1>
+      <div class="header-actions">
+        <button id="open-popup-btn" type="button">🔙 Open Popup</button>
+        <button id="open-leads-btn" type="button">📋 View Leads</button>
+      </div>
+    </header>
+    <main>
+      <section class="settings-panel">
+        <h2>Credentials</h2>
+        <div class="settings-row">
+          <label>
+            OpenAI API Key
+            <input id="api-key" type="password" placeholder="sk-..." autocomplete="off" />
+          </label>
+          <button id="save-api-key-btn" type="button">💾 Save Key</button>
+        </div>
+      </section>
+
+      <section class="settings-panel">
+        <h2>Automation Settings</h2>
+        <p class="settings-summary">
+          Tune delays and concurrency to balance speed with LinkedIn safety.
+        </p>
+        <form id="settings-form" class="settings-form">
+          <fieldset>
+            <legend>Deep Scan</legend>
+            <div class="settings-grid">
+              <label for="setting-deep-scan-profile-delay">
+                Profile Load Delay (ms)
+                <input
+                  id="setting-deep-scan-profile-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-deep-scan-batch-size">
+                Parallel Profile Tabs
+                <input
+                  id="setting-deep-scan-batch-size"
+                  type="number"
+                  min="1"
+                  max="10"
+                  step="1"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-deep-scan-batch-delay">
+                Delay Between Batches (ms)
+                <input
+                  id="setting-deep-scan-batch-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Deep Scan ALL</legend>
+            <div class="settings-grid">
+              <label for="setting-deep-scan-all-max-pages">
+                Max Pages
+                <input
+                  id="setting-deep-scan-all-max-pages"
+                  type="number"
+                  min="1"
+                  max="500"
+                  step="1"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-deep-scan-all-page-delay">
+                Delay Between Pages (ms)
+                <input
+                  id="setting-deep-scan-all-page-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Virk Enrichment</legend>
+            <div class="settings-grid">
+              <label for="setting-virk-parallel-tabs">
+                Parallel Virk Tabs
+                <input
+                  id="setting-virk-parallel-tabs"
+                  type="number"
+                  min="1"
+                  max="10"
+                  step="1"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-virk-warmup-delay">
+                Tab Warmup Delay (ms)
+                <input
+                  id="setting-virk-warmup-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-virk-search-delay">
+                Search Delay (ms)
+                <input
+                  id="setting-virk-search-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-virk-navigation-delay">
+                Navigation Delay (ms)
+                <input
+                  id="setting-virk-navigation-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-virk-page-load-delay">
+                Detail Page Delay (ms)
+                <input
+                  id="setting-virk-page-load-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="settings-actions">
+            <button id="reset-settings-btn" type="button">♻️ Reset Defaults</button>
+            <button id="save-settings-btn" type="submit">✅ Save Settings</button>
+          </div>
+        </form>
+      </section>
+
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <script type="module" src="settings-page.js"></script>
+  </body>
+</html>

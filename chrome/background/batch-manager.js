@@ -12,14 +12,21 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  * @param {Array} batch - Array of {lead, index} objects
  * @param {number} batchNum - Current batch number
  * @param {number} totalBatches - Total number of batches
+ * @param {Object} [options]
+ * @param {number} [options.tabWarmupDelayMs=10000]
+ * @param {Object} [options.timing]
  * @returns {Promise<Array>} Array of {enriched, index} results
  */
-export async function processBatch(batch, batchNum, totalBatches) {
+export async function processBatch(batch, batchNum, totalBatches, options = {}) {
   console.log(`\n📦 [Background] Processing batch ${batchNum}/${totalBatches} (${batch.length} leads)...`);
   console.log(`[Background] Batch contains:`, batch.map(b => `${b.lead.name} (${b.lead.company})`));
 
   // Create fresh tabs for this batch
   console.log(`[Background] Creating ${batch.length} fresh Virk.dk tabs...`);
+
+  const warmupDelay = Number.isFinite(options.tabWarmupDelayMs) && options.tabWarmupDelayMs >= 0
+    ? options.tabWarmupDelayMs
+    : 10000;
 
   const batchWindows = await Promise.all(
     batch.map(async () => {
@@ -61,17 +68,21 @@ export async function processBatch(batch, batchNum, totalBatches) {
   console.log(`[Background] Created windows:`, batchWindows.map(w => `window:${w.windowId}, tab:${w.tabId}`));
 
   // Wait for pages to load and JavaScript to initialize
-  await sleep(10000); // Increased wait time for JS initialization
+  if (warmupDelay > 0) {
+    await sleep(warmupDelay);
+  }
 
   // Minimize windows after initialization to avoid UI clutter
   await Promise.all(batchWindows.map(({ windowId }) => chrome.windows.update(windowId, { state: 'minimized' })));
+
+  const enrichmentOptions = options.timing ? { timing: options.timing } : undefined;
 
   try {
     // Process batch in parallel
     const results = await Promise.all(
       batch.map(({ lead, index }, batchIdx) => {
         console.log(`[Background] Assigning lead "${lead.name}" to window ${batchWindows[batchIdx].windowId}, tab ${batchWindows[batchIdx].tabId}`);
-        return enrichLeadWithVirk(lead, batchWindows[batchIdx].tabId)
+        return enrichLeadWithVirk(lead, batchWindows[batchIdx].tabId, enrichmentOptions)
           .then(enriched => {
             console.log(`[Background] Lead "${lead.name}" enrichment complete: ${enriched.virkEnriched ? '✅ Success' : '❌ Failed'}`);
             return { enriched, index };

@@ -9,6 +9,7 @@ import {
 } from '../popup/handlers/scan-deep-scripts.js';
 import { processProfile } from './profile-processor.js';
 import { processBatches } from './batch-processor.js';
+import { getSettings } from '../scripts/settings.js';
 
 /**
  * Run deep scan in background
@@ -17,6 +18,9 @@ import { processBatches } from './batch-processor.js';
  */
 export async function runDeepScanInBackground(searchTabId) {
   console.log('Starting deep scan in background...');
+
+  const { deepScan } = await getSettings();
+  console.log(`Deep Scan: Settings -> batchSize:${deepScan.batchSize}, batchDelay:${deepScan.batchDelayMs}ms, profileDelay:${deepScan.profileLoadDelayMs}ms`);
 
   // Step 1: Get all profile links from search results
   const [profilesResult] = await chrome.scripting.executeScript({
@@ -34,9 +38,14 @@ export async function runDeepScanInBackground(searchTabId) {
 
   // Step 2: Process profiles in parallel batches
   const processProfileWithScripts = (profile) =>
-    processProfile(profile, extractCompanyScript, extractProfileDataScript);
+    processProfile(profile, extractCompanyScript, extractProfileDataScript, {
+      profileLoadDelayMs: deepScan.profileLoadDelayMs
+    });
 
-  const leads = await processBatches(profiles, processProfileWithScripts, 2);  // Process 2 profiles at a time
+  const leads = await processBatches(profiles, processProfileWithScripts, {
+    batchSize: deepScan.batchSize,
+    batchDelayMs: deepScan.batchDelayMs
+  });
 
   console.log(`Deep scan complete! Processed ${leads.length} leads`);
   return leads;

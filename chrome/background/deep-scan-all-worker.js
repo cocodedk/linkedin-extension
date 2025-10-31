@@ -17,8 +17,6 @@ import {
   getStatusFromStorage
 } from './deep-scan-all-state.js';
 import {
-  MAX_PAGES,
-  PAGE_DELAY_MS,
   updateBadge,
   clearBadge,
   checkNextButtonExists,
@@ -30,17 +28,22 @@ import {
   handleFailure,
   processPage
 } from './deep-scan-all-helpers.js';
+import { getSettings } from '../scripts/settings.js';
 
 export async function runDeepScanAllInBackground(searchTabId) {
   console.log('Deep Scan ALL: Starting...');
+  const { deepScanAll } = await getSettings();
+  const maxPages = deepScanAll.maxPages;
+  const pageDelayMs = deepScanAll.pageDelayMs;
+  console.log(`Deep Scan ALL: Settings -> maxPages:${maxPages}, pageDelay:${pageDelayMs}ms`);
   initState(searchTabId);
   await saveStateToStorage();
   await updateBadge(state.currentPage);
-  await showStartNotification();
+  await showStartNotification(maxPages);
 
   try {
-    while (state.isRunning && state.currentPage <= MAX_PAGES) {
-      console.log(`Deep Scan ALL: Processing page ${state.currentPage}/${MAX_PAGES}`);
+    while (state.isRunning && state.currentPage <= maxPages) {
+      console.log(`Deep Scan ALL: Processing page ${state.currentPage}/${maxPages}`);
       try {
         const totalCount = await processPage(searchTabId, runDeepScanInBackground, getLeads, saveLeads);
         updateLeadCount(totalCount);
@@ -54,11 +57,11 @@ export async function runDeepScanAllInBackground(searchTabId) {
         }
       }
       await updateBadge(state.currentPage);
-      if (state.currentPage >= MAX_PAGES || !state.isRunning) break;
+      if (state.currentPage >= maxPages || !state.isRunning) break;
       const hasNext = await checkNextButtonExists(searchTabId);
       if (!hasNext) break;
       await clickNextButton(searchTabId);
-      await sleep(PAGE_DELAY_MS);
+      await sleep(pageDelayMs);
       incrementPage();
       await saveStateToStorage();
     }

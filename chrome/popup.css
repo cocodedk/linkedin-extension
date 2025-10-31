@@ -12,3 +12,24 @@
 @import url('styles/cards.css');
 @import url('styles/table.css');
 @import url('styles/responsive.css');
+
+.settings-shortcut {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px;
+  padding: 12px;
+  background: var(--elev);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+}
+
+.settings-shortcut button {
+  align-self: flex-start;
+}
+
+.settings-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}

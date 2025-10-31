@@ -7,7 +7,13 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 /**
  * Process profiles in parallel batches
  */
-export async function processBatches(profiles, processProfileFn, batchSize = 3) {
+export async function processBatches(profiles, processProfileFn, options = {}) {
+  const batchSize = Number.isFinite(options.batchSize) && options.batchSize > 0
+    ? options.batchSize
+    : 3;
+  const batchDelayMs = Number.isFinite(options.batchDelayMs) && options.batchDelayMs >= 0
+    ? options.batchDelayMs
+    : 3000;
   const leads = [];
 
   for (let i = 0; i < profiles.length; i += batchSize) {
@@ -22,7 +28,10 @@ export async function processBatches(profiles, processProfileFn, batchSize = 3) 
     );
 
     leads.push(...batchResults);
-    await sleep(3000); // Rate limit between batches
+    const hasMoreBatches = i + batchSize < profiles.length;
+    if (hasMoreBatches && batchDelayMs > 0) {
+      await sleep(batchDelayMs); // Rate limit between batches
+    }
   }
 
   return leads;

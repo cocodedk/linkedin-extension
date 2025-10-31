@@ -16,7 +16,7 @@ export async function handleEvaluate(evaluateBtn, apiKeyInput) {
   const apiKey = (await getApiKey()).trim();
   if (!apiKey) {
     setStatus('Add your OpenAI API key first.', 'warning');
-    apiKeyInput.focus();
+    if (apiKeyInput) apiKeyInput.focus();
     return;
   }
 
@@ -48,4 +48,3 @@ export async function handleEvaluate(evaluateBtn, apiKeyInput) {
     evaluateBtn.classList.remove('evaluating');
   }
 }
-

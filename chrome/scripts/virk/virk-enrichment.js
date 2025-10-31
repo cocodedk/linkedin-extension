@@ -3,7 +3,7 @@
  * Main logic for enriching leads with virk.dk data
  */
 
-import { TIMING } from './virk-selectors.js';
+import { TIMING as DEFAULT_TIMING } from './virk-selectors.js';
 import {
   searchScript,
   clickFilterScript,
@@ -18,7 +18,11 @@ import { checkCompanyCount } from './count-checker.js';
  * @param {number} tabId - Tab ID of virk.dk page
  * @returns {Promise<Object>} Enriched lead object
  */
-export async function enrichLeadWithVirk(lead, tabId) {
+export async function enrichLeadWithVirk(lead, tabId, options = {}) {
+  const timing = {
+    ...DEFAULT_TIMING,
+    ...(options.timing || {})
+  };
   const startTime = Date.now();
   console.log(`[Virk] ⏱️ Starting enrichment for: ${lead.name} (${lead.company})`);
 
@@ -39,8 +43,8 @@ export async function enrichLeadWithVirk(lead, tabId) {
 
     console.log(`[Virk] ⏱️ Step 1 took ${Date.now() - step1Start}ms`);
     const sleepStart = Date.now();
-    await sleep(TIMING.searchDelay);
-    console.log(`[Virk] ⏱️ Search delay: ${Date.now() - sleepStart}ms (configured: ${TIMING.searchDelay}ms)`);
+    await sleep(timing.searchDelay);
+    console.log(`[Virk] ⏱️ Search delay: ${Date.now() - sleepStart}ms (configured: ${timing.searchDelay}ms)`);
 
     // Step 2: Check company count with retry (page might still be loading)
     const step2Start = Date.now();
@@ -73,8 +77,8 @@ export async function enrichLeadWithVirk(lead, tabId) {
         throw error;
       }
       const navSleepStart = Date.now();
-      await sleep(TIMING.navigationDelay);
-      console.log(`[Virk] ⏱️ Navigation delay: ${Date.now() - navSleepStart}ms (configured: ${TIMING.navigationDelay}ms)`);
+      await sleep(timing.navigationDelay);
+      console.log(`[Virk] ⏱️ Navigation delay: ${Date.now() - navSleepStart}ms (configured: ${timing.navigationDelay}ms)`);
     }
     console.log(`[Virk] ⏱️ Step 3 for "${lead.company}" took ${Date.now() - step3Start}ms`);
 
@@ -93,8 +97,8 @@ export async function enrichLeadWithVirk(lead, tabId) {
     }
 
     const pageSleepStart = Date.now();
-    await sleep(TIMING.pageLoadDelay);
-    console.log(`[Virk] ⏱️ Page load delay: ${Date.now() - pageSleepStart}ms (configured: ${TIMING.pageLoadDelay}ms)`);
+    await sleep(timing.pageLoadDelay);
+    console.log(`[Virk] ⏱️ Page load delay: ${Date.now() - pageSleepStart}ms (configured: ${timing.pageLoadDelay}ms)`);
     console.log(`[Virk] ⏱️ Step 4 for "${lead.company}" took ${Date.now() - step4Start}ms`);
 
     // Log current URL to verify we're on the detail page

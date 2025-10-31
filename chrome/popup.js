@@ -2,7 +2,7 @@
  * Main popup controller - orchestrates UI and event handling
  */
 
-import { getLeads, getApiKey } from './scripts/storage.js';
+import { getLeads } from './scripts/storage.js';
 import { renderLeads } from './popup/ui.js';
 import { updateButtonVisibility } from './popup/ui/button-visibility.js';
 import {
@@ -12,7 +12,6 @@ import {
   handleExportCsv,
   handleExportJson,
   handleClearLeads,
-  handleSaveApiKey,
   handleEvaluate,
   handleGenerateAiQuery,
   handleDeepScanAll,
@@ -31,11 +30,10 @@ const evaluateBtn = document.getElementById('evaluate-btn');
 const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
-const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
 const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
 const openTabBtn = document.getElementById('open-tab-btn');
-const apiKeyInput = document.getElementById('api-key');
+const openSettingsBtn = document.getElementById('open-settings-btn');
 
 // Event listeners
 scanBtn.addEventListener('click', () => {
@@ -50,13 +48,12 @@ openVirkBtn.addEventListener('click', async () => {
   tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
 viewBtn.addEventListener('click', handleViewLeads);
-evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn, apiKeyInput));
+evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn));
 enrichVirkBtn.addEventListener('click', handleEnrichWithVirk);
 exportCsvBtn.addEventListener('click', handleExportCsv);
 exportJsonBtn.addEventListener('click', handleExportJson);
-saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 clearLeadsBtn.addEventListener('click', handleClearLeads);
-generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn, apiKeyInput));
+generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(generateAiQueryBtn));
 openTabBtn.addEventListener('click', async () => {
   const { runtime } = await import('./api/runtime.js');
   const { tabs } = await import('./api/tabs.js');
@@ -73,10 +70,22 @@ openTabBtn.addEventListener('click', async () => {
   }
 });
 
+openSettingsBtn?.addEventListener('click', async () => {
+  try {
+    const [{ runtime }, { tabs }] = await Promise.all([
+      import('./api/runtime.js'),
+      import('./api/tabs.js')
+    ]);
+    const settingsUrl = runtime.getURL('settings.html');
+    await tabs.create({ url: settingsUrl });
+    window.close();
+  } catch (error) {
+    console.error('Failed to open settings page:', error);
+  }
+});
+
 // Initialize
 async function initialise() {
-  const apiKey = await getApiKey();
-  apiKeyInput.value = apiKey;
   const leads = await getLeads();
   console.log(`Popup: Loaded ${leads.length} leads from storage`);
   const enrichedCount = leads.filter(l => l.virkEnriched).length;

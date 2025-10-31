@@ -10,4 +10,3 @@ export async function handleSaveApiKey(apiKeyInput) {
   await setApiKey(apiKey);
   setStatus(apiKey ? 'API key saved.' : 'API key cleared.', 'success');
 }
-

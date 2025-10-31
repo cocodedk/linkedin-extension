@@ -6,8 +6,13 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * Process a single profile - extract company and data
+ * @param {Object} options
+ * @param {number} [options.profileLoadDelayMs=4000]
  */
-export async function processProfile(profile, extractCompanyScript, extractProfileDataScript) {
+export async function processProfile(profile, extractCompanyScript, extractProfileDataScript, options = {}) {
+  const profileLoadDelayMs = Number.isFinite(options.profileLoadDelayMs)
+    ? options.profileLoadDelayMs
+    : 4000;
   let profileTab;
   try {
     profileTab = await chrome.tabs.create({
@@ -15,8 +20,8 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
       active: false
     });
 
-    // Wait for profile page to load
-    await sleep(4000);
+    // Wait for profile page to load before extracting data
+    await sleep(profileLoadDelayMs);
 
     // Extract company (no longer needs click/wait for overlay)
     const [companyResult] = await chrome.scripting.executeScript({

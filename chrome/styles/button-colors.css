@@ -68,14 +68,16 @@
 
 /* Utility actions - Gray (Open Tab, Save Key) */
 #open-tab-btn,
-#save-api-key-btn {
+#save-api-key-btn,
+#open-settings-btn {
   background: linear-gradient(180deg, #52525b, #3f3f46);
   color: #ffffff;
   box-shadow: 4px 4px 12px rgba(82, 82, 91, 0.3), -4px -4px 12px rgba(113, 113, 122, 0.1);
 }
 
 #open-tab-btn:hover:enabled,
-#save-api-key-btn:hover:enabled {
+#save-api-key-btn:hover:enabled,
+#open-settings-btn:hover:enabled {
   background: linear-gradient(180deg, #71717a, #52525b);
 }
 
