@@ -3,7 +3,7 @@
  */
 
 import { getLeads } from './scripts/storage.js';
-import { renderLeads } from './popup/ui.js';
+import { renderLeads as renderLeadsUi, setStatus } from './popup/ui.js';
 import { updateButtonVisibility } from './popup/ui/button-visibility.js';
 import {
   handleScan,
@@ -17,9 +17,12 @@ import {
   handleDeepScan,
   handleDeepScanAll,
   handleStopDeepScanAll,
-  handleConnectAutomation
+  handleConnectAutomation,
+  handleConnectAutomationAll,
+  handleStopConnectAutomation
 } from './popup/handlers.js';
 import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
+import { describeConnectFailure } from './scripts/connect/connect-automation-utils.js';
 
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
@@ -29,6 +32,8 @@ const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
 const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 const openVirkBtn = document.getElementById('open-virk-btn');
 const autoConnectBtn = document.getElementById('auto-connect-btn');
+const autoConnectAllBtn = document.getElementById('auto-connect-all-btn');
+const autoConnectStopBtn = document.getElementById('auto-connect-stop-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
 const enrichVirkBtn = document.getElementById('enrich-virk-btn');
@@ -49,7 +54,9 @@ openVirkBtn.addEventListener('click', async () => {
   const { tabs } = await import('./api/tabs.js');
   tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
-autoConnectBtn?.addEventListener('click', () => handleConnectAutomation(autoConnectBtn));
+autoConnectBtn?.addEventListener('click', () => handleConnectAutomation(autoConnectBtn, autoConnectStopBtn));
+autoConnectAllBtn?.addEventListener('click', () => handleConnectAutomationAll(autoConnectAllBtn, autoConnectStopBtn));
+autoConnectStopBtn?.addEventListener('click', () => handleStopConnectAutomation(autoConnectStopBtn));
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn));
 enrichVirkBtn.addEventListener('click', handleEnrichWithVirk);
@@ -88,6 +95,13 @@ openSettingsBtn?.addEventListener('click', async () => {
 });
 
 // Initialize
+let cachedLeads = [];
+
+function renderLeads(leads) {
+  cachedLeads = Array.isArray(leads) ? leads : [];
+  renderLeadsUi(cachedLeads);
+}
+
 async function initialise() {
   const leads = await getLeads();
   console.log(`Popup: Loaded ${leads.length} leads from storage`);
@@ -98,3 +112,39 @@ async function initialise() {
 }
 
 document.addEventListener('DOMContentLoaded', initialise);
+
+chrome.runtime.onMessage.addListener((message) => {
+  switch (message?.type) {
+    case 'AUTO_CONNECT_STARTED': {
+      const total = message.total ?? 0;
+      setStatus(`Auto Connect All started for ${total} lead(s).`, 'info');
+      updateButtonVisibility(cachedLeads).catch((error) => {
+        console.warn('Failed to update button visibility:', error);
+      });
+      break;
+    }
+    case 'AUTO_CONNECT_PROGRESS': {
+      const { lead = {}, index = 0, total = 0, result = {}, message: progressMessage } = message;
+      const name = lead.name || lead.profileUrl || `Lead ${index}`;
+      const success = Boolean(result.success);
+      const reason = success ? '' : progressMessage || describeConnectFailure(result);
+      const label = success ? 'success' : (result.reason === 'aborted' ? 'warning' : 'error');
+      const suffix = reason ? ` ${reason}` : '';
+      setStatus(`Auto connect ${success ? 'sent' : 'failed'} for ${name} (${index}/${total}).${suffix}`, label);
+      break;
+    }
+    case 'AUTO_CONNECT_COMPLETE': {
+      const summary = message.summary || {};
+      const { total = 0, successes = 0, failures = 0, cancelled = false } = summary;
+      const label = cancelled ? 'warning' : failures ? 'warning' : 'success';
+      const extra = cancelled ? ' (cancelled)' : '';
+      setStatus(`Auto Connect All finished${extra}. Successes: ${successes}/${total}, Failures: ${failures}.`, label);
+      updateButtonVisibility(cachedLeads).catch((error) => {
+        console.warn('Failed to update button visibility:', error);
+      });
+      break;
+    }
+    default:
+      break;
+  }
+});

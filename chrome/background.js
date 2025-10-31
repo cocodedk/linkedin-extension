@@ -9,7 +9,9 @@ import {
   handleDeepScanAllRequest,
   handleVirkEnrichmentRequest,
   handleStopDeepScanAllRequest,
-  handleGetDeepScanAllStatus
+  handleGetDeepScanAllStatus,
+  handleStartAutoConnectAllRequest,
+  handleStopAutoConnectAllRequest
 } from './background/message-handlers.js';
 
 // Listen for messages from popup
@@ -45,6 +47,20 @@ runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'START_VIRK_ENRICHMENT') {
     handleVirkEnrichmentRequest()
       .then(result => sendResponse({ success: true, result }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  if (message.type === 'START_AUTO_CONNECT_ALL') {
+    handleStartAutoConnectAllRequest()
+      .then(summary => sendResponse({ success: true, total: summary.total }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
+  if (message.type === 'STOP_AUTO_CONNECT_ALL') {
+    handleStopAutoConnectAllRequest()
+      .then(result => sendResponse({ success: true, stopped: result.stopped }))
       .catch(error => sendResponse({ success: false, error: error.message }));
     return true;
   }

@@ -3,8 +3,48 @@
  * Designed to be executed via chrome.scripting.executeScript.
  */
 
+const ABORT_FLAG = '__linkedinConnectAbortRequested';
+
+function isAbortRequested() {
+  return Boolean(window[ABORT_FLAG]);
+}
+
+function ensureNotAborted() {
+  if (isAbortRequested()) {
+    const error = new Error('abort-requested');
+    error.name = 'AbortError';
+    throw error;
+  }
+}
+
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, Math.max(0, ms)));
+  const duration = Math.max(0, ms);
+  if (duration === 0) {
+    ensureNotAborted();
+    return Promise.resolve();
+  }
+
+  const step = Math.min(300, duration);
+  const start = Date.now();
+
+  return new Promise((resolve, reject) => {
+    function tick() {
+      if (isAbortRequested()) {
+        reject(new Error('abort-requested'));
+        return;
+      }
+
+      const elapsed = Date.now() - start;
+      if (elapsed >= duration) {
+        resolve();
+        return;
+      }
+
+      setTimeout(tick, Math.min(step, duration - elapsed));
+    }
+
+    tick();
+  });
 }
 
 const TOP_LEVEL_CONNECT_XPATH = '/html/body/div[7]/div[3]/div/div/div[2]/div/div/main/section[1]/div[2]/div[3]/div/button';
@@ -78,6 +118,7 @@ function labelIncludesConnect(element) {
 }
 
 async function triggerConnectFlow() {
+  ensureNotAborted();
   const directButton = getByXPath(TOP_LEVEL_CONNECT_XPATH);
 
   if (directButton && labelIncludesConnect(directButton) && !directButton.matches('[disabled],[aria-disabled="true"]')) {
@@ -93,6 +134,7 @@ async function triggerConnectFlow() {
     return { success: false, reason: 'menu-button-missing' };
   }
 
+  ensureNotAborted();
   menuTrigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
   await sleep(addJitter(400, 0.4));
   menuTrigger.click();
@@ -109,6 +151,7 @@ async function triggerConnectFlow() {
     return { success: false, reason: 'menu-connect-unavailable' };
   }
 
+  ensureNotAborted();
   menuItem.click();
   console.log('[Connect Automation] Selected connect option from menu.');
 
@@ -124,6 +167,9 @@ async function typeMessage(element, message, minDelay, maxDelay) {
   const inputEventSupported = typeof InputEvent === 'function';
 
   for (const char of message) {
+    if (isAbortRequested()) {
+      throw new Error('abort-requested');
+    }
     const key = char === '\n' ? 'Enter' : char;
     element.value += char;
     if (inputEventSupported) {
@@ -153,6 +199,7 @@ export async function connectWithProfileScript(rawSettings = {}) {
   };
 
   try {
+    ensureNotAborted();
     if (!settings.message) {
       console.warn(`${logPrefix} No message provided. Aborting.`);
       return { success: false, reason: 'empty-message' };
@@ -168,6 +215,7 @@ export async function connectWithProfileScript(rawSettings = {}) {
     }
 
     await sleep(addJitter(settings.confirmDelayMs));
+    ensureNotAborted();
 
     const addNoteButton = getByXPath('/html/body/div[4]/div/div/div[3]/button[1]');
     if (!addNoteButton) {
@@ -175,10 +223,12 @@ export async function connectWithProfileScript(rawSettings = {}) {
       return { success: false, reason: 'add-note-missing' };
     }
 
+    ensureNotAborted();
     addNoteButton.click();
     console.log(`${logPrefix} Clicked add note.`);
 
     await sleep(addJitter(settings.messageDelayMs));
+    ensureNotAborted();
 
     const textarea = getByXPath('/html/body/div[4]/div/div/div[2]/div[2]/div[1]/textarea');
     if (!textarea) {
@@ -205,6 +255,7 @@ export async function connectWithProfileScript(rawSettings = {}) {
       return { success: false, reason: 'send-button-missing' };
     }
 
+    ensureNotAborted();
     sendButton.click();
     console.log(`${logPrefix} Clicked send.`);
 
@@ -213,6 +264,10 @@ export async function connectWithProfileScript(rawSettings = {}) {
     return { success: true };
 
   } catch (error) {
+    if (error instanceof Error && error.message === 'abort-requested') {
+      console.warn(`${logPrefix} Automation aborted by user request.`);
+      return { success: false, reason: 'aborted' };
+    }
     console.error(`${logPrefix} Failed to send connection request:`, error);
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }

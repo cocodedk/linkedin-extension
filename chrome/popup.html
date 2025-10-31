@@ -6,30 +6,56 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <header>
+    <header class="popup-header">
       <h1>LinkedIn Lead Exporter</h1>
+      <div class="header-actions">
+        <button id="open-settings-btn" type="button">⚙️ Settings</button>
+      </div>
     </header>
     <main>
       <section class="actions">
-        <button id="scan-btn">🔍 Scan Results</button>
-        <button id="deep-scan-btn">🕵️ Deep Scan</button>
-        <button id="scan-next-btn">⏭️ Scan Next</button>
-        <button id="deep-scan-all-btn">🔄 Deep Scan ALL</button>
-        <button id="stop-deep-scan-all-btn" style="display: none;">⏹️ Stop Deep Scan</button>
-        <button id="open-virk-btn">🏢 Open Virk</button>
-        <button id="auto-connect-btn">🤝 Auto Connect</button>
-        <button id="view-btn">👁️ View Leads</button>
-        <button id="evaluate-btn">⚡ Evaluate with AI</button>
-        <button id="enrich-virk-btn">🇩🇰 Enrich with Virk</button>
-        <button id="generate-ai-query-btn">🤖 Generate AI Query</button>
-        <button id="open-tab-btn">🗂️ Open in Tab</button>
-        <button id="export-csv-btn">📊 Export CSV</button>
-        <button id="export-json-btn">📄 Export JSON</button>
-        <button id="clear-leads-btn">🗑️ Clear All</button>
-      </section>
-      <section class="settings-shortcut">
-        <button id="open-settings-btn" type="button">⚙️ Settings</button>
-        <p class="settings-hint">Open the full settings page to adjust timeouts, tab limits, and your API key.</p>
+        <div class="action-group" aria-labelledby="scan-group-title">
+          <h2 id="scan-group-title" class="action-group__title">Scan Controls</h2>
+          <div class="action-row">
+            <button id="scan-btn">🔍 Scan Results</button>
+            <button id="scan-next-btn">⏭️ Scan Next</button>
+            <button id="deep-scan-btn">🕵️ Deep Scan</button>
+          </div>
+          <div class="action-row">
+            <button id="deep-scan-all-btn">🔄 Deep Scan ALL</button>
+            <button id="stop-deep-scan-all-btn" style="display: none;">⏹️ Stop Deep Scan</button>
+          </div>
+        </div>
+
+        <div class="action-group" aria-labelledby="automation-group-title">
+          <h2 id="automation-group-title" class="action-group__title">AI &amp; Automation</h2>
+          <div class="action-row">
+            <button id="evaluate-btn">⚡ Evaluate with AI</button>
+            <button id="generate-ai-query-btn">🤖 Generate AI Query</button>
+            <button id="auto-connect-btn">🤝 Auto Connect</button>
+            <button id="auto-connect-all-btn">🌐 Auto Connect All</button>
+            <button id="auto-connect-stop-btn" style="display: none;">⏹️ Stop Auto Connect</button>
+          </div>
+        </div>
+
+        <div class="action-group" aria-labelledby="leads-group-title">
+          <h2 id="leads-group-title" class="action-group__title">Lead Management</h2>
+          <div class="action-row">
+            <button id="view-btn">👁️ View Leads</button>
+            <button id="open-tab-btn">🗂️ Open in Tab</button>
+            <button id="export-csv-btn">📊 Export CSV</button>
+            <button id="export-json-btn">📄 Export JSON</button>
+            <button id="clear-leads-btn">🗑️ Clear All</button>
+          </div>
+        </div>
+
+        <div class="action-group" aria-labelledby="virk-group-title">
+          <h2 id="virk-group-title" class="action-group__title">Virk Tools</h2>
+          <div class="action-row">
+            <button id="open-virk-btn">🏢 Open Virk</button>
+            <button id="enrich-virk-btn">🇩🇰 Enrich with Virk</button>
+          </div>
+        </div>
       </section>
       <p id="status" role="status"></p>
       <section class="table-container">

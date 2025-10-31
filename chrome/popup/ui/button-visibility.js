@@ -56,7 +56,13 @@ async function isDeepScanAllRunning() {
 export async function updateButtonVisibility(leads) {
   const onLinkedIn = await isOnLinkedIn();
   const onVirk = await isOnVirk();
-  const hasLeads = leads && leads.length > 0;
+  let hasLeads = Array.isArray(leads) && leads.length > 0;
+  try {
+    const { leads: storedLeads = [] } = await chrome.storage.local.get('leads');
+    hasLeads = storedLeads.length > 0;
+  } catch (error) {
+    console.error('Failed to read leads from storage:', error);
+  }
   const deepScanRunning = await isDeepScanAllRunning();
 
   // LinkedIn-specific buttons
@@ -67,9 +73,20 @@ export async function updateButtonVisibility(leads) {
   const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
   const openVirkBtn = document.getElementById('open-virk-btn');
   const generateAiQueryBtn = document.getElementById('generate-ai-query-btn');
+  const autoConnectBtn = document.getElementById('auto-connect-btn');
+  const autoConnectAllBtn = document.getElementById('auto-connect-all-btn');
+  const autoConnectStopBtn = document.getElementById('auto-connect-stop-btn');
 
   // Virk enrichment button (only show when NOT on virk.dk AND has leads)
   const enrichVirkBtn = document.getElementById('enrich-virk-btn');
+
+  let autoConnectRunning = false;
+  try {
+    const { isAutoConnectRunning } = await chrome.storage.local.get('isAutoConnectRunning');
+    autoConnectRunning = Boolean(isAutoConnectRunning);
+  } catch (error) {
+    console.error('Failed to check auto connect status:', error);
+  }
 
   // Show/hide LinkedIn-only buttons
   if (scanBtn) scanBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
@@ -77,6 +94,9 @@ export async function updateButtonVisibility(leads) {
   if (deepScanBtn) deepScanBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
   if (openVirkBtn) openVirkBtn.style.display = onLinkedIn ? '' : 'none';
   if (generateAiQueryBtn) generateAiQueryBtn.style.display = onLinkedIn ? '' : 'none';
+  if (autoConnectBtn) autoConnectBtn.style.display = (onLinkedIn && !autoConnectRunning) ? '' : 'none';
+  if (autoConnectAllBtn) autoConnectAllBtn.style.display = (!autoConnectRunning && hasLeads) ? '' : 'none';
+  if (autoConnectStopBtn) autoConnectStopBtn.style.display = autoConnectRunning ? '' : 'none';
 
   // Show Deep Scan ALL button only on LinkedIn and when NOT running
   if (deepScanAllBtn) {

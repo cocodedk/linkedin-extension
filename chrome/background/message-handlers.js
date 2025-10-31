@@ -6,6 +6,7 @@ import { notifications } from '../api/notifications.js';
 import { runDeepScanInBackground } from './deep-scan-worker.js';
 import { runVirkEnrichmentInBackground } from './virk-enrichment-worker.js';
 import { runDeepScanAllInBackground, stopDeepScanAll, getDeepScanAllStatus } from './deep-scan-all-worker.js';
+import { startAutoConnectAll, stopAutoConnectAll } from './connect-automation-worker.js';
 import { saveLeads } from '../scripts/storage.js';
 
 export async function handleDeepScanRequest(searchTabId) {
@@ -81,4 +82,12 @@ export async function handleStopDeepScanAllRequest() {
 
 export async function handleGetDeepScanAllStatus() {
   return await getDeepScanAllStatus();
+}
+
+export async function handleStartAutoConnectAllRequest() {
+  return await startAutoConnectAll();
+}
+
+export async function handleStopAutoConnectAllRequest() {
+  return await stopAutoConnectAll();
 }

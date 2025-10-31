@@ -46,6 +46,24 @@ export const BUTTON_CONFIGS = {
     label: 'Evaluate with AI',
     title: 'Evaluate leads using OpenAI'
   },
+  autoConnect: {
+    id: 'auto-connect-btn',
+    icon: '🤝',
+    label: 'Auto Connect',
+    title: 'Send a personalised connection request on the active profile'
+  },
+  autoConnectAll: {
+    id: 'auto-connect-all-btn',
+    icon: '🌐',
+    label: 'Auto Connect All',
+    title: 'Connect with every saved lead using the configured message'
+  },
+  stopAutoConnect: {
+    id: 'auto-connect-stop-btn',
+    icon: '⏹️',
+    label: 'Stop Auto Connect',
+    title: 'Cancel the in-progress auto connect sequence'
+  },
   enrichVirk: {
     id: 'enrich-virk-btn',
     icon: '🇩🇰',
