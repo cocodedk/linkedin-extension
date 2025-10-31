@@ -96,6 +96,90 @@
           </fieldset>
 
           <fieldset>
+            <legend>Connect Automation</legend>
+            <div class="settings-grid settings-grid--connect">
+              <label class="toggle" for="setting-connect-enabled">
+                <input
+                  id="setting-connect-enabled"
+                  type="checkbox"
+                />
+                <span>Enable Connect Automation</span>
+              </label>
+              <label for="setting-connect-initial-delay">
+                Initial Wait Before Connect (ms)
+                <input
+                  id="setting-connect-initial-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-connect-confirm-delay">
+                Delay Before “Add Note” (ms)
+                <input
+                  id="setting-connect-confirm-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-connect-message-delay">
+                Delay Before Typing (ms)
+                <input
+                  id="setting-connect-message-delay"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-connect-send-delay">
+                Delay Before Send (ms)
+                <input
+                  id="setting-connect-send-delay"
+                  type="number"
+                  min="0"
+                  step="50"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-connect-typing-min-delay">
+                Typing Min Delay (ms)
+                <input
+                  id="setting-connect-typing-min-delay"
+                  type="number"
+                  min="0"
+                  step="10"
+                  inputmode="numeric"
+                />
+              </label>
+              <label for="setting-connect-typing-max-delay">
+                Typing Max Delay (ms)
+                <input
+                  id="setting-connect-typing-max-delay"
+                  type="number"
+                  min="0"
+                  step="10"
+                  inputmode="numeric"
+                />
+              </label>
+              <label class="settings-grid__full" for="setting-connect-message">
+                Connection Message
+                <textarea
+                  id="setting-connect-message"
+                  rows="4"
+                  placeholder="Hi, I'd love to connect and stay in touch."
+                ></textarea>
+              </label>
+            </div>
+            <p class="settings-help">
+              After enabling, use the Auto Connect button in the popup to wait about 20 seconds on the profile, open the connect dialog, type your message with human-like timing, and send it.
+            </p>
+          </fieldset>
+
+          <fieldset>
             <legend>Virk Enrichment</legend>
             <div class="settings-grid">
               <label for="setting-virk-parallel-tabs">

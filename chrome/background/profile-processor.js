@@ -13,7 +13,9 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
   const profileLoadDelayMs = Number.isFinite(options.profileLoadDelayMs)
     ? options.profileLoadDelayMs
     : 4000;
+
   let profileTab;
+
   try {
     profileTab = await chrome.tabs.create({
       url: profile.profileUrl,
@@ -23,7 +25,7 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
     // Wait for profile page to load before extracting data
     await sleep(profileLoadDelayMs);
 
-    // Extract company (no longer needs click/wait for overlay)
+    // Extract company
     const [companyResult] = await chrome.scripting.executeScript({
       target: { tabId: profileTab.id },
       func: extractCompanyScript
@@ -35,8 +37,6 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
       func: extractProfileDataScript
     });
 
-    await chrome.tabs.remove(profileTab.id);
-
     const data = profileData.result || {};
     const company = companyResult.result || '';
 
@@ -44,6 +44,8 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
 
   } catch (error) {
     console.error(`Error processing ${profile.name}:`, error);
+    return buildLeadData(profile, '', {});
+  } finally {
     if (profileTab) {
       try {
         await chrome.tabs.remove(profileTab.id);
@@ -51,7 +53,6 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
         // Tab may already be closed
       }
     }
-    return buildLeadData(profile, '', {});
   }
 }
 

@@ -15,7 +15,8 @@ import {
   handleEvaluate,
   handleGenerateAiQuery,
   handleDeepScanAll,
-  handleStopDeepScanAll
+  handleStopDeepScanAll,
+  handleConnectAutomation
 } from './popup/handlers.js';
 import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 
@@ -25,6 +26,7 @@ const scanNextBtn = document.getElementById('scan-next-btn');
 const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
 const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 const openVirkBtn = document.getElementById('open-virk-btn');
+const autoConnectBtn = document.getElementById('auto-connect-btn');
 const viewBtn = document.getElementById('view-btn');
 const evaluateBtn = document.getElementById('evaluate-btn');
 const enrichVirkBtn = document.getElementById('enrich-virk-btn');
@@ -47,6 +49,7 @@ openVirkBtn.addEventListener('click', async () => {
   const { tabs } = await import('./api/tabs.js');
   tabs.create({ url: 'https://datacvr.virk.dk/' });
 });
+autoConnectBtn?.addEventListener('click', () => handleConnectAutomation(autoConnectBtn));
 viewBtn.addEventListener('click', handleViewLeads);
 evaluateBtn.addEventListener('click', () => handleEvaluate(evaluateBtn));
 enrichVirkBtn.addEventListener('click', handleEnrichWithVirk);

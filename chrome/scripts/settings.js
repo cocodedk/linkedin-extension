@@ -15,6 +15,16 @@ export const DEFAULT_SETTINGS = {
     maxPages: 100,
     pageDelayMs: 2500
   },
+  connectAutomation: {
+    enabled: false,
+    message: '',
+    initialDelayMs: 20000,
+    confirmDelayMs: 5000,
+    messageDelayMs: 1000,
+    sendDelayMs: 700,
+    typingCharMinDelayMs: 65,
+    typingCharMaxDelayMs: 160
+  },
   virk: {
     parallelTabs: 1,
     tabWarmupDelayMs: 10000,
@@ -30,7 +40,10 @@ const DEFAULT_LIMITS = {
   batchSizeMin: 1,
   batchSizeMax: 10,
   pagesMin: 1,
-  pagesMax: 500
+  pagesMax: 500,
+  typingDelayMin: 20,
+  typingDelayMax: 500,
+  messageMaxLength: 500
 };
 
 function isPlainObject(value) {
@@ -67,8 +80,40 @@ function clampNumber(value, fallback, { min = Number.MIN_SAFE_INTEGER, max = Num
   return Math.min(max, Math.max(min, rounded));
 }
 
+function sanitiseBoolean(value, fallback = false) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const normalised = value.trim().toLowerCase();
+    if (normalised === 'true') return true;
+    if (normalised === 'false') return false;
+  }
+  return fallback;
+}
+
+function sanitiseString(value, fallback = '', { maxLength = 255 } = {}) {
+  if (typeof value !== 'string') return fallback;
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (trimmed.length > maxLength) {
+    return trimmed.slice(0, maxLength);
+  }
+  return trimmed;
+}
+
 function sanitise(settings) {
   const merged = deepMerge(DEFAULT_SETTINGS, settings ?? {});
+
+  const typingCharMinDelayMs = clampNumber(
+    merged.connectAutomation?.typingCharMinDelayMs,
+    DEFAULT_SETTINGS.connectAutomation.typingCharMinDelayMs,
+    { min: DEFAULT_LIMITS.typingDelayMin, max: DEFAULT_LIMITS.typingDelayMax }
+  );
+
+  const typingCharMaxDelayMs = clampNumber(
+    merged.connectAutomation?.typingCharMaxDelayMs,
+    DEFAULT_SETTINGS.connectAutomation.typingCharMaxDelayMs,
+    { min: typingCharMinDelayMs, max: DEFAULT_LIMITS.typingDelayMax }
+  );
 
   return {
     deepScan: {
@@ -99,6 +144,39 @@ function sanitise(settings) {
         DEFAULT_SETTINGS.deepScanAll.pageDelayMs,
         { min: DEFAULT_LIMITS.delayMin, max: DEFAULT_LIMITS.delayMax }
       )
+    },
+    connectAutomation: {
+      enabled: sanitiseBoolean(
+        merged.connectAutomation?.enabled,
+        DEFAULT_SETTINGS.connectAutomation.enabled
+      ),
+      message: sanitiseString(
+        merged.connectAutomation?.message,
+        DEFAULT_SETTINGS.connectAutomation.message,
+        { maxLength: DEFAULT_LIMITS.messageMaxLength }
+      ),
+      initialDelayMs: clampNumber(
+        merged.connectAutomation?.initialDelayMs,
+        DEFAULT_SETTINGS.connectAutomation.initialDelayMs,
+        { min: DEFAULT_LIMITS.delayMin, max: DEFAULT_LIMITS.delayMax }
+      ),
+      confirmDelayMs: clampNumber(
+        merged.connectAutomation?.confirmDelayMs,
+        DEFAULT_SETTINGS.connectAutomation.confirmDelayMs,
+        { min: DEFAULT_LIMITS.delayMin, max: DEFAULT_LIMITS.delayMax }
+      ),
+      messageDelayMs: clampNumber(
+        merged.connectAutomation?.messageDelayMs,
+        DEFAULT_SETTINGS.connectAutomation.messageDelayMs,
+        { min: DEFAULT_LIMITS.delayMin, max: DEFAULT_LIMITS.delayMax }
+      ),
+      sendDelayMs: clampNumber(
+        merged.connectAutomation?.sendDelayMs,
+        DEFAULT_SETTINGS.connectAutomation.sendDelayMs,
+        { min: DEFAULT_LIMITS.delayMin, max: DEFAULT_LIMITS.delayMax }
+      ),
+      typingCharMinDelayMs,
+      typingCharMaxDelayMs
     },
     virk: {
       parallelTabs: clampNumber(

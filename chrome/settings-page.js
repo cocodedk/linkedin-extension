@@ -16,12 +16,42 @@ const inputs = {
   deepScanBatchDelay: document.getElementById('setting-deep-scan-batch-delay'),
   deepScanAllMaxPages: document.getElementById('setting-deep-scan-all-max-pages'),
   deepScanAllPageDelay: document.getElementById('setting-deep-scan-all-page-delay'),
+  connectEnabled: document.getElementById('setting-connect-enabled'),
+  connectMessage: document.getElementById('setting-connect-message'),
+  connectInitialDelay: document.getElementById('setting-connect-initial-delay'),
+  connectConfirmDelay: document.getElementById('setting-connect-confirm-delay'),
+  connectMessageDelay: document.getElementById('setting-connect-message-delay'),
+  connectSendDelay: document.getElementById('setting-connect-send-delay'),
+  connectTypingMinDelay: document.getElementById('setting-connect-typing-min-delay'),
+  connectTypingMaxDelay: document.getElementById('setting-connect-typing-max-delay'),
   virkParallelTabs: document.getElementById('setting-virk-parallel-tabs'),
   virkWarmupDelay: document.getElementById('setting-virk-warmup-delay'),
   virkSearchDelay: document.getElementById('setting-virk-search-delay'),
   virkNavigationDelay: document.getElementById('setting-virk-navigation-delay'),
   virkPageLoadDelay: document.getElementById('setting-virk-page-load-delay')
 };
+
+function updateConnectAutomationUi() {
+  if (!inputs.connectEnabled) return;
+  const enabled = Boolean(inputs.connectEnabled.checked);
+  const connectControls = [
+    inputs.connectMessage,
+    inputs.connectInitialDelay,
+    inputs.connectConfirmDelay,
+    inputs.connectMessageDelay,
+    inputs.connectSendDelay,
+    inputs.connectTypingMinDelay,
+    inputs.connectTypingMaxDelay
+  ].filter(Boolean);
+
+  connectControls.forEach((control) => {
+    control.disabled = !enabled;
+    const parent = control.closest('label');
+    if (parent) {
+      parent.classList.toggle('disabled', !enabled);
+    }
+  });
+}
 
 function readNumber(input) {
   if (!input) return Number.NaN;
@@ -40,6 +70,16 @@ function collectSettings() {
     deepScanAll: {
       maxPages: readNumber(inputs.deepScanAllMaxPages),
       pageDelayMs: readNumber(inputs.deepScanAllPageDelay)
+    },
+    connectAutomation: {
+      enabled: Boolean(inputs.connectEnabled?.checked),
+      message: inputs.connectMessage?.value ?? '',
+      initialDelayMs: readNumber(inputs.connectInitialDelay),
+      confirmDelayMs: readNumber(inputs.connectConfirmDelay),
+      messageDelayMs: readNumber(inputs.connectMessageDelay),
+      sendDelayMs: readNumber(inputs.connectSendDelay),
+      typingCharMinDelayMs: readNumber(inputs.connectTypingMinDelay),
+      typingCharMaxDelayMs: readNumber(inputs.connectTypingMaxDelay)
     },
     virk: {
       parallelTabs: readNumber(inputs.virkParallelTabs),
@@ -61,11 +101,36 @@ function applySettings(settings) {
   inputs.deepScanBatchDelay.value = settings.deepScan.batchDelayMs;
   inputs.deepScanAllMaxPages.value = settings.deepScanAll.maxPages;
   inputs.deepScanAllPageDelay.value = settings.deepScanAll.pageDelayMs;
+  if (inputs.connectEnabled) {
+    inputs.connectEnabled.checked = Boolean(settings.connectAutomation.enabled);
+  }
+  if (inputs.connectMessage) {
+    inputs.connectMessage.value = settings.connectAutomation.message;
+  }
+  if (inputs.connectInitialDelay) {
+    inputs.connectInitialDelay.value = settings.connectAutomation.initialDelayMs;
+  }
+  if (inputs.connectConfirmDelay) {
+    inputs.connectConfirmDelay.value = settings.connectAutomation.confirmDelayMs;
+  }
+  if (inputs.connectMessageDelay) {
+    inputs.connectMessageDelay.value = settings.connectAutomation.messageDelayMs;
+  }
+  if (inputs.connectSendDelay) {
+    inputs.connectSendDelay.value = settings.connectAutomation.sendDelayMs;
+  }
+  if (inputs.connectTypingMinDelay) {
+    inputs.connectTypingMinDelay.value = settings.connectAutomation.typingCharMinDelayMs;
+  }
+  if (inputs.connectTypingMaxDelay) {
+    inputs.connectTypingMaxDelay.value = settings.connectAutomation.typingCharMaxDelayMs;
+  }
   inputs.virkParallelTabs.value = settings.virk.parallelTabs;
   inputs.virkWarmupDelay.value = settings.virk.tabWarmupDelayMs;
   inputs.virkSearchDelay.value = settings.virk.searchDelayMs;
   inputs.virkNavigationDelay.value = settings.virk.navigationDelayMs;
   inputs.virkPageLoadDelay.value = settings.virk.pageLoadDelayMs;
+  updateConnectAutomationUi();
 }
 
 saveApiKeyBtn.addEventListener('click', async () => {
@@ -136,6 +201,8 @@ openLeadsBtn.addEventListener('click', async () => {
     setStatus(`Failed to open leads page: ${error.message}`, 'error');
   }
 });
+
+inputs.connectEnabled?.addEventListener('change', updateConnectAutomationUi);
 
 async function initialise() {
   try {
