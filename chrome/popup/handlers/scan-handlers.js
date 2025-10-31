@@ -7,35 +7,29 @@ import { setStatus, renderLeads } from '../ui.js';
 import { scrapeActiveTab, clickNextButton } from '../chrome-utils.js';
 
 export async function handleScan() {
-  setStatus('Starting deep scan in background...');
+  setStatus('Scanning current page...');
   try {
-    // Get active tab
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    if (!tab.url.includes('linkedin.com/search/results')) {
-      setStatus('Please navigate to LinkedIn search results first', 'warning');
+    if (!tab?.url?.includes('linkedin.com/search/results')) {
+      setStatus('Please navigate to LinkedIn search results first.', 'warning');
       return;
     }
 
-    // Send message to background worker for deep scan
-    setStatus('Deep scan running in background. Popup will close.');
+    const scanResult = await scrapeActiveTab();
+    const { leads = [], debugInfo = {} } = scanResult ?? {};
+    console.debug('Scan results debug info:', debugInfo);
 
-    chrome.runtime.sendMessage(
-      { type: 'START_DEEP_SCAN', searchTabId: tab.id },
-      (response) => {
-        if (response && response.success) {
-          console.log('Deep scan started successfully');
-        } else if (response) {
-          console.error('Deep scan failed:', response.error);
-        }
-      }
-    );
+    if (!Array.isArray(leads) || leads.length === 0) {
+      setStatus('No leads found on this page.', 'warning');
+      return;
+    }
 
-    // Close popup after 2 seconds
-    setTimeout(() => window.close(), 2000);
-
+    const savedLeads = await saveLeads(leads);
+    renderLeads(savedLeads);
+    setStatus(`Captured ${leads.length} lead(s). Stored ${savedLeads.length} total.`, 'success');
   } catch (error) {
-    console.error(error);
+    console.error('Scan failed:', error);
     setStatus(`Scan failed: ${error.message}`, 'error');
   }
 }

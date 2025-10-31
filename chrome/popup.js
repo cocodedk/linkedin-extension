@@ -14,6 +14,7 @@ import {
   handleClearLeads,
   handleEvaluate,
   handleGenerateAiQuery,
+  handleDeepScan,
   handleDeepScanAll,
   handleStopDeepScanAll,
   handleConnectAutomation
@@ -23,6 +24,7 @@ import { handleEnrichWithVirk } from './popup/handlers/virk-handler.js';
 // DOM elements
 const scanBtn = document.getElementById('scan-btn');
 const scanNextBtn = document.getElementById('scan-next-btn');
+const deepScanBtn = document.getElementById('deep-scan-btn');
 const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
 const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 const openVirkBtn = document.getElementById('open-virk-btn');
@@ -38,11 +40,9 @@ const openTabBtn = document.getElementById('open-tab-btn');
 const openSettingsBtn = document.getElementById('open-settings-btn');
 
 // Event listeners
-scanBtn.addEventListener('click', () => {
-  // Start deep scan in background
-  handleScan();
-});
+scanBtn.addEventListener('click', handleScan);
 scanNextBtn.addEventListener('click', handleScanNext);
+deepScanBtn?.addEventListener('click', handleDeepScan);
 deepScanAllBtn.addEventListener('click', handleDeepScanAll);
 stopDeepScanAllBtn.addEventListener('click', handleStopDeepScanAll);
 openVirkBtn.addEventListener('click', async () => {

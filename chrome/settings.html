@@ -243,6 +243,57 @@
         </form>
       </section>
 
+      <section class="help-panel" aria-labelledby="help-title">
+        <h2 id="help-title">Help &amp; Tips</h2>
+        <p class="help-summary">
+          Quick explanations of each control and how to combine the extension’s features.
+        </p>
+        <div class="help-grid">
+          <article class="help-card">
+            <h3>Credentials</h3>
+            <p>
+              Save your OpenAI API key to unlock AI lead scoring inside the popup. Leave the field empty if you do
+              not want any calls made to OpenAI.
+            </p>
+          </article>
+          <article class="help-card">
+            <h3>Deep Scan</h3>
+            <p>
+              Opens individual profiles in background tabs to gather detailed company data. Increase delays if you
+              see LinkedIn warnings or want to reduce CPU usage.
+            </p>
+          </article>
+          <article class="help-card">
+            <h3>Deep Scan ALL</h3>
+            <p>
+              Walks through multiple pages of search results automatically. Use the page delay to space out requests
+              and the page limit to keep runs manageable.
+            </p>
+          </article>
+          <article class="help-card">
+            <h3>Connect Automation</h3>
+            <p>
+              When enabled, the popup’s Auto Connect button waits on a profile, opens the connect dialogue, types your
+              note with human-like pauses, and sends it. Longer waits are safer on new accounts.
+            </p>
+          </article>
+          <article class="help-card">
+            <h3>Virk Enrichment</h3>
+            <p>
+              Matches leads against the Danish CVR register via virk.dk. Parallel tabs finish faster but may trigger
+              rate limits—dial them down if pages stop loading.
+            </p>
+          </article>
+          <article class="help-card">
+            <h3>Suggested Workflow</h3>
+            <p>
+              In the popup, start with Scan Results to capture leads, run Deep Scan for richer data, optionally add
+              Virk enrichment, then review everything on the Leads page and export CSV or JSON.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <p id="status" role="status" aria-live="polite"></p>
     </main>
 

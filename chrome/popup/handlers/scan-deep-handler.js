@@ -21,8 +21,8 @@ export async function handleDeepScan() {
     // Get active tab
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    if (!tab.url.includes('linkedin.com/search/results')) {
-      setStatus('Please navigate to LinkedIn search results first', 'warning');
+    if (!tab?.url?.includes('linkedin.com/search/results')) {
+      setStatus('Please navigate to LinkedIn search results first.', 'warning');
       return;
     }
 
@@ -32,9 +32,9 @@ export async function handleDeepScan() {
     chrome.runtime.sendMessage(
       { type: 'START_DEEP_SCAN', searchTabId: tab.id },
       (response) => {
-        if (response.success) {
+        if (response?.success) {
           console.log('Deep scan started successfully');
-        } else {
+        } else if (response) {
           console.error('Deep scan failed:', response.error);
         }
       }

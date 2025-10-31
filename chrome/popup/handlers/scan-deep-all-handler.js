@@ -15,7 +15,7 @@ export async function handleDeepScanAll() {
     // Get active tab
     const [tab] = await tabs.query({ active: true, currentWindow: true });
 
-    if (!tab.url.includes('linkedin.com/search/results')) {
+    if (!tab?.url?.includes('linkedin.com/search/results')) {
       setStatus('Please navigate to LinkedIn search results first', 'warning');
       return;
     }

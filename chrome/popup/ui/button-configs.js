@@ -16,6 +16,12 @@ export const BUTTON_CONFIGS = {
     label: 'Scan Next',
     title: 'Navigate to next page and scan'
   },
+  deepScan: {
+    id: 'deep-scan-btn',
+    icon: '🕵️',
+    label: 'Deep Scan',
+    title: 'Visit each profile to capture detailed company data'
+  },
   deepScanAll: {
     id: 'deep-scan-all-btn',
     icon: '🔄',

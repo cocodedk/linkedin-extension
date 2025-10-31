@@ -62,6 +62,7 @@ export async function updateButtonVisibility(leads) {
   // LinkedIn-specific buttons
   const scanBtn = document.getElementById('scan-btn');
   const scanNextBtn = document.getElementById('scan-next-btn');
+  const deepScanBtn = document.getElementById('deep-scan-btn');
   const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
   const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
   const openVirkBtn = document.getElementById('open-virk-btn');
@@ -71,8 +72,9 @@ export async function updateButtonVisibility(leads) {
   const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 
   // Show/hide LinkedIn-only buttons
-  if (scanBtn) scanBtn.style.display = onLinkedIn ? '' : 'none';
-  if (scanNextBtn) scanNextBtn.style.display = onLinkedIn ? '' : 'none';
+  if (scanBtn) scanBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
+  if (scanNextBtn) scanNextBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
+  if (deepScanBtn) deepScanBtn.style.display = (onLinkedIn && !deepScanRunning) ? '' : 'none';
   if (openVirkBtn) openVirkBtn.style.display = onLinkedIn ? '' : 'none';
   if (generateAiQueryBtn) generateAiQueryBtn.style.display = onLinkedIn ? '' : 'none';
 
