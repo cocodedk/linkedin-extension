@@ -10,8 +10,9 @@ import {
   handleVirkEnrichmentRequest,
   handleStopDeepScanAllRequest,
   handleGetDeepScanAllStatus,
+  handleStartAutoConnectSingleRequest,
   handleStartAutoConnectAllRequest,
-  handleStopAutoConnectAllRequest
+  handleStopAutoConnectRequest
 } from './background/message-handlers.js';
 
 // Listen for messages from popup
@@ -51,6 +52,13 @@ runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === 'START_AUTO_CONNECT_SINGLE') {
+    handleStartAutoConnectSingleRequest(message.tabId)
+      .then(info => sendResponse({ success: true, mode: info.mode }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+
   if (message.type === 'START_AUTO_CONNECT_ALL') {
     handleStartAutoConnectAllRequest()
       .then(summary => sendResponse({ success: true, total: summary.total }))
@@ -58,9 +66,9 @@ runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  if (message.type === 'STOP_AUTO_CONNECT_ALL') {
-    handleStopAutoConnectAllRequest()
-      .then(result => sendResponse({ success: true, stopped: result.stopped }))
+  if (message.type === 'STOP_AUTO_CONNECT') {
+    handleStopAutoConnectRequest()
+      .then(result => sendResponse({ success: true, stopped: result.stopped, mode: result.mode }))
       .catch(error => sendResponse({ success: false, error: error.message }));
     return true;
   }
