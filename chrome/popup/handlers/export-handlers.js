@@ -10,14 +10,15 @@ export async function handleExportCsv() {
   try {
     const leads = await getLeads();
 
-    if (!leads.length) {
-      setStatus('No leads to export.', 'warning');
+    // Validate leads data first
+    if (!Array.isArray(leads)) {
+      setStatus('Invalid leads data format', 'error');
       return;
     }
 
-    // Validate leads data
-    if (!Array.isArray(leads)) {
-      throw new Error('Invalid leads data format');
+    if (leads.length === 0) {
+      setStatus('No leads to export.', 'warning');
+      return;
     }
 
     const content = toCsv(leads);
@@ -37,14 +38,15 @@ export async function handleExportJson() {
   try {
     const leads = await getLeads();
 
-    if (!leads.length) {
-      setStatus('No leads to export.', 'warning');
+    // Validate leads data first
+    if (!Array.isArray(leads)) {
+      setStatus('Invalid leads data format', 'error');
       return;
     }
 
-    // Validate leads data
-    if (!Array.isArray(leads)) {
-      throw new Error('Invalid leads data format');
+    if (leads.length === 0) {
+      setStatus('No leads to export.', 'warning');
+      return;
     }
 
     const content = toJson(leads);

@@ -52,6 +52,31 @@ describe('export-handlers', () => {
       const callArgs = mockDownloads.download.mock.calls[0][0];
       expect(callArgs.url).toBeTruthy();
     });
+
+    it('should handle invalid leads data format', async () => {
+      storageData.set('leads', 'not an array');
+
+      await handleExportCsv();
+
+      expect(mockSetStatus).toHaveBeenCalledWith(
+        expect.stringContaining('Invalid leads data format'),
+        'error'
+      );
+      expect(mockDownloads.download).not.toHaveBeenCalled();
+    });
+
+    it('should handle download errors gracefully', async () => {
+      const leads = [createMockLead()];
+      storageData.set('leads', leads);
+      mockDownloads.download.mockRejectedValueOnce(new Error('Download failed'));
+
+      await handleExportCsv();
+
+      expect(mockSetStatus).toHaveBeenCalledWith(
+        expect.stringContaining('Export failed'),
+        'error'
+      );
+    });
   });
 
   describe('handleExportJson', () => {
@@ -86,6 +111,31 @@ describe('export-handlers', () => {
       expect(mockDownloads.download).toHaveBeenCalled();
       const callArgs = mockDownloads.download.mock.calls[0][0];
       expect(callArgs.url).toBeTruthy();
+    });
+
+    it('should handle invalid leads data format for JSON', async () => {
+      storageData.set('leads', { not: 'an array' });
+
+      await handleExportJson();
+
+      expect(mockSetStatus).toHaveBeenCalledWith(
+        expect.stringContaining('Invalid leads data format'),
+        'error'
+      );
+      expect(mockDownloads.download).not.toHaveBeenCalled();
+    });
+
+    it('should handle download errors gracefully for JSON', async () => {
+      const leads = [createMockLead()];
+      storageData.set('leads', leads);
+      mockDownloads.download.mockRejectedValueOnce(new Error('Download failed'));
+
+      await handleExportJson();
+
+      expect(mockSetStatus).toHaveBeenCalledWith(
+        expect.stringContaining('Export failed'),
+        'error'
+      );
     });
   });
 });
