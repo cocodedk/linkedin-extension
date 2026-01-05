@@ -1,5 +1,0 @@
----
-alwaysApply: true
----
-1. instead of writing the same code for chrome and firefox, copy the code from chrome to firefox when possible.
-2. finish code for chrome first, then copy the code to firefox.
