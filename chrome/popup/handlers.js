@@ -3,7 +3,16 @@
  */
 
 export { handleScan, handleScanNext, handleViewLeads, handleClearLeads } from './handlers/scan-handlers.js';
-export { handleExportCsv, handleExportJson } from './handlers/export-handlers.js';
+export {
+  handleExportCsv,
+  handleExportJson,
+  handleCopyCsv,
+  handleCopyJson,
+  handleOpenCsvInTab,
+  handleOpenJsonInTab,
+  handleSaveCsvWithFS,
+  handleSaveJsonWithFS
+} from './handlers/export-handlers.js';
 export { handleSaveApiKey } from './handlers/settings-handlers.js';
 export { handleEvaluate } from './handlers/evaluate-handler.js';
 export { handleGenerateAiQuery } from './handlers/ai-query-handler.js';

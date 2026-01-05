@@ -7,6 +7,12 @@ import { renderLeads } from './popup/ui.js';
 import {
   handleExportCsv,
   handleExportJson,
+  handleCopyCsv,
+  handleCopyJson,
+  handleOpenCsvInTab,
+  handleOpenJsonInTab,
+  handleSaveCsvWithFS,
+  handleSaveJsonWithFS,
   handleClearLeads,
   handleSaveApiKey,
   handleEvaluate,
@@ -20,6 +26,12 @@ const evaluateBtn = document.getElementById('evaluate-btn');
 const enrichVirkBtn = document.getElementById('enrich-virk-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const exportJsonBtn = document.getElementById('export-json-btn');
+const copyCsvBtn = document.getElementById('copy-csv-btn');
+const copyJsonBtn = document.getElementById('copy-json-btn');
+const openCsvTabBtn = document.getElementById('open-csv-tab-btn');
+const openJsonTabBtn = document.getElementById('open-json-tab-btn');
+const saveCsvFsBtn = document.getElementById('save-csv-fs-btn');
+const saveJsonFsBtn = document.getElementById('save-json-fs-btn');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearLeadsBtn = document.getElementById('clear-leads-btn');
 const apiKeyInput = document.getElementById('api-key');
@@ -43,6 +55,12 @@ enrichVirkBtn.addEventListener('click', async () => {
 
 exportCsvBtn.addEventListener('click', handleExportCsv);
 exportJsonBtn.addEventListener('click', handleExportJson);
+copyCsvBtn.addEventListener('click', handleCopyCsv);
+copyJsonBtn.addEventListener('click', handleCopyJson);
+openCsvTabBtn.addEventListener('click', handleOpenCsvInTab);
+openJsonTabBtn.addEventListener('click', handleOpenJsonInTab);
+saveCsvFsBtn.addEventListener('click', handleSaveCsvWithFS);
+saveJsonFsBtn.addEventListener('click', handleSaveJsonWithFS);
 saveApiKeyBtn.addEventListener('click', () => handleSaveApiKey(apiKeyInput));
 
 clearLeadsBtn.addEventListener('click', async () => {

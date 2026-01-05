@@ -10,7 +10,8 @@
     "activeTab",
     "tabs",
     "windows",
-    "notifications"
+    "notifications",
+    "clipboardWrite"
   ],
   "background": {
     "service_worker": "background.js",
