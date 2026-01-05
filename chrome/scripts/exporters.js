@@ -1,20 +1,50 @@
 const HEADERS = [
-  'name', 'headline', 'company', 'contact', 'location', 'profileUrl',
-  'aiScore', 'aiReasons', 'aiFitSummary',
-  'virkCvrNumber', 'virkAddress', 'virkPostalCode', 'virkCity',
-  'virkStartDate', 'virkCompanyForm', 'virkStatus', 'virkEnriched', 'virkEnrichmentDate'
+  'name',
+  'headline',
+  'company',
+  'contact',
+  'location',
+  'profileUrl',
+  'aiScore',
+  'aiReasons',
+  'aiFitSummary',
+  'virkCvrNumber',
+  'virkAddress',
+  'virkPostalCode',
+  'virkCity',
+  'virkStartDate',
+  'virkCompanyForm',
+  'virkStatus',
+  'virkEnriched',
+  'virkEnrichmentDate'
 ];
 
 export function toCsv(leads) {
-  const safeLeads = Array.isArray(leads) ? leads : [];
+  // Validate input
+  if (!Array.isArray(leads)) {
+    throw new Error('Leads must be an array');
+  }
+
+  const safeLeads = leads;
   const headerRow = HEADERS.join(',');
-  const rows = safeLeads.map((lead) =>
-    HEADERS.map((key) => {
+  const rows = safeLeads.map((lead) => {
+    // Handle null/undefined leads gracefully
+    if (!lead || typeof lead !== 'object') {
+      return HEADERS.map(() => '""').join(',');
+    }
+    return HEADERS.map((key) => {
       const value = lead?.[key] ?? '';
-      const escaped = String(value).replace(/"/g, '""');
+      // Safely convert to string, handling circular references
+      let stringValue = '';
+      try {
+        stringValue = String(value);
+      } catch (e) {
+        stringValue = '[Unable to convert]';
+      }
+      const escaped = stringValue.replace(/"/g, '""');
       return `"${escaped}"`;
-    }).join(',')
-  );
+    }).join(',');
+  });
   return [headerRow, ...rows].join('\n');
 }
 
@@ -24,15 +54,40 @@ export function toJson(leads) {
 }
 
 export async function triggerDownload({ filename, mimeType, content }) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
+  let url = null;
+  try {
+    // Validate inputs
+    if (!content || !filename) {
+      throw new Error('Missing required parameters');
+    }
 
-  await chrome.downloads.download({
-    url,
-    filename,
-    saveAs: true
-  });
+    // Check if downloads API is available
+    if (!chrome?.downloads?.download) {
+      throw new Error('Downloads API not available');
+    }
 
-  // Release the object URL after a short delay to allow Chrome to resolve it.
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const blob = new Blob([content], { type: mimeType });
+    url = URL.createObjectURL(blob);
+
+    await chrome.downloads.download({
+      url,
+      filename,
+      saveAs: true
+    });
+
+    // Longer delay to ensure download completes before revoking URL
+    setTimeout(() => {
+      if (url) {
+        URL.revokeObjectURL(url);
+        url = null;
+      }
+    }, 5000);
+  } catch (error) {
+    // Cleanup on error
+    if (url) {
+      URL.revokeObjectURL(url);
+      url = null;
+    }
+    throw error;
+  }
 }
