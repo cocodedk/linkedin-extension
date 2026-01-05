@@ -26,7 +26,10 @@ describe('export-handlers', () => {
 
       await handleExportCsv();
 
-      expect(mockSetStatus).toHaveBeenCalledWith('CSV export triggered.', 'success');
+      expect(mockSetStatus).toHaveBeenCalledWith(
+        'CSV export completed successfully (2 leads).',
+        'success'
+      );
       expect(mockDownloads.download).toHaveBeenCalledWith(
         expect.objectContaining({
           filename: 'linkedin-leads.csv',
@@ -72,10 +75,7 @@ describe('export-handlers', () => {
 
       await handleExportCsv();
 
-      expect(mockSetStatus).toHaveBeenCalledWith(
-        expect.stringContaining('Export failed'),
-        'error'
-      );
+      expect(mockSetStatus).toHaveBeenCalledWith(expect.stringContaining('Export failed'), 'error');
     });
   });
 
@@ -132,10 +132,7 @@ describe('export-handlers', () => {
 
       await handleExportJson();
 
-      expect(mockSetStatus).toHaveBeenCalledWith(
-        expect.stringContaining('Export failed'),
-        'error'
-      );
+      expect(mockSetStatus).toHaveBeenCalledWith(expect.stringContaining('Export failed'), 'error');
     });
   });
 });
