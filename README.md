@@ -71,3 +71,12 @@ See `ARCHITECTURE.md` for additional implementation notes.
 > The Virk.dk enrichment feature requires Danish company data and works with CVR numbers.
 
 > The Deep Scan ALL feature runs in a background service worker and survives popup closure. Progress is shown via badge updates.
+
+---
+
+## Author
+
+**Babak Bandpey**
+
+- Website: [cocode.dk](https://cocode.dk)
+- LinkedIn: [linkedin.com/in/babakbandpey](https://linkedin.com/in/babakbandpey)
