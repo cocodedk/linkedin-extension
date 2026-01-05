@@ -10,6 +10,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.test.js'],
+    exclude: ['tests/integration/**', 'node_modules/**'],
     setupFiles: ['./tests/setup/chrome-mocks.js'],
     coverage: {
       provider: 'v8',

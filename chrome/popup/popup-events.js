@@ -2,7 +2,7 @@
  * Event listeners setup for popup
  */
 
-import { runtime, tabs } from '../api/runtime.js';
+import { runtime } from '../api/runtime.js';
 import { tabs as tabsApi } from '../api/tabs.js';
 import {
   handleScan,
@@ -43,9 +43,15 @@ export function setupEventListeners() {
   });
 
   // Connection automation buttons
-  dom.autoConnectBtn?.addEventListener('click', () => handleConnectAutomation(dom.autoConnectBtn, dom.autoConnectStopBtn));
-  dom.autoConnectAllBtn?.addEventListener('click', () => handleConnectAutomationAll(dom.autoConnectAllBtn, dom.autoConnectStopBtn));
-  dom.autoConnectStopBtn?.addEventListener('click', () => handleStopConnectAutomation(dom.autoConnectStopBtn));
+  dom.autoConnectBtn?.addEventListener('click', () =>
+    handleConnectAutomation(dom.autoConnectBtn, dom.autoConnectStopBtn)
+  );
+  dom.autoConnectAllBtn?.addEventListener('click', () =>
+    handleConnectAutomationAll(dom.autoConnectAllBtn, dom.autoConnectStopBtn)
+  );
+  dom.autoConnectStopBtn?.addEventListener('click', () =>
+    handleStopConnectAutomation(dom.autoConnectStopBtn)
+  );
 
   // View and lead management buttons
   dom.viewBtn.addEventListener('click', handleViewLeads);
@@ -62,7 +68,9 @@ export function setupEventListeners() {
   dom.saveCsvFsBtn.addEventListener('click', handleSaveCsvWithFS);
   dom.saveJsonFsBtn.addEventListener('click', handleSaveJsonWithFS);
   dom.clearLeadsBtn.addEventListener('click', handleClearLeads);
-  dom.generateAiQueryBtn.addEventListener('click', () => handleGenerateAiQuery(dom.generateAiQueryBtn));
+  dom.generateAiQueryBtn.addEventListener('click', () =>
+    handleGenerateAiQuery(dom.generateAiQueryBtn)
+  );
 
   // Navigation buttons
   dom.openTabBtn.addEventListener('click', async () => {
