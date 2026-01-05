@@ -60,6 +60,30 @@ describe('exporters', () => {
       expect(headers).toContain('virkEnriched');
       expect(headers).toContain('virkEnrichmentDate');
     });
+
+    it('should throw error for non-array input', () => {
+      expect(() => toCsv(null)).toThrow('Leads must be an array');
+      expect(() => toCsv({})).toThrow('Leads must be an array');
+      expect(() => toCsv('string')).toThrow('Leads must be an array');
+    });
+
+    it('should handle null/undefined leads gracefully', () => {
+      const leads = [null, undefined, { name: 'Valid' }];
+      const csv = toCsv(leads);
+      expect(csv).toContain('Valid');
+      // Should have 3 rows (header + 3 data rows)
+      expect(csv.split('\n').length).toBe(4);
+    });
+
+    it('should handle circular reference attempts safely', () => {
+      const lead = { name: 'Test' };
+      // Try to create a circular reference
+      lead.self = lead;
+      const leads = [lead];
+      // Should not crash, should handle gracefully
+      const csv = toCsv(leads);
+      expect(csv).toContain('Test');
+    });
   });
 
   describe('toJson', () => {
@@ -143,6 +167,55 @@ describe('exporters', () => {
       });
 
       expect(mockDownloads.download).toHaveBeenCalledTimes(2);
+    });
+
+    it('should throw error for missing filename', async () => {
+      await expect(
+        triggerDownload({
+          mimeType: 'text/csv',
+          content: 'test'
+        })
+      ).rejects.toThrow('Missing required parameters');
+    });
+
+    it('should throw error for missing content', async () => {
+      await expect(
+        triggerDownload({
+          filename: 'test.csv',
+          mimeType: 'text/csv'
+        })
+      ).rejects.toThrow('Missing required parameters');
+    });
+
+    it('should handle downloads API errors', async () => {
+      const originalDownload = mockDownloads.download;
+      mockDownloads.download.mockRejectedValueOnce(new Error('Download failed'));
+
+      await expect(
+        triggerDownload({
+          filename: 'test.csv',
+          mimeType: 'text/csv',
+          content: 'test'
+        })
+      ).rejects.toThrow('Download failed');
+
+      // Restore original mock
+      mockDownloads.download = originalDownload;
+    });
+
+    it('should handle missing downloads API', async () => {
+      const originalChrome = global.chrome;
+      global.chrome = { ...originalChrome, downloads: undefined };
+
+      await expect(
+        triggerDownload({
+          filename: 'test.csv',
+          mimeType: 'text/csv',
+          content: 'test'
+        })
+      ).rejects.toThrow('Downloads API not available');
+
+      global.chrome = originalChrome;
     });
   });
 });

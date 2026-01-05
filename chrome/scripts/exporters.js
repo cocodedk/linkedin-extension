@@ -1,3 +1,5 @@
+import { setupDownloadCleanup, cleanupDownloadResources } from './exporters/download-cleanup.js';
+
 const HEADERS = [
   'name',
   'headline',
@@ -25,9 +27,8 @@ export function toCsv(leads) {
     throw new Error('Leads must be an array');
   }
 
-  const safeLeads = leads;
   const headerRow = HEADERS.join(',');
-  const rows = safeLeads.map((lead) => {
+  const rows = leads.map((lead) => {
     // Handle null/undefined leads gracefully
     if (!lead || typeof lead !== 'object') {
       return HEADERS.map(() => '""').join(',');
@@ -49,12 +50,17 @@ export function toCsv(leads) {
 }
 
 export function toJson(leads) {
-  const safeLeads = Array.isArray(leads) ? leads : [];
-  return JSON.stringify(safeLeads, null, 2);
+  // Validate input - return empty array for invalid inputs
+  if (!Array.isArray(leads)) {
+    return '[]';
+  }
+  return JSON.stringify(leads, null, 2);
 }
 
 export async function triggerDownload({ filename, mimeType, content }) {
   let url = null;
+  let listener = null;
+  let timeoutId = null;
   try {
     // Validate inputs
     if (!content || !filename) {
@@ -69,25 +75,19 @@ export async function triggerDownload({ filename, mimeType, content }) {
     const blob = new Blob([content], { type: mimeType });
     url = URL.createObjectURL(blob);
 
-    await chrome.downloads.download({
+    const downloadId = await chrome.downloads.download({
       url,
       filename,
       saveAs: true
     });
 
-    // Longer delay to ensure download completes before revoking URL
-    setTimeout(() => {
-      if (url) {
-        URL.revokeObjectURL(url);
-        url = null;
-      }
-    }, 5000);
+    // Event-driven cleanup: listen for download state changes
+    const cleanup = setupDownloadCleanup(downloadId, url);
+    listener = cleanup.listener;
+    timeoutId = cleanup.timeoutId;
   } catch (error) {
     // Cleanup on error
-    if (url) {
-      URL.revokeObjectURL(url);
-      url = null;
-    }
+    cleanupDownloadResources(listener, timeoutId, url);
     throw error;
   }
 }

@@ -22,6 +22,7 @@ global.chrome = {
 beforeEach(() => {
   storageData.clear();
   vi.clearAllMocks();
+  mockDownloads._reset();
 
   mockTabs.query.mockResolvedValue([
     {
