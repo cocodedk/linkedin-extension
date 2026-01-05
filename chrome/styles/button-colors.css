@@ -76,6 +76,17 @@
   background: linear-gradient(180deg, #10b981, #059669);
 }
 
+/* Settings actions - Green (Save Settings) */
+#save-settings-btn {
+  background: linear-gradient(180deg, #059669, #047857);
+  color: #ffffff;
+  box-shadow: 4px 4px 12px rgba(5, 150, 105, 0.3), -4px -4px 12px rgba(16, 185, 129, 0.1);
+}
+
+#save-settings-btn:hover:enabled {
+  background: linear-gradient(180deg, #10b981, #059669);
+}
+
 /* Export actions - Teal (CSV, JSON) */
 #export-csv-btn,
 #export-json-btn {
@@ -92,7 +103,8 @@
 /* Utility actions - Gray (Open Tab, Save Key) */
 #open-tab-btn,
 #save-api-key-btn,
-#open-settings-btn {
+#open-settings-btn,
+#reset-settings-btn {
   background: linear-gradient(180deg, #52525b, #3f3f46);
   color: #ffffff;
   box-shadow: 4px 4px 12px rgba(82, 82, 91, 0.3), -4px -4px 12px rgba(113, 113, 122, 0.1);
@@ -100,7 +112,8 @@
 
 #open-tab-btn:hover:enabled,
 #save-api-key-btn:hover:enabled,
-#open-settings-btn:hover:enabled {
+#open-settings-btn:hover:enabled,
+#reset-settings-btn:hover:enabled {
   background: linear-gradient(180deg, #71717a, #52525b);
 }
 

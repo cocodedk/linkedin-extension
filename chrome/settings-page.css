@@ -244,6 +244,29 @@ main {
   gap: 12px;
 }
 
+.settings-actions button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.settings-actions button:hover:enabled {
+  transform: translateY(-1px);
+}
+
+.settings-actions button:active:enabled {
+  transform: translateY(0);
+}
+
+.settings-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 #status {
   margin: 0;
 }
