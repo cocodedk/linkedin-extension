@@ -3,6 +3,7 @@
 Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads.
 
 ## Features
+
 - **Lead capture**: Injects a content script into the active LinkedIn search results page and gathers profile metadata.
 - **Deep Scan**: Extracts detailed company information from individual LinkedIn profiles.
 - **Deep Scan ALL**: Automatically scans up to 100 pages of search results.
@@ -16,6 +17,7 @@ Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads
 ### Chrome Installation
 
 1. Open Chrome and navigate to:
+
    ```
    chrome://extensions/
    ```
@@ -31,12 +33,28 @@ Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads
 6. Pin the extension for easy access (click the puzzle icon → pin)
 
 ## Repository Layout
+
 - `chrome/` – Chrome extension source (Manifest V3)
 - `ARCHITECTURE.md` – Detailed explanation of the extension architecture
 - `README-ARCHITECTURE.md` – Quick reference for the API abstraction pattern
 - `DEEP_SCAN_ALL_TESTING.md` – Testing guide for the Deep Scan ALL feature
 
 ## Development Workflow
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- Chrome browser for testing
+
+### Initial Setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. The pre-commit hooks will be automatically set up via the `prepare` script.
 
 ### Making Changes
 
@@ -49,6 +67,90 @@ The `chrome/api/` folder re-exports the relevant `chrome.*` APIs that the rest o
 All business logic imports from `../api/`, keeping the browser API usage centralized.
 
 See `ARCHITECTURE.md` for additional implementation notes.
+
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+```
+
+### Test Structure
+
+Tests are located in the `tests/` directory and mirror the source structure:
+
+- `tests/scripts/` - Tests for `chrome/scripts/`
+- `tests/handlers/` - Tests for `chrome/popup/handlers/`
+- `tests/setup/` - Test utilities and Chrome API mocks
+
+### Writing Tests
+
+Tests use Vitest and follow this pattern:
+
+```javascript
+import { describe, it, expect } from 'vitest';
+import { functionToTest } from '../../chrome/path/to/module.js';
+
+describe('module name', () => {
+  it('should do something', () => {
+    expect(functionToTest()).toBe(expected);
+  });
+});
+```
+
+Chrome APIs are automatically mocked via `tests/setup/chrome-mocks.js`.
+
+## Code Quality
+
+### Linting
+
+```bash
+# Check for linting errors
+npm run lint
+
+# Auto-fix linting errors
+npm run lint:fix
+```
+
+### Formatting
+
+```bash
+# Format all files
+npm run format
+
+# Check formatting without changing files
+npm run format:check
+```
+
+### Pre-commit Hooks
+
+Pre-commit hooks automatically run on staged files before each commit:
+
+1. **File Size Check** - Ensures no file exceeds 100 lines (enforced by workspace rules)
+2. **ESLint** - Lints JavaScript files and auto-fixes issues
+3. **Prettier** - Formats code consistently
+4. **Tests** - Runs affected tests for changed files
+
+To bypass hooks (not recommended):
+
+```bash
+git commit --no-verify
+```
+
+### File Size Enforcement
+
+The pre-commit hook enforces a 100-line limit per file. If a file exceeds this limit, the commit will be blocked. Refactor large files by splitting them into smaller modules following the patterns in `ARCHITECTURE.md`.
 
 ## Usage
 
