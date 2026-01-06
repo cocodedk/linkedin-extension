@@ -20,6 +20,9 @@ export const mockTabs = {
   update: vi.fn((tabId, updateProperties) => {
     return Promise.resolve({ id: tabId, ...updateProperties });
   }),
+  remove: vi.fn((tabId) => {
+    return Promise.resolve();
+  }),
   reload: vi.fn((tabId) => {
     return Promise.resolve();
   }),
