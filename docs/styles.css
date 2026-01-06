@@ -30,6 +30,23 @@ body {
   background-color: var(--bg-light);
 }
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--linkedin-blue);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 100;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
@@ -109,6 +126,56 @@ main {
 
 section {
   margin-bottom: var(--spacing-xl);
+}
+
+.table-of-contents {
+  background: var(--bg-white);
+  padding: var(--spacing-md);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--border-color);
+}
+
+.table-of-contents h2 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--linkedin-blue);
+  text-align: center;
+}
+
+.table-of-contents ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.table-of-contents li {
+  flex: 1;
+  min-width: 120px;
+}
+
+.table-of-contents a {
+  display: block;
+  padding: 0.5rem 1rem;
+  background: var(--bg-light);
+  color: var(--linkedin-blue);
+  text-decoration: none;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.table-of-contents a:hover,
+.table-of-contents a:focus {
+  background: var(--linkedin-blue);
+  color: white;
+  transform: translateY(-2px);
 }
 
 h2 {
@@ -199,6 +266,193 @@ h2 {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin-top: var(--spacing-xl);
+}
+
+.faq {
+  background: var(--bg-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: var(--spacing-xl);
+}
+
+.faq-list {
+  margin-top: var(--spacing-lg);
+}
+
+.faq-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+}
+
+.faq-item:last-child {
+  margin-bottom: 0;
+}
+
+.faq-question {
+  background: var(--bg-light);
+  padding: var(--spacing-md);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--linkedin-blue);
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 1.125rem;
+  transition: background-color 0.2s ease;
+}
+
+.faq-question:hover,
+.faq-question:focus {
+  background: var(--linkedin-blue-light);
+  color: white;
+}
+
+.faq-answer {
+  padding: var(--spacing-md);
+  background: white;
+  border-top: 1px solid var(--border-color);
+}
+
+.faq-answer p {
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-secondary);
+}
+
+.faq-answer p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-answer ul {
+  margin-left: var(--spacing-lg);
+  color: var(--text-secondary);
+}
+
+.faq-answer li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.troubleshooting {
+  background: var(--bg-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: var(--spacing-xl);
+}
+
+.troubleshoot-list {
+  margin-top: var(--spacing-lg);
+}
+
+.troubleshoot-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  background: var(--bg-light);
+}
+
+.troubleshoot-item:last-child {
+  margin-bottom: 0;
+}
+
+.troubleshoot-item h3 {
+  color: var(--linkedin-blue);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.troubleshoot-item p {
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.troubleshoot-item strong {
+  color: var(--text-primary);
+}
+
+.changelog {
+  background: var(--bg-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: var(--spacing-xl);
+}
+
+.version-list {
+  margin-top: var(--spacing-lg);
+}
+
+.version-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  margin-bottom: var(--spacing-lg);
+  overflow: hidden;
+}
+
+.version-item:last-child {
+  margin-bottom: 0;
+}
+
+.version-header {
+  background: var(--linkedin-blue);
+  color: white;
+  padding: var(--spacing-md);
+}
+
+.version-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.version-date {
+  font-weight: 400;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.version-changes {
+  padding: var(--spacing-md);
+}
+
+.version-changes h4 {
+  color: var(--linkedin-blue);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.version-changes ul {
+  margin-left: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+.version-changes li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.update-notice {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--linkedin-blue);
+}
+
+.update-notice p {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.update-notice a {
+  color: var(--linkedin-blue);
+  font-weight: 600;
 }
 
 .install-steps {
