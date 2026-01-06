@@ -3,9 +3,8 @@
  */
 
 // DOM elements
-export const scanBtn = document.getElementById('scan-btn');
-export const scanNextBtn = document.getElementById('scan-next-btn');
 export const deepScanBtn = document.getElementById('deep-scan-btn');
+export const goToNextPageBtn = document.getElementById('go-to-next-page-btn');
 export const deepScanAllBtn = document.getElementById('deep-scan-all-btn');
 export const stopDeepScanAllBtn = document.getElementById('stop-deep-scan-all-btn');
 export const openVirkBtn = document.getElementById('open-virk-btn');

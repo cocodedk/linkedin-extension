@@ -31,6 +31,19 @@
       "128": "icons/icon128.png"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "settings.html",
+        "settings-page.js",
+        "settings-page.css",
+        "leads.html",
+        "leads.js",
+        "leads.css"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

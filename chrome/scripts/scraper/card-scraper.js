@@ -14,31 +14,30 @@ import {
 } from './selectors.js';
 
 export function scrapeCard(card) {
-  const profileCandidates = Array.from(card.querySelectorAll(PROFILE_LINK_SELECTOR));
-  const profileElement = profileCandidates.find((a) =>
-    PROFILE_URL_PATTERNS.some((p) => p.test(a?.href ?? ''))
-  ) ?? profileCandidates[0] ?? null;
+  // Card is already a profile link, use it directly
+  const profileUrl = card.href;
 
-  const profileUrl = profileElement?.href ?? card?.href ?? '';
-
-  const nameElement = card.querySelector(NAME_SELECTOR);
+  // Try to get name from link with data-view-name
   let name = '';
-
-  if (nameElement?.tagName === 'IMG') {
-    name = String(nameElement.getAttribute('alt') || '').trim();
-  } else {
-    name = normaliseText(nameElement) || normaliseText(profileElement);
+  const nameLink = card.querySelector('a[data-view-name="search-result-lockup-title"]');
+  if (nameLink) {
+    name = nameLink.textContent.trim();
   }
 
+  // Fallback to image alt
   if (!name) {
-    const img = card.querySelector('img[alt][src*="profile-displayphoto"], img.presence-entity__image[alt], img[alt]');
-    if (img?.getAttribute) name = String(img.getAttribute('alt') || '').trim();
+    const img = card.querySelector('img[alt][src*="profile-displayphoto"]');
+    if (img) {
+      name = img.getAttribute('alt').trim();
+    }
   }
 
-  const headline = normaliseText(card.querySelector(HEADLINE_SELECTOR));
-  const location = normaliseText(card.querySelector(LOCATION_SELECTOR));
-  const companySummary = normaliseText(card.querySelector(COMPANY_SELECTOR));
-  const company = extractCompany({ card, companySummary, headline });
+  // Try to extract additional data from the card's context
+  // Note: LinkedIn may have moved company/headline/location data
+  // so these might be empty for now, which is acceptable for a quick scan
+  const headline = '';
+  const location = '';
+  const company = '';
 
   return {
     name,

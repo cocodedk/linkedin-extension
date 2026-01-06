@@ -2,6 +2,10 @@
  * Pagination utilities for clicking next buttons
  */
 
+import { clickLinkedInNextPageByXPath } from './pagination-xpath.js';
+
+export { clickLinkedInNextPageByXPath };
+
 export function clickLinkedInNext() {
   // Try data-testid selector first
   const nextBtn = document.querySelector('button[data-testid="pagination-controls-next-button-visible"]');

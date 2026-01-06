@@ -1,26 +1,16 @@
-/**
- * Button configuration constants
- * Defines consistent icons, labels, and titles for all buttons
- */
-
+/** Button configuration constants */
 export const BUTTON_CONFIGS = {
-  scan: {
-    id: 'scan-btn',
-    icon: '🔍',
-    label: 'Scan Results',
-    title: 'Scan current LinkedIn page for leads'
-  },
-  scanNext: {
-    id: 'scan-next-btn',
-    icon: '⏭️',
-    label: 'Scan Next',
-    title: 'Navigate to next page and scan'
-  },
   deepScan: {
     id: 'deep-scan-btn',
     icon: '🕵️',
     label: 'Deep Scan',
     title: 'Visit each profile to capture detailed company data'
+  },
+  goToNextPage: {
+    id: 'go-to-next-page-btn',
+    icon: '➡️',
+    label: 'Go to Next Page',
+    title: 'Navigate to the next LinkedIn search results page'
   },
   deepScanAll: {
     id: 'deep-scan-all-btn',

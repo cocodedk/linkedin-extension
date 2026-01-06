@@ -48,3 +48,47 @@ header.popup-header {
   transform: translateY(0);
   box-shadow: inset 2px 2px 6px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
 }
+
+/* Deep Scan Settings Display */
+.settings-display {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.deep-scan-settings {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.settings-line {
+  display: flex;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.settings-line:last-child {
+  margin-bottom: 0;
+}
+
+.settings-label {
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 90px;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.settings-values {
+  color: var(--text);
+  flex: 1;
+}
+
+.settings-error {
+  color: var(--error);
+  font-size: 11px;
+  text-align: center;
+  padding: 4px 0;
+}

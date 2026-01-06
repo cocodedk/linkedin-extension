@@ -6,7 +6,7 @@ import { scrapeLinkedInResults } from '../scripts/scraper.js';
 import { getActiveTabId } from './utils/tab-utils.js';
 import { injectLinkedInQuery } from './utils/linkedin-injection.js';
 import { injectVirkQuery } from './utils/virk-injection.js';
-import { clickLinkedInNext, clickVirkNext } from './utils/pagination.js';
+import { clickLinkedInNext, clickLinkedInNextPageByXPath, clickVirkNext } from './utils/pagination.js';
 
 export { getActiveTabId };
 
@@ -53,6 +53,19 @@ export async function clickNextButton() {
 
   if (!result?.success) {
     throw new Error(result?.message || 'Failed to click Next button');
+  }
+}
+
+export async function clickLinkedInNextPageButton() {
+  const tabId = await getActiveTabId();
+
+  const [{ result }] = await chrome.scripting.executeScript({
+    target: { tabId },
+    func: clickLinkedInNextPageByXPath
+  });
+
+  if (!result?.success) {
+    throw new Error(result?.message || 'Failed to click LinkedIn Next Page button');
   }
 }
 

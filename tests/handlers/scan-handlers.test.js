@@ -4,12 +4,11 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  handleScan,
-  handleScanNext,
+  handleGoToNextPage,
   handleViewLeads,
   handleClearLeads
 } from '../../chrome/popup/handlers/scan-handlers.js';
-import { mockTabs, mockScripting, storageData } from '../setup/chrome-mocks.js';
+import { mockTabs, storageData } from '../setup/chrome-mocks.js';
 import { createMockLead } from '../setup/test-utils.js';
 
 // Mock UI functions
@@ -22,12 +21,10 @@ vi.mock('../../chrome/popup/ui.js', () => ({
 }));
 
 // Mock chrome-utils
-const mockScrapeActiveTab = vi.fn();
-const mockClickNextButton = vi.fn();
+const mockClickLinkedInNextPageButton = vi.fn();
 
 vi.mock('../../chrome/popup/chrome-utils.js', () => ({
-  scrapeActiveTab: (...args) => mockScrapeActiveTab(...args),
-  clickNextButton: (...args) => mockClickNextButton(...args)
+  clickLinkedInNextPageButton: (...args) => mockClickLinkedInNextPageButton(...args)
 }));
 
 describe('scan-handlers', () => {
@@ -44,23 +41,15 @@ describe('scan-handlers', () => {
     ]);
   });
 
-  describe('handleScan', () => {
-    it('should scan and save leads successfully', async () => {
-      const mockLeads = [
-        createMockLead(),
-        createMockLead({ name: 'Jane Doe', profileUrl: 'https://www.linkedin.com/in/janedoe' })
-      ];
-      mockScrapeActiveTab.mockResolvedValue({ leads: mockLeads });
+  describe('handleGoToNextPage', () => {
+    it('should navigate to next page successfully', async () => {
+      mockClickLinkedInNextPageButton.mockResolvedValue();
 
-      await handleScan();
+      await handleGoToNextPage();
 
-      expect(mockSetStatus).toHaveBeenCalledWith('Scanning current page...');
-      expect(mockScrapeActiveTab).toHaveBeenCalled();
-      expect(mockRenderLeads).toHaveBeenCalled();
-      expect(mockSetStatus).toHaveBeenCalledWith(
-        expect.stringContaining('Captured 2 lead(s)'),
-        'success'
-      );
+      expect(mockSetStatus).toHaveBeenCalledWith('Going to next page...');
+      expect(mockClickLinkedInNextPageButton).toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith('Navigated to next page.', 'success');
     });
 
     it('should show warning when not on LinkedIn search page', async () => {
@@ -73,63 +62,22 @@ describe('scan-handlers', () => {
         }
       ]);
 
-      await handleScan();
+      await handleGoToNextPage();
 
       expect(mockSetStatus).toHaveBeenCalledWith(
         'Please navigate to LinkedIn search results first.',
         'warning'
       );
-      expect(mockScrapeActiveTab).not.toHaveBeenCalled();
+      expect(mockClickLinkedInNextPageButton).not.toHaveBeenCalled();
     });
 
-    it('should show warning when no leads found', async () => {
-      mockScrapeActiveTab.mockResolvedValue({ leads: [] });
+    it('should handle navigation errors', async () => {
+      const error = new Error('Navigation failed');
+      mockClickLinkedInNextPageButton.mockRejectedValue(error);
 
-      await handleScan();
+      await handleGoToNextPage();
 
-      expect(mockSetStatus).toHaveBeenCalledWith('No leads found on this page.', 'warning');
-      expect(mockRenderLeads).not.toHaveBeenCalled();
-    });
-
-    it('should handle scan errors', async () => {
-      const error = new Error('Scan failed');
-      mockScrapeActiveTab.mockRejectedValue(error);
-
-      await handleScan();
-
-      expect(mockSetStatus).toHaveBeenCalledWith('Scan failed: Scan failed', 'error');
-    });
-
-    it('should handle null scan result', async () => {
-      mockScrapeActiveTab.mockResolvedValue(null);
-
-      await handleScan();
-
-      expect(mockSetStatus).toHaveBeenCalledWith('No leads found on this page.', 'warning');
-    });
-  });
-
-  describe('handleScanNext', () => {
-    it('should click next and scan', async () => {
-      const mockLeads = [createMockLead()];
-      mockClickNextButton.mockResolvedValue();
-      mockScrapeActiveTab.mockResolvedValue({ leads: mockLeads });
-
-      await handleScanNext();
-
-      expect(mockSetStatus).toHaveBeenCalledWith('Clicking Next button...');
-      expect(mockClickNextButton).toHaveBeenCalled();
-      expect(mockSetStatus).toHaveBeenCalledWith('Waiting for page to load...');
-      expect(mockScrapeActiveTab).toHaveBeenCalled();
-    });
-
-    it('should handle errors', async () => {
-      const error = new Error('Click failed');
-      mockClickNextButton.mockRejectedValue(error);
-
-      await handleScanNext();
-
-      expect(mockSetStatus).toHaveBeenCalledWith('Scan Next failed: Click failed', 'error');
+      expect(mockSetStatus).toHaveBeenCalledWith('Go to Next Page failed: Navigation failed', 'error');
     });
   });
 

@@ -2,13 +2,7 @@
  * CSS selectors for LinkedIn scraping
  */
 
-export const CARD_SELECTOR = [
-  'a[href*="/in/"][componentkey][tabindex]',
-  '[data-view-name="search-entity-result-universal-template"]',
-  '[data-chameleon-result-urn]',
-  '.reusable-search__result-container',
-  '.search-result__wrapper'
-].join(', ');
+export const CARD_SELECTOR = 'a[href*="/in/"][componentkey][tabindex]';
 
 export const NAME_SELECTOR = [
   'a[data-view-name="search-result-lockup-title"]',

@@ -5,8 +5,7 @@
 import { runtime } from '../api/runtime.js';
 import { tabs as tabsApi } from '../api/tabs.js';
 import {
-  handleScan,
-  handleScanNext,
+  handleGoToNextPage,
   handleViewLeads,
   handleExportCsv,
   handleExportJson,
@@ -31,9 +30,8 @@ import * as dom from './popup-dom.js';
 
 export function setupEventListeners() {
   // Scan and automation buttons
-  dom.scanBtn.addEventListener('click', handleScan);
-  dom.scanNextBtn.addEventListener('click', handleScanNext);
   dom.deepScanBtn?.addEventListener('click', handleDeepScan);
+  dom.goToNextPageBtn?.addEventListener('click', handleGoToNextPage);
   dom.deepScanAllBtn.addEventListener('click', handleDeepScanAll);
   dom.stopDeepScanAllBtn.addEventListener('click', handleStopDeepScanAll);
 

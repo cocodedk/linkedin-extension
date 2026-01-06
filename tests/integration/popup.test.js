@@ -35,7 +35,6 @@ test.describe('Popup UI Tests', () => {
   test('should display all main buttons', async ({ page }) => {
     await navigateToPopup(page, extensionId);
     await delay();
-    await expect(page.locator('#scan-btn')).toBeVisible();
     await expect(page.locator('#view-btn')).toBeVisible();
     await expect(page.locator('#export-csv-btn')).toBeVisible();
     await expect(page.locator('#export-json-btn')).toBeVisible();

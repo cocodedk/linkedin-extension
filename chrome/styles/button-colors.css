@@ -4,16 +4,12 @@
  */
 
 /* Primary actions - Blue (Scan, View) */
-#scan-btn,
-#scan-next-btn,
 #view-btn {
   background: linear-gradient(180deg, #2563eb, #1d4ed8);
   color: #ffffff;
   box-shadow: 4px 4px 12px rgba(37, 99, 235, 0.3), -4px -4px 12px rgba(59, 130, 246, 0.1);
 }
 
-#scan-btn:hover:enabled,
-#scan-next-btn:hover:enabled,
 #view-btn:hover:enabled {
   background: linear-gradient(180deg, #3b82f6, #2563eb);
 }

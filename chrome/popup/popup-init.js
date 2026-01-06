@@ -7,6 +7,7 @@ import { renderLeads as renderLeadsUi } from './ui.js';
 import { updateButtonVisibility } from './ui/button-visibility.js';
 import { describeConnectFailure } from '../scripts/connect/connect-automation-utils.js';
 import { setStatus } from './ui.js';
+import { initializeSettingsDisplay } from './ui/settings-display.js';
 
 // Global state
 let cachedLeads = [];
@@ -83,6 +84,7 @@ export async function initializePopup() {
   console.log(`Popup: ${enrichedCount} leads have Virk enrichment`);
   renderLeads(leads);
   await updateButtonVisibility(leads);
+  initializeSettingsDisplay();
   setupMessageListener();
 }
 
