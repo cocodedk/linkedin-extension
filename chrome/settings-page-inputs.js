@@ -9,8 +9,7 @@ export const resetSettingsBtn = document.getElementById('reset-settings-btn');
 export const openPopupBtn = document.getElementById('open-popup-btn');
 export const openLeadsBtn = document.getElementById('open-leads-btn');
 
-// Auto-save state tracking
-export let autoSaveInProgress = false;
+// Note: autoSaveInProgress is now handled locally in settings-page-init.js
 
 export const inputs = {
   profileLoadDelay: document.getElementById('setting-deep-scan-profile-delay'),

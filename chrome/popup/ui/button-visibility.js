@@ -2,7 +2,7 @@
  * Button visibility controller based on context (domain, leads count, etc.)
  */
 
-import { getCurrentTabUrl, isOnLinkedIn, isOnVirk, isDeepScanAllRunning } from './button-visibility-helpers.js';
+import { isOnLinkedIn, isOnVirk, isDeepScanAllRunning } from './button-visibility-helpers.js';
 
 /**
  * Update button visibility based on current context

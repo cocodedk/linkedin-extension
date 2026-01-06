@@ -2,9 +2,10 @@
  * Settings page initialization and event setup
  */
 
-import { getApiKey, setApiKey } from './scripts/storage.js';
-import { getSettings, saveSettings, resetSettings } from './scripts/settings.js';
+import { getApiKey } from './scripts/storage.js';
+import { getSettings, saveSettings } from './scripts/settings.js';
 import { showToast } from './popup/ui/toast.js';
+import { collectSettings, debounce } from './settings-page-handlers.js';
 import {
   apiKeyInput,
   saveApiKeyBtn,
@@ -13,10 +14,18 @@ import {
   openPopupBtn,
   openLeadsBtn,
   inputs,
-  updateConnectAutomationUi,
-  autoSaveInProgress
+  updateConnectAutomationUi
 } from './settings-page-inputs.js';
-import { collectSettings, applySettings, debounce } from './settings-page-handlers.js';
+import { applySettings } from './settings-page-handlers.js';
+import {
+  handleSaveApiKey,
+  handleResetSettings,
+  handleOpenPopup,
+  handleOpenLeads
+} from './settings-page-event-handlers.js';
+
+// Auto-save state tracking
+let autoSaveInProgress = false;
 
 // Auto-save function with debouncing
 const debouncedAutoSave = debounce(async () => {
@@ -34,60 +43,6 @@ const debouncedAutoSave = debounce(async () => {
     autoSaveInProgress = false;
   }
 }, 1000);
-
-// Event handlers
-async function handleSaveApiKey() {
-  try {
-    const apiKey = apiKeyInput.value.trim();
-    await setApiKey(apiKey);
-    showToast(apiKey ? 'API key saved' : 'API key cleared', 'success');
-  } catch (error) {
-    console.error('Save API key failed:', error);
-    showToast('Failed to save API key', 'error');
-  }
-}
-
-async function handleResetSettings() {
-  try {
-    const confirmed = confirm('Reset all settings to defaults? This cannot be undone.');
-    if (!confirmed) return;
-
-    const defaultSettings = await resetSettings();
-    await applySettings(defaultSettings);
-    showToast('Settings reset to defaults', 'success');
-  } catch (error) {
-    console.error('Reset settings failed:', error);
-    showToast('Failed to reset settings', 'error');
-  }
-}
-
-async function handleOpenPopup() {
-  try {
-    const popupUrl = chrome.runtime.getURL('popup.html');
-    await chrome.tabs.create({ url: popupUrl });
-    window.close();
-  } catch (error) {
-    console.error('Failed to open popup:', error);
-  }
-}
-
-async function handleOpenLeads() {
-  try {
-    const leadsUrl = chrome.runtime.getURL('leads.html');
-    const tabList = await chrome.tabs.query({ url: leadsUrl });
-
-    if (tabList.length > 0) {
-      // Tab exists, focus it and reload
-      await chrome.tabs.update(tabList[0].id, { active: true });
-      await chrome.tabs.reload(tabList[0].id);
-    } else {
-      // No tab exists, create new one
-      await chrome.tabs.create({ url: leadsUrl });
-    }
-  } catch (error) {
-    console.error('Failed to open leads page:', error);
-  }
-}
 
 // Initialize the settings page
 export async function initializeSettingsPage() {

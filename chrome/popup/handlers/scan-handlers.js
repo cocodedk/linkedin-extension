@@ -2,7 +2,7 @@
  * Scan and view handlers
  */
 
-import { getLeads, saveLeads } from '../../scripts/storage.js';
+import { getLeads } from '../../scripts/storage.js';
 import { setStatus, renderLeads } from '../ui.js';
 import { clickLinkedInNextPageButton } from '../chrome-utils.js';
 
