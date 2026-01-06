@@ -2,14 +2,21 @@
  * Process individual LinkedIn profiles
  */
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { enrichWithCompanyData } from '../popup/handlers/company-enrichment.js';
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Process a single profile - extract company and data
  * @param {Object} options
  * @param {number} [options.profileLoadDelayMs=4000]
  */
-export async function processProfile(profile, extractCompanyScript, extractProfileDataScript, options = {}) {
+export async function processProfile(
+  profile,
+  extractCompanyScript,
+  extractProfileDataScript,
+  options = {}
+) {
   const profileLoadDelayMs = Number.isFinite(options.profileLoadDelayMs)
     ? options.profileLoadDelayMs
     : 4000;
@@ -40,11 +47,13 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
     const data = profileData.result || {};
     const company = companyResult.result || '';
 
-    return buildLeadData(profile, company, data);
+    // Extract company URL and enrich with additional company data
+    const companyEnrichment = await enrichWithCompanyData(profileTab.id, '');
 
+    return buildLeadData(profile, company, data, companyEnrichment);
   } catch (error) {
     console.error(`Error processing ${profile.name}:`, error);
-    return buildLeadData(profile, '', {});
+    return buildLeadData(profile, '', {}, {});
   } finally {
     if (profileTab) {
       try {
@@ -56,11 +65,14 @@ export async function processProfile(profile, extractCompanyScript, extractProfi
   }
 }
 
-function buildLeadData(profile, company, data) {
+function buildLeadData(profile, company, data, companyEnrichment = {}) {
   return {
     name: profile.name,
     headline: data.headline || '',
     company: company || '',
+    companySize: companyEnrichment.companySize || '',
+    companyIndustry: companyEnrichment.companyIndustry || '',
+    companyTechStack: companyEnrichment.companyTechStack || '',
     location: data.location || '',
     contact: profile.profileUrl,
     contactLinks: [{ href: profile.profileUrl, label: 'LinkedIn', type: 'linkedin' }],

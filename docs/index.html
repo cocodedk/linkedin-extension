@@ -5,13 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinkedIn Lead Exporter - Chrome Extension</title>
   <meta name="description" content="Extract, evaluate, and export LinkedIn leads with AI-powered scoring and Danish CVR enrichment.">
+  <meta name="keywords" content="LinkedIn, lead generation, Chrome extension, AI evaluation, CVR enrichment, business development, sales prospecting">
+  <meta name="author" content="Babak Bandpey">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <link rel="canonical" href="https://cocode.dk/linkedin-extension/">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cocode.dk/linkedin-extension/">
+  <meta property="og:title" content="LinkedIn Lead Exporter - Chrome Extension">
+  <meta property="og:description" content="Extract, evaluate, and export LinkedIn leads with AI-powered scoring and Danish CVR enrichment.">
+  <meta property="og:image" content="https://cocode.dk/linkedin-extension/favicon-32x32.png">
+  <meta property="og:site_name" content="LinkedIn Lead Exporter">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://cocode.dk/linkedin-extension/">
+  <meta property="twitter:title" content="LinkedIn Lead Exporter - Chrome Extension">
+  <meta property="twitter:description" content="Extract, evaluate, and export LinkedIn leads with AI-powered scoring and Danish CVR enrichment.">
+  <meta property="twitter:image" content="https://cocode.dk/linkedin-extension/favicon-32x32.png">
+  <meta property="twitter:creator" content="@babakbandpey">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LinkedIn Lead Exporter",
+    "description": "Extract, evaluate, and export LinkedIn leads with AI-powered scoring and Danish CVR enrichment.",
+    "url": "https://cocode.dk/linkedin-extension/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Chrome OS",
+    "browserRequirements": "Chrome",
+    "softwareVersion": "1.0.0",
+    "author": {
+      "@type": "Person",
+      "name": "Babak Bandpey",
+      "url": "https://cocode.dk",
+      "sameAs": [
+        "https://linkedin.com/in/babakbandpey",
+        "https://github.com/cocodedk"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Babak Bandpey",
+      "url": "https://cocode.dk"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Lead Capture from LinkedIn search results",
+      "Deep Scan for detailed company information",
+      "AI-powered lead evaluation with OpenAI",
+      "Danish CVR data enrichment",
+      "Connect automation with customizable messages",
+      "CSV/JSON data export",
+      "Persistent local storage"
+    ],
+    "screenshot": "https://cocode.dk/linkedin-extension/favicon-32x32.png",
+    "fileSize": "500KB",
+    "datePublished": "2024-01-01",
+    "dateModified": "2024-12-31"
+  }
+  </script>
 </head>
 <body>
-  <header class="hero">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="hero" role="banner">
     <div class="container">
       <div class="hero-content">
         <h1>LinkedIn Lead Exporter</h1>
@@ -24,8 +93,21 @@
     </div>
   </header>
 
-  <main>
-    <section class="features">
+  <main id="main-content" role="main">
+    <nav class="table-of-contents" aria-label="Table of contents">
+      <div class="container">
+        <h2>Quick Navigation</h2>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#installation">Installation</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#changelog">Version History</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="features" class="features">
       <div class="container">
         <h2>What It Can Do</h2>
         <div class="features-grid">
@@ -91,7 +173,7 @@
       </div>
     </section>
 
-    <section class="installation">
+    <section id="installation" class="installation">
       <div class="container">
         <h2>Installation</h2>
         <div class="install-steps">
@@ -126,9 +208,179 @@
         </div>
       </div>
     </section>
+
+    <section id="faq" class="faq">
+      <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary class="faq-question">Is this extension safe to use?</summary>
+            <div class="faq-answer">
+              <p>Yes, this extension is completely safe. It only accesses LinkedIn pages you visit and stores data locally in your browser. It does not transmit any personal information to external servers except when using the AI evaluation feature (which requires your own OpenAI API key) or Virk.dk integration.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Do I need an OpenAI API key?</summary>
+            <div class="faq-answer">
+              <p>No, the AI evaluation feature is optional. You can use all other features without an API key. The AI evaluation helps score leads based on your custom criteria, but basic lead extraction works without it.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">What permissions does the extension need?</summary>
+            <div class="faq-answer">
+              <p>The extension requests access to LinkedIn domains and browser storage. It needs these permissions to:</p>
+              <ul>
+                <li>Extract data from LinkedIn pages</li>
+                <li>Store leads locally in your browser</li>
+                <li>Download CSV/JSON files</li>
+                <li>Access the OpenAI API (optional)</li>
+                <li>Access Virk.dk for Danish company data (optional)</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Can I use this for commercial purposes?</summary>
+            <div class="faq-answer">
+              <p>Yes, you can use the extension for commercial lead generation and business development. The extension is designed for professional use and includes features specifically for sales and marketing teams.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">How many leads can I extract?</summary>
+            <div class="faq-answer">
+              <p>The extension can handle hundreds of leads efficiently. The "Deep Scan ALL" feature can process up to 100 pages of LinkedIn search results automatically. All data is stored locally in your browser with automatic deduplication.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Does it work on mobile devices?</summary>
+            <div class="faq-answer">
+              <p>No, this is a Chrome extension that only works on desktop Chrome browsers. LinkedIn's mobile interface is different and doesn't support the same automation features.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">What if LinkedIn changes their interface?</summary>
+            <div class="faq-answer">
+              <p>The extension uses robust selectors and includes error handling. If LinkedIn makes significant changes, the extension will be updated. You can check the GitHub repository for the latest version and updates.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">Can I export data to my CRM?</summary>
+            <div class="faq-answer">
+              <p>The extension exports data as CSV or JSON files, which can be imported into most CRM systems. The data includes all extracted fields plus AI scores and enrichment data, making it ready for CRM integration.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="troubleshooting" class="troubleshooting">
+      <div class="container">
+        <h2>Troubleshooting</h2>
+        <div class="troubleshoot-list">
+          <div class="troubleshoot-item">
+            <h3>Extension not appearing after installation</h3>
+            <p><strong>Solution:</strong> Make sure you've enabled "Developer mode" in Chrome extensions and clicked "Load unpacked" with the correct folder. The extension icon should appear in your toolbar after pinning it.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Buttons not showing on LinkedIn</h3>
+            <p><strong>Solution:</strong> Refresh the LinkedIn page and make sure you're on a search results page. The extension only activates on LinkedIn search result pages.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>AI evaluation not working</h3>
+            <p><strong>Solution:</strong> Check that you've entered a valid OpenAI API key in the extension settings. Make sure your API key has sufficient credits and the correct permissions.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Deep scan getting stuck</h3>
+            <p><strong>Solution:</strong> LinkedIn may have rate limiting. Try increasing the delay between scans in the settings, or run scans during off-peak hours. Also check your internet connection.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Data export failing</h3>
+            <p><strong>Solution:</strong> Make sure your browser allows downloads. Check that you have sufficient disk space and that no security software is blocking the download.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Virk.dk integration not working</h3>
+            <p><strong>Solution:</strong> This feature only works for Danish companies. Make sure the company has a valid CVR number and that the Virk.dk service is available.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Extension running slowly</h3>
+            <p><strong>Solution:</strong> Clear your browser cache and restart Chrome. If using Deep Scan ALL, reduce the number of parallel tabs or increase delays between operations.</p>
+          </div>
+
+          <div class="troubleshoot-item">
+            <h3>Connect automation not working</h3>
+            <p><strong>Solution:</strong> LinkedIn may have changed their interface. Check the extension settings and try adjusting the message templates. Some accounts may have sending limits.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="changelog" class="changelog">
+      <div class="container">
+        <h2>Version History</h2>
+        <div class="version-list">
+          <div class="version-item">
+            <div class="version-header">
+              <h3>v1.0.0 <span class="version-date">January 2025</span></h3>
+            </div>
+            <div class="version-changes">
+              <h4>✨ New Features</h4>
+              <ul>
+                <li>Complete LinkedIn lead extraction system</li>
+                <li>AI-powered lead evaluation with OpenAI integration</li>
+                <li>Danish CVR data enrichment via Virk.dk</li>
+                <li>Connect automation with customizable messages</li>
+                <li>Deep scan functionality for detailed company profiles</li>
+                <li>Batch processing for up to 100 pages</li>
+                <li>CSV and JSON export capabilities</li>
+                <li>Persistent local storage with deduplication</li>
+              </ul>
+
+              <h4>🔧 Technical Features</h4>
+              <ul>
+                <li>Chrome extension architecture</li>
+                <li>Background processing with web workers</li>
+                <li>Robust error handling and retry logic</li>
+                <li>Rate limiting and anti-detection measures</li>
+                <li>Comprehensive settings management</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="version-item">
+            <div class="version-header">
+              <h3>v0.9.0 <span class="version-date">December 2024</span></h3>
+            </div>
+            <div class="version-changes">
+              <h4>🚀 Initial Beta Release</h4>
+              <ul>
+                <li>Basic LinkedIn lead extraction</li>
+                <li>Simple CSV export</li>
+                <li>Core extension infrastructure</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="update-notice">
+          <p><strong>📋 Stay Updated:</strong> Follow the <a href="https://github.com/cocodedk/linkedin-extension" target="_blank" rel="noopener">GitHub repository</a> for the latest updates and releases.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>
+  <footer role="contentinfo">
     <div class="container">
       <p>LinkedIn Lead Exporter - Chrome Extension</p>
       <p>

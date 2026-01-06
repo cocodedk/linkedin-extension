@@ -29,7 +29,7 @@ describe('exporters', () => {
     it('should handle empty array', () => {
       const csv = toCsv([]);
       expect(csv).toBe(
-        'name,headline,company,contact,location,profileUrl,aiScore,aiReasons,aiFitSummary,virkCvrNumber,virkAddress,virkPostalCode,virkCity,virkStartDate,virkCompanyForm,virkStatus,virkEnriched,virkEnrichmentDate'
+        'name,headline,company,companySize,companyIndustry,companyTechStack,contact,location,profileUrl,aiScore,aiReasons,aiFitSummary,virkCvrNumber,virkAddress,virkPostalCode,virkCity,virkStartDate,virkCompanyForm,virkStatus,virkEnriched,virkEnrichmentDate'
       );
     });
 
