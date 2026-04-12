@@ -1,0 +1,21 @@
+# LinkedIn Extension
+
+> Chrome extension for collecting and evaluating LinkedIn search leads.
+
+LinkedIn Extension helps users gather and evaluate lead data from LinkedIn search results. Built with Vitest for unit testing and Playwright for integration testing.
+
+## Key Features
+- Collect lead data from LinkedIn search pages
+- Evaluate and filter leads based on criteria
+- Export collected lead data
+- Full test suite (unit + integration)
+
+## Source
+- [GitHub Repository](https://github.com/cocodedk/linkedin-extension)
+- [Releases](https://github.com/cocodedk/linkedin-extension/releases)
+
+## Author
+Babak Bandpey — [cocode.dk](https://cocode.dk) | [LinkedIn](https://linkedin.com/in/babakbandpey)
+
+## License
+Apache-2.0

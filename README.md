@@ -1,184 +1,67 @@
-# LinkedIn Lead Exporter Extension
+# LinkedIn Extension
 
-Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads.
+Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads. Collects profile metadata, enriches with company data, and supports AI-based lead scoring.
+
+## Website
+
+- [English](https://cocodedk.github.io/linkedin-extension/)
+- [فارسی (Persian)](https://cocodedk.github.io/linkedin-extension/fa/)
 
 ## Features
 
-- **Lead capture**: Injects a content script into the active LinkedIn search results page and gathers profile metadata.
-- **Deep Scan**: Extracts detailed company information from individual LinkedIn profiles.
-- **Deep Scan ALL**: Automatically scans up to 100 pages of search results.
-- **Persistent storage**: Deduplicates and stores captured leads locally so repeated scans enrich the saved list.
-- **Virk.dk Integration**: Enriches leads with Danish CVR company data.
-- **AI evaluation**: Lets you supply an OpenAI API key to score each lead and capture qualitative feedback.
-- **Data export**: Downloads the stored leads as CSV or JSON using the browser downloads API.
+- **Lead capture**: Injects a content script into LinkedIn search results and gathers profile metadata
+- **Deep Scan**: Extracts detailed company information from individual LinkedIn profiles
+- **Deep Scan ALL**: Automatically scans up to 100 pages of search results
+- **Persistent storage**: Deduplicates and stores captured leads locally
+- **Virk.dk Integration**: Enriches leads with Danish CVR company data
+- **AI evaluation**: Score leads using an OpenAI API key
+- **Data export**: Downloads stored leads as CSV or JSON
 
-## Installation
+## Download
 
-### Chrome Installation
+[**Download LinkedIn Extension**](https://github.com/cocodedk/linkedin-extension/releases/latest/download/linkedin-extension.zip)
 
-1. Open Chrome and navigate to:
+## Build from Source
 
-   ```
-   chrome://extensions/
-   ```
-
-2. Enable **Developer mode** (toggle in top-right corner)
-
-3. Click **Load unpacked**
-
-4. Select the `chrome/` folder from this repository
-
-5. The extension icon should appear in your browser toolbar
-
-6. Pin the extension for easy access (click the puzzle icon → pin)
-
-## Repository Layout
-
-- `chrome/` – Chrome extension source (Manifest V3)
-- `ARCHITECTURE.md` – Detailed explanation of the extension architecture
-- `README-ARCHITECTURE.md` – Quick reference for the API abstraction pattern
-- `DEEP_SCAN_ALL_TESTING.md` – Testing guide for the Deep Scan ALL feature
-
-## Development Workflow
-
-### Prerequisites
-
-- Node.js 18+ and npm
-- Chrome browser for testing
-
-### Initial Setup
-
-1. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. The pre-commit hooks will be automatically set up via the `prepare` script.
-
-### Making Changes
-
-Edit code in the `chrome/` folder (business logic, UI, handlers, etc.), then reload the unpacked extension.
-
-### Architecture
-
-The `chrome/api/` folder re-exports the relevant `chrome.*` APIs that the rest of the extension consumes.
-
-All business logic imports from `../api/`, keeping the browser API usage centralized.
-
-See `ARCHITECTURE.md` for additional implementation notes.
-
-## Testing
-
-### Running Tests
+**Prerequisites:** Node.js 22 or later, Google Chrome 116+.
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with UI
-npm run test:ui
-
-# Generate coverage report
-npm run test:coverage
+git clone https://github.com/cocodedk/linkedin-extension.git
+cd linkedin-extension
+npm ci
+./scripts/install-hooks.sh
+npm run lint     # Lint
+npm test         # Unit tests
 ```
 
-### Test Structure
+Load in Chrome: `chrome://extensions/` → Developer mode → Load unpacked → select `chrome/`
 
-Tests are located in the `tests/` directory and mirror the source structure:
+## Architecture
 
-- `tests/scripts/` - Tests for `chrome/scripts/`
-- `tests/handlers/` - Tests for `chrome/popup/handlers/`
-- `tests/setup/` - Test utilities and Chrome API mocks
-
-### Writing Tests
-
-Tests use Vitest and follow this pattern:
-
-```javascript
-import { describe, it, expect } from 'vitest';
-import { functionToTest } from '../../chrome/path/to/module.js';
-
-describe('module name', () => {
-  it('should do something', () => {
-    expect(functionToTest()).toBe(expected);
-  });
-});
+```
+linkedin-extension/
+├── chrome/          ← Extension source (MV3)
+│   ├── manifest.json
+│   ├── background.js
+│   ├── content/     ← LinkedIn page interaction
+│   └── ui/          ← Popup UI
+├── tests/           ← Vitest unit tests
+├── test-extension/  ← Playwright test helpers
+└── website/         ← GitHub Pages site
 ```
 
-Chrome APIs are automatically mocked via `tests/setup/chrome-mocks.js`.
-
-## Code Quality
-
-### Linting
-
-```bash
-# Check for linting errors
-npm run lint
-
-# Auto-fix linting errors
-npm run lint:fix
-```
-
-### Formatting
-
-```bash
-# Format all files
-npm run format
-
-# Check formatting without changing files
-npm run format:check
-```
-
-### Pre-commit Hooks
-
-Pre-commit hooks automatically run on staged files before each commit:
-
-1. **File Size Check** - Ensures no file exceeds 100 lines (enforced by workspace rules)
-2. **ESLint** - Lints JavaScript files and auto-fixes issues
-3. **Prettier** - Formats code consistently
-4. **Tests** - Runs affected tests for changed files
-
-To bypass hooks (not recommended):
-
-```bash
-git commit --no-verify
-```
-
-### File Size Enforcement
-
-The pre-commit hook enforces a 100-line limit per file. If a file exceeds this limit, the commit will be blocked. Refactor large files by splitting them into smaller modules following the patterns in `ARCHITECTURE.md`.
-
-## Usage
-
-1. Navigate to LinkedIn search results (e.g., `linkedin.com/search/results/people/`)
-
-2. Click the extension icon to open the popup
-
-3. Use **Scan Results** to capture leads from the current page
-
-4. Use **Deep Scan** to extract detailed company info from profiles
-
-5. Use **Deep Scan ALL** to automatically scan multiple pages (up to 100)
-
-6. View, evaluate, enrich, and export your leads
-
-## Development Notes
-
-> The OpenAI integration requires the user to provide an API key through the popup before evaluation can run.
-
-> The Virk.dk enrichment feature requires Danish company data and works with CVR numbers.
-
-> The Deep Scan ALL feature runs in a background service worker and survives popup closure. Progress is shown via badge updates.
-
----
+| Component         | Technology              |
+| ----------------- | ----------------------- |
+| Extension runtime | Chrome MV3              |
+| Language          | JavaScript (ES modules) |
+| Unit tests        | Vitest                  |
+| Integration tests | Playwright              |
+| Linting           | ESLint + Prettier       |
 
 ## Author
 
-**Babak Bandpey**
+**Babak Bandpey** — [cocode.dk](https://cocode.dk) | [LinkedIn](https://linkedin.com/in/babakbandpey) | [GitHub](https://github.com/cocodedk)
 
-- Website: [cocode.dk](https://cocode.dk)
-- LinkedIn: [linkedin.com/in/babakbandpey](https://linkedin.com/in/babakbandpey)
+## License
+
+Apache-2.0 | © 2026 [Cocode](https://cocode.dk) | Created by [Babak Bandpey](https://linkedin.com/in/babakbandpey)

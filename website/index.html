@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkedIn Extension — Collect and Evaluate LinkedIn Leads</title>
+  <meta name="description" content="LinkedIn Extension is a free Chrome extension that helps you collect and evaluate lead data from LinkedIn search results. Built with a full test suite." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://cocodedk.github.io/linkedin-extension/" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="LinkedIn Extension" />
+  <meta property="og:title" content="LinkedIn Extension — Collect and Evaluate LinkedIn Leads" />
+  <meta property="og:description" content="Free Chrome extension for collecting and evaluating lead data from LinkedIn search results." />
+  <meta property="og:url" content="https://cocodedk.github.io/linkedin-extension/" />
+  <meta property="og:image" content="https://cocodedk.github.io/linkedin-extension/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="LinkedIn Extension logo on dark background" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LinkedIn Extension — Collect and Evaluate LinkedIn Leads" />
+  <meta name="twitter:description" content="Free Chrome extension for collecting and evaluating lead data from LinkedIn." />
+  <meta name="twitter:image" content="https://cocodedk.github.io/linkedin-extension/og.png" />
+  <meta name="twitter:image:alt" content="LinkedIn Extension Chrome extension" />
+
+  <!-- Hreflang alternates -->
+  <link rel="alternate" hreflang="en"        href="https://cocodedk.github.io/linkedin-extension/" />
+  <link rel="alternate" hreflang="fa"        href="https://cocodedk.github.io/linkedin-extension/fa/" />
+  <link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/linkedin-extension/" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LinkedIn Extension",
+    "description": "Chrome extension for collecting and evaluating lead data from LinkedIn search results.",
+    "url": "https://cocodedk.github.io/linkedin-extension/",
+    "downloadUrl": "https://github.com/cocodedk/linkedin-extension/releases/latest/download/linkedin-extension.zip",
+    "applicationCategory": "BrowserApplication",
+    "operatingSystem": "Chrome, Chromium, Edge",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": {
+      "@type": "Person",
+      "name": "Babak Bandpey",
+      "url": "https://cocode.dk",
+      "sameAs": ["https://linkedin.com/in/babakbandpey", "https://github.com/cocodedk"]
+    },
+    "codeRepository": "https://github.com/cocodedk/linkedin-extension"
+  }
+  </script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <span class="logo">in LinkedIn Extension</span>
+    <a href="fa/" class="lang-switch">فارسی</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>LinkedIn Lead Collection</h1>
+      <p>LinkedIn Extension helps you collect and evaluate lead data from LinkedIn search results directly in your browser. Fast, private, and developer-friendly.</p>
+      <a href="https://github.com/cocodedk/linkedin-extension/releases/latest/download/linkedin-extension.zip" class="btn">Download Extension</a>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <ul>
+        <li>Collect lead data from LinkedIn search result pages</li>
+        <li>Evaluate and filter leads based on configurable criteria</li>
+        <li>Export collected lead data for further processing</li>
+        <li>Full test suite — Vitest (unit) + Playwright (integration)</li>
+        <li>Offline operation — no data sent to external servers</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Installation</h2>
+      <ol>
+        <li>Download the latest <a href="https://github.com/cocodedk/linkedin-extension/releases/latest/download/linkedin-extension.zip">linkedin-extension.zip</a> and extract it.</li>
+        <li>Open Chrome and navigate to <code>chrome://extensions/</code>.</li>
+        <li>Enable <strong>Developer mode</strong> (top-right toggle).</li>
+        <li>Click <strong>Load unpacked</strong> and select the <code>chrome/</code> folder.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Build from Source</h2>
+      <pre><code>git clone https://github.com/cocodedk/linkedin-extension.git
+cd linkedin-extension
+npm ci
+npm test          # Run unit tests
+npm run lint      # Lint code</code></pre>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <pre><code>linkedin-extension/
+├── chrome/          ← Extension source (MV3)
+├── tests/           ← Vitest unit tests
+├── test-extension/  ← Playwright helpers
+└── website/         ← This site</code></pre>
+
+      <p>Tech stack: JavaScript ES modules · Chrome MV3 · Vitest · Playwright · ESLint · Prettier</p>
+    </section>
+
+    <section>
+      <h2>Author</h2>
+      <p><strong>Babak Bandpey</strong> — <a href="https://cocode.dk" target="_blank" rel="noreferrer">cocode.dk</a> | <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noreferrer">LinkedIn</a> | <a href="https://github.com/cocodedk" target="_blank" rel="noreferrer">GitHub</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Apache-2.0 &nbsp;|&nbsp; © 2026 <a href="https://cocode.dk" target="_blank" rel="noreferrer">Cocode</a> &nbsp;|&nbsp; Created by <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noreferrer">Babak Bandpey</a></p>
+  </footer>
+</body>
+</html>
