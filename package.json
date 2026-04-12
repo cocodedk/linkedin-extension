@@ -28,7 +28,7 @@
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@vitest/coverage-v8": "^1.6.1",
-    "@vitest/ui": "^1.6.0",
+    "@vitest/ui": "^4.1.4",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "jsdom": "^27.4.0",
