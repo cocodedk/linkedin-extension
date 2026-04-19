@@ -33,7 +33,7 @@
     "husky": "^9.0.11",
     "jsdom": "^27.4.0",
     "lint-staged": "^15.2.0",
-    "playwright": "^1.57.0",
+    "playwright": "^1.59.1",
     "prettier": "^3.2.5",
     "vitest": "^1.6.0"
   }
