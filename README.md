@@ -4,8 +4,8 @@ Chrome Manifest V3 extension for collecting and evaluating LinkedIn search leads
 
 ## Website
 
-- [English](https://cocodedk.github.io/linkedin-extension/)
-- [فارسی (Persian)](https://cocodedk.github.io/linkedin-extension/fa/)
+- [English](https://linkedin-extension.cocode.dk/)
+- [فارسی (Persian)](https://linkedin-extension.cocode.dk/fa/)
 
 ## Features
 
