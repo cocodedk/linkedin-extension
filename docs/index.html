@@ -30,6 +30,8 @@
   <meta property="twitter:image" content="https://cocode.dk/linkedin-extension/favicon-32x32.png">
   <meta property="twitter:creator" content="@babakbandpey">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css">
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -80,6 +82,9 @@
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
+  <cocode-head project="LinkedIn Lead Exporter" accent="#0a66c2" on-accent="#ffffff">
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-head>
   <header class="hero" role="banner">
     <div class="container">
       <div class="hero-content">
@@ -380,17 +385,8 @@
     </section>
   </main>
 
-  <footer role="contentinfo">
-    <div class="container">
-      <p>LinkedIn Lead Exporter - Chrome Extension</p>
-      <p>
-        <a href="https://github.com/cocodedk/linkedin-extension" target="_blank" rel="noopener">GitHub Repository</a>
-      </p>
-      <p>
-        <strong>Author:</strong> <a href="https://cocode.dk" target="_blank" rel="noopener">Babak Bandpey</a> |
-        <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noopener">LinkedIn</a>
-      </p>
-    </div>
-  </footer>
+  <cocode-foot repo="cocodedk/linkedin-extension">
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-foot>
 </body>
 </html>
