@@ -22,7 +22,9 @@ export function scrapeLinkedInResults() {
 
   const leads = rawLeads.filter((lead) => {
     const hasUrl = PROFILE_URL_PATTERNS.some((p) => p.test(lead.profileUrl));
-    if (!hasUrl) debugInfo.missingProfileUrl += 1;
+    if (!hasUrl) {
+      debugInfo.missingProfileUrl += 1;
+    }
     return hasUrl;
   });
 
