@@ -21,12 +21,14 @@ export async function runVirkEnrichmentInBackground() {
     navigationDelay: virk.navigationDelayMs,
     pageLoadDelay: virk.pageLoadDelayMs
   };
-  console.log(`[Background] Settings -> parallelTabs:${parallelTabs}, warmup:${virk.tabWarmupDelayMs}ms, searchDelay:${timingOverrides.searchDelay}ms, navigationDelay:${timingOverrides.navigationDelay}ms, pageLoadDelay:${timingOverrides.pageLoadDelay}ms`);
+  console.log(
+    `[Background] Settings -> parallelTabs:${parallelTabs}, warmup:${virk.tabWarmupDelayMs}ms, searchDelay:${timingOverrides.searchDelay}ms, navigationDelay:${timingOverrides.navigationDelay}ms, pageLoadDelay:${timingOverrides.pageLoadDelay}ms`
+  );
 
   const leads = await getLeads();
   console.log(`[Background] Loaded ${leads.length} leads from storage`);
 
-  const leadsWithCompany = leads.filter(lead => lead.company);
+  const leadsWithCompany = leads.filter((lead) => lead.company);
   console.log(`[Background] ${leadsWithCompany.length} leads have company names`);
 
   if (leadsWithCompany.length === 0) {
@@ -38,7 +40,8 @@ export async function runVirkEnrichmentInBackground() {
   const enrichedLeads = [...leads];
 
   // Get leads that need enrichment with their indices
-  const leadsToEnrich = leads.map((lead, index) => ({ lead, index }))
+  const leadsToEnrich = leads
+    .map((lead, index) => ({ lead, index }))
     .filter(({ lead }) => lead.company);
 
   console.log(`[Background] Starting to process ${leadsToEnrich.length} leads...`);
@@ -57,20 +60,25 @@ export async function runVirkEnrichmentInBackground() {
 
       results.forEach(({ enriched, index }) => {
         enrichedLeads[index] = enriched;
-        if (enriched.virkEnriched) enrichedCount++;
+        if (enriched.virkEnriched) {
+          enrichedCount++;
+        }
       });
 
       // Save after each batch
       console.log(`[Background] 💾 Saving batch ${batchNum} results to storage...`);
       await saveLeads(enrichedLeads);
-      console.log(`[Background] ✅ Progress saved - ${enrichedCount}/${leadsWithCompany.length} enriched so far`);
-
+      console.log(
+        `[Background] ✅ Progress saved - ${enrichedCount}/${leadsWithCompany.length} enriched so far`
+      );
     } catch (error) {
       console.error(`[Background] ❌ Error in batch ${batchNum}:`, error);
     }
   }
 
-  console.log(`\n🎉 [Background] Virk enrichment complete! Enriched ${enrichedCount}/${leadsWithCompany.length} leads`);
+  console.log(
+    `\n🎉 [Background] Virk enrichment complete! Enriched ${enrichedCount}/${leadsWithCompany.length} leads`
+  );
 
   return {
     total: leadsWithCompany.length,

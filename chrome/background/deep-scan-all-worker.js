@@ -45,10 +45,17 @@ export async function runDeepScanAllInBackground(searchTabId) {
     while (state.isRunning && state.currentPage <= maxPages) {
       console.log(`Deep Scan ALL: Processing page ${state.currentPage}/${maxPages}`);
       try {
-        const totalCount = await processPage(searchTabId, runDeepScanInBackground, getLeads, saveLeads);
+        const totalCount = await processPage(
+          searchTabId,
+          runDeepScanInBackground,
+          getLeads,
+          saveLeads
+        );
         updateLeadCount(totalCount);
         resetErrors();
-        console.log(`Deep Scan ALL: Page ${state.currentPage} complete. Total: ${state.totalLeads}`);
+        console.log(
+          `Deep Scan ALL: Page ${state.currentPage} complete. Total: ${state.totalLeads}`
+        );
       } catch (error) {
         console.error(`Deep Scan ALL: Error on page ${state.currentPage}:`, error);
         incrementErrors();
@@ -57,9 +64,13 @@ export async function runDeepScanAllInBackground(searchTabId) {
         }
       }
       await updateBadge(state.currentPage);
-      if (state.currentPage >= maxPages || !state.isRunning) break;
+      if (state.currentPage >= maxPages || !state.isRunning) {
+        break;
+      }
       const hasNext = await checkNextButtonExists(searchTabId);
-      if (!hasNext) break;
+      if (!hasNext) {
+        break;
+      }
       await clickNextButton(searchTabId);
       await sleep(pageDelayMs);
       incrementPage();
