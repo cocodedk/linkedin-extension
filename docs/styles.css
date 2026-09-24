@@ -32,7 +32,8 @@ body {
 
 .skip-link {
   position: absolute;
-  top: -40px;
+  /* Fully off-screen: the link is ~42px tall, and at -40px its bottom edge showed on the frame's bar. */
+  top: -48px;
   left: 6px;
   background: var(--linkedin-blue);
   color: white;
@@ -503,28 +504,14 @@ h2 {
   color: var(--linkedin-blue);
 }
 
-footer {
-  background: var(--text-primary);
-  color: white;
-  padding: var(--spacing-lg) var(--spacing-sm);
-  text-align: center;
-  margin-top: var(--spacing-xl);
-}
-
-footer p {
-  margin-bottom: var(--spacing-xs);
-}
-
-footer a {
-  color: var(--linkedin-blue-light);
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
-}
+/* The cocode.dk frame (brand.cocode.dk) lines up with the content column: main's side padding
+   plus .container's. The max is .container's 1200px widened by main's padding on both sides,
+   so the edges still match once the column stops growing. Keep these in step with both. */
+cocode-head, cocode-foot { --cocode-max: 1232px; --cocode-gutter: 32px; }
 
 @media (min-width: 640px) {
+  cocode-head, cocode-foot { --cocode-gutter: 40px; }
+
   .container {
     padding: 0 var(--spacing-md);
   }
@@ -554,6 +541,8 @@ footer a:hover {
 }
 
 @media (min-width: 1024px) {
+  cocode-head, cocode-foot { --cocode-max: 1248px; --cocode-gutter: 48px; }
+
   .hero {
     padding: 4rem var(--spacing-sm);
   }
